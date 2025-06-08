@@ -9,7 +9,7 @@ return (
         <div className={styles.container}>
             <div className={styles.left}>
                 <h1>¡Bienvenido!</h1>
-                <p>IIngrese los datos solicitados para crear su cuenta.</p>
+                <p>Ingrese los datos solicitados para crear su cuenta.</p>
                 <p className={styles.register}>¿Ya tienes cuenta? <a href="/login">Inicia sesion</a></p>
             </div>
 
