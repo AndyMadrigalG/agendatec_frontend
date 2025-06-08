@@ -1,0 +1,30 @@
+.main {
+    display: flex;
+    justify-content: center;
+}
+
+.div {
+    margin-top: 240px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form{
+    display: flex;
+    flex-direction: row;
+}
+
+.form input {
+    width: 500px;
+    height: 40px;
+    font-size: 20px;
+    padding-left: 10px;
+}
+
+.form button {
+    width: 150px;
+    color: white;
+    border-radius: 15px;
+    border-color: var(--buttonColor);
+    background-color: var(--buttonColor);
+}
