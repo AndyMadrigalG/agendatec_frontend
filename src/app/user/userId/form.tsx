@@ -5,7 +5,7 @@ import { updateNameAction } from './actions';
 import { useFormState, useFormStatus } from 'react-dom';
 import { useRef } from 'react';
 
-export default function Form({userId }: { userId: string }) {
+export default function Form({ userId }: { userId: string }) {
 
     const formRef = useRef<HTMLFormElement>(null);
     const [state, action] = useFormState (updateNameAction, {
