@@ -1,6 +1,6 @@
 import styles from './agendaInicio.module.css';
 
-export default function HomePage() {
+export default function AgendaPage() {
     return (
         <div>
             <div className={styles.mainContainer}>
