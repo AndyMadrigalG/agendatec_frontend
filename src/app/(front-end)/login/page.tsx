@@ -10,7 +10,7 @@ export default function LoginPage() {
       <div className={styles.container}>
         
           <div className={styles.left}>
-              <h1>¡Bienvenido!</h1>
+              <h1>¡BBienvenido!</h1>
               <p>Inicie sesión para acceder al sistema</p>
               <p className={styles.register}>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
           </div>
