@@ -1,0 +1,8 @@
+# Docker Compose file to setup a simple Next.js application
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    restart: always

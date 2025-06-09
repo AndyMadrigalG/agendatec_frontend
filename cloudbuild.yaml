@@ -1,0 +1,17 @@
+options: 
+    logging: 'CLOUD_LOGGING_ONLY'
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/agendatec-gcp-proyect/agendatec-frontend', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/agendatec-gcp-proyect/agendatec-frontend']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: ['run', 'deploy', 'agendatec-frontend',
+       '--image', 'gcr.io/agendatec-gcp-proyect/agendatec-frontend',
+       '--region', 'us-central1', '--platform', 'managed',
+       '--allow-unauthenticated']
+images:
+  - 'gcr.io/agendatec-gcp-proyect/agendatec-frontend'
