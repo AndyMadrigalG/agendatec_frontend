@@ -2,13 +2,12 @@ import styles from './user.module.css';
 import { getUser } from "@/app/data-access/user";
 import Form from './form';
 
-type PageProps = {
+async function UserPage({ params }: {
     params: {
         userId: string;
     };
-};
+}) {
 
-async function UserPage({ params }: PageProps) {
     const user = await getUser(params.userId);
 
     return (
