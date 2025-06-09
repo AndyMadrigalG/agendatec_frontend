@@ -1,38 +1,41 @@
-# agendatec_frontend
+# AgendaTec Frontend
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a frontend project made with [Next.js](https://nextjs.org), a [React](https://reactjs.org) framework for building server-side rendered applications
 
-## Getting Started
+## Prerequisites
+To run this project you need to install [Node JS](https://nodejs.org/en/download) and then start downloading the project dependencies
 
-First, run the development server:
+If you want to run this inside a Docker container, you need to have [Docker](https://www.docker.com/get-started) installed
 
+## Project dependencies
+Get all the node packages needed to run this project by running this command:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+$ npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Compile and run the project
+Choose one of the following commands to compile and run the project:
+```bash
+# compile the project 
+npm run build
+# run the project from the build folder
+npm run start
+# run the project in development mode
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deployment - Dev Environment - Docker
+To run the Dockerfile locally and generate a docker image that can generate containers, use this command:
+```bash
+$ docker compose up
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment - Prod Environment - GCP Cloud Run
+When you are ready to deploy to production, make sure you have [gcloud CLI](https://cloud.google.com/cli) installed and configured:
+```bash
+$ gcloud init
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How to start, where is the landing page
+The landing page is available at [localhost:3000](http://localhost:3000) on development environment
+and for production is at [https://agendatec-frontend-371160271556.us-central1.run.app/login](https://agendatec-frontend-371160271556.us-central1.run.app/login)
