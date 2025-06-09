@@ -1,6 +1,6 @@
 "use server";
 
-import { updateUser } from '@/app/data-acess/user';
+import { updateUser } from '@/app/data-access/user';
 import { revalidatePath } from 'next/cache';
 
 
