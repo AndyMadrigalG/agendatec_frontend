@@ -4,6 +4,7 @@
   --foreground: #ededed;
   --buttonColor: #7b6ef6;
   --hoverButton: #aba1fd;
+  --borderInputColor: rgb(126, 126, 126);
 }
 
 body {
@@ -15,8 +16,8 @@ body {
 form Input {
   color: white;
   padding-left: 8px;
-  background-color: #1a1a1e;
-  border: 2px, rgb(126, 126, 126);
+  background-color: var(--background);
+  border: 2px, var(--borderInputColor);
   border-style:solid;
   margin: 5px;
   border-radius: 8px;
@@ -38,10 +39,13 @@ form input:focus{
 button {
   padding: 14px;
   color: white;
-  border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.buttonAceptar {
+  background-color: var(--buttonColor);
 }
 
 button:hover {

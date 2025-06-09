@@ -2,7 +2,7 @@ import styles from './agendaInicio.module.css';
 import Image from 'next/image';
 import logo from '/public/logo.png';
 
-export default function HomePage() {
+export default function AgendaPage() {
     return (
         <div>
             <div className={styles.mainContainer}>
