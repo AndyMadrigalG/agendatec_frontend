@@ -17,21 +17,22 @@ export default function CrearAgendaPage() {
     const [fecha, setFecha] = useState('');
     const [tipo, setTipo] = useState('');
     const [convocados, setConvocados] = useState<string[]>([]);
-    const [enlace, setEnlace] = useState('');
+    const [lugar, setLugar] = useState('');
 
 
     const handleGuardar = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && tipo && convocados && enlace){
+        if (nombre && fecha && tipo && convocados && lugar){
             const formData = new FormData();
             formData.append('nombre', nombre);
             formData.append('fecha', fecha);
             formData.append('tipo', tipo);
+            formData.append('lugar', lugar)
             convocados.forEach((convocado) => {
                 formData.append('convocados[]', convocado);
             });
             
-            console.log('Formulario enviado:', {nombre, fecha, tipo, convocados})
+            console.log('Formulario enviado:', {nombre, fecha, tipo, lugar, convocados})
         } 
 
         else{
@@ -43,7 +44,7 @@ export default function CrearAgendaPage() {
 
     const handleCrear = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && tipo && convocados && enlace){
+        if (nombre && fecha && tipo && convocados && lugar){
             console.log('Formulario enviado:', {nombre, fecha, tipo, convocados})
         } 
         else{
@@ -106,12 +107,12 @@ export default function CrearAgendaPage() {
                                     ))}
                                 </select>
 
-                                <label htmlFor="enlace_lugar">Enlace / Lugar de Reunion</label>
+                                <label htmlFor="lugar">Lugar de Reunion</label>
                                 <input 
                                     type="text" 
-                                    id='enlace_lugar' 
-                                    name='enlace_lugar'
-                                    onChange={(e) => setEnlace(e.target.value)} 
+                                    id='lugar' 
+                                    name='lugar'
+                                    onChange={(e) => setLugar(e.target.value)} 
                                     required
                                     />
 
