@@ -24,8 +24,11 @@
     margin: 0 !important;
   }
 
-  .form label {
-    align-self: start !important;
+  .formColumns{
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .columna {
@@ -86,7 +89,13 @@
 .form{
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+}
+
+.formColumns {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .columna {
@@ -206,7 +215,7 @@
   flex-direction: row;
   justify-content: end;
   align-items: center;
-  width: 60%;
+  width: 92%;
   margin-top: 20px;
 }
 
