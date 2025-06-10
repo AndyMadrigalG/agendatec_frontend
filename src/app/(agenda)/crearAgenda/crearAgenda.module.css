@@ -146,16 +146,6 @@
     background-color: var(--background);
 }
 
-
-
-.chechboxContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-
 .addPuntoButton {
       display: inline-flex;
       width: 165px;
@@ -216,7 +206,7 @@
   justify-content: end;
   align-items: center;
   width: 92%;
-  margin-top: 20px;
+  margin-top: 60px;
 }
 
 .botonesContainer button {

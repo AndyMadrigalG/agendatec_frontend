@@ -7,20 +7,14 @@ import { useState } from 'react';
 
 export default function CrearAgendaPage() {
 
-    const modalidades = [
-        { value : 'virtual', label: 'Virtual' },
-        { value: 'presencial', label: 'Presencial' }
-    ];
-
     const tipoSesion = [
-        {value: 'reunion', label: 'Reunion'},
-        {value: 'conferencia', label: 'Conferencia'}
+        {value: 'ordinaria', label: 'Ordinaria'},
+        {value: 'extraordinaria', label: 'Extraordinaria'}
     ];
     
 
     const [nombre, setNombre] = useState('');
     const [fecha, setFecha] = useState('');
-    const [modalidad, setModalidad] = useState('');
     const [tipo, setTipo] = useState('');
     const [convocados, setConvocados] = useState<string[]>([]);
     const [enlace, setEnlace] = useState('');
@@ -28,17 +22,16 @@ export default function CrearAgendaPage() {
 
     const handleGuardar = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && modalidad && tipo && convocados && enlace){
+        if (nombre && fecha && tipo && convocados && enlace){
             const formData = new FormData();
             formData.append('nombre', nombre);
             formData.append('fecha', fecha);
-            formData.append('modalidad', modalidad);
             formData.append('tipo', tipo);
             convocados.forEach((convocado) => {
                 formData.append('convocados[]', convocado);
             });
             
-            console.log('Formulario enviado:', {nombre, fecha, modalidad, tipo, convocados})
+            console.log('Formulario enviado:', {nombre, fecha, tipo, convocados})
         } 
 
         else{
@@ -50,8 +43,8 @@ export default function CrearAgendaPage() {
 
     const handleCrear = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && modalidad && tipo && convocados && enlace){
-            console.log('Formulario enviado:', {nombre, fecha, modalidad, tipo, convocados})
+        if (nombre && fecha && tipo && convocados && enlace){
+            console.log('Formulario enviado:', {nombre, fecha, tipo, convocados})
         } 
         else{
             alert('Por favor, complete todos los campos obligatorios.');
@@ -88,19 +81,6 @@ export default function CrearAgendaPage() {
                                     onChange={(e) => setFecha(e.target.value)}  
                                     required />
 
-                                <label htmlFor="modalidad">Modalidad</label>
-                                <select 
-                                    id='modalidad' 
-                                    name='modalidad' 
-                                    onChange={(e) => setModalidad(e.target.value)} 
-                                    required>
-                                    <option value="">Seleccionar modalidad</option>
-                                    {modalidades.map((modalidad, index) => (
-                                        <option key={modalidad.value} value={modalidad.value}>
-                                            {modalidad.label}
-                                        </option>
-                                    ))}
-                                </select>
 
                                 <label htmlFor="puntos">Puntos</label>
                                 <button className={styles.addPuntoButton}>
