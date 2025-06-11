@@ -1,10 +1,13 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 
 import styles from './crearPunto.module.css';
+import Swal from 'sweetalert2'
 
 export default function CrearPuntoPage() {
+    const router = useRouter();
 
     const tipos = [
         { value: 'informativo', label: 'Informativo' },
@@ -12,20 +15,56 @@ export default function CrearPuntoPage() {
         { value: 'decisional', label: 'Decisional' },  
     ];
 
-    const personas = [
-        { value: 'expositor1', label: 'Expositor 1' },
-        { value: 'expositor2', label: 'Expositor 2' },
-        { value: 'expositor3', label: 'Expositor 3' },
-    ]
-
+    
     const [titulo, setTitulo] = useState('');
     const [duracion, setDuracion] = useState('');
     const [tipo, setTipo] = useState('');
     const [archivos, setArchivos] = useState<File[]>([]);
     const [expositor, setExpositor] = useState('');
 
+    
+    const [personas, setPersonas] = useState<{ value: string; label: string }[]>([]);
+    
+    useEffect(() => {
+        const fetchPersonas = async () => {
+
+            // const response = await fetch('/api/personas');
+            // const data = await response.json();
+            // setPersonas(data);
+            
+            setPersonas([
+                { value: 'expositor1', label: 'Expositor 1' },
+                { value: 'expositor2', label: 'Expositor 2' },
+                { value: 'expositor3', label: 'Expositor 3' },
+            ]);
+        };
+        fetchPersonas();
+    }, []);
+
+    const camposVacios = 
+        titulo.trim() === '' ||
+        duracion.trim() === '' ||
+        tipo.trim() === '' ||
+        expositor.trim() === '';
+
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (camposVacios) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campos vacíos',
+                text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
+            return;
+        }
+
+        
+
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('duracion', duracion);
@@ -36,8 +75,20 @@ export default function CrearPuntoPage() {
             formData.append('archivos', archivo);
             });
         }
-        console.log('Formulario enviado:', {titulo, duracion, tipo, archivos, expositor});
+        
+        Swal.fire({
+                        icon: 'success',
+                        title: 'Punto creado con exito',
+                        text: 'Se ha creado el punto correctamente.',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#7b6ef6',
+                        background: 'var(--background)',
+                        color: '#f9fafb',
+                    }).then(() => {
+                        router.push('/crearAgenda'); 
+                    });
     };
+    
 
     return (
         <div>

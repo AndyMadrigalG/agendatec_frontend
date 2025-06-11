@@ -11,24 +11,27 @@
 .menu{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   width: 70%;
   border-bottom: rgb(91, 91, 91) 1px solid;
   padding-bottom: 20px;
-
+  margin-top: 80px
 }
 
 .derecha {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .menu h2 {
-  margin-bottom: 0px;
+  margin: 2px;
   font-size: 50px;
 }
 
 .menu button {
+  width: 200px;
+  margin: 0px;
   margin-left: 20px;
   font-size: 20px;
   background-color: var(--buttonColor);
@@ -38,6 +41,13 @@
 
 .menu button:hover {
   background-color: var(--hoverButton);
+}
+
+.inputBuscar {
+  width: 300px;
+  margin: 0px;
+  border-radius: 10px;
+  height: 35px;
 }
 
 .agendasContainer{
@@ -81,5 +91,10 @@
 .agendaBox p{
   font-size: 16px;
   margin-right: 10px;
+}
+
+.loadingMsg {
+  margin-top: 100px;
+  font-size: 20px;
 }
 

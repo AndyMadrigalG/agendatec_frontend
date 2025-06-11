@@ -2,6 +2,7 @@
 
 import styles from './agendaInicio.module.css';
 import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2'; 
 
 export default function AgendaPage() {
     interface Agenda {
@@ -13,14 +14,28 @@ export default function AgendaPage() {
     const [agendas, setAgendas] = useState<Agenda[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [search, setSearch] = useState('');
+
+    const filteredAgendas = agendas.filter(agenda =>
+        agenda.nombre.toLowerCase().includes(search.toLowerCase())
+    );
+
     useEffect(() => {
         const fetchAgendas = async () => {
             try {
-                const res = await fetch('/api/agendas'); // o la URL de tu backend
+                const res = await fetch('/api/agendas'); // cambiar ruta
                 const data = await res.json();
                 setAgendas(data);
             } catch (err) {
-                alert('No se pudieron cargar las agendas');
+                Swal.fire({
+                    icon: 'error', 
+                    title: 'Error al cargar agendas',
+                    text: 'Ocurrio un error al cargar las agendas',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#7b6ef6',
+                    background: 'var(--background)',
+                    color: '#f9fafb'
+                });
             } finally {
                 setLoading(false);
             }
@@ -35,16 +50,23 @@ export default function AgendaPage() {
                 <div className={styles.menu}>
                     <h2>Agendas</h2>
                     <div className={styles.derecha}>
-                        <h3>Buscar</h3>
+                        <input
+                            id="buscar"
+                            name="buscar"
+                            placeholder='Buscar agenda...'
+                            className={styles.inputBuscar} 
+                            type="text" 
+                            onChange={e => setSearch(e.target.value)}
+                        />
                         <button>Crear Agenda</button>
                     </div>
                 </div>
 
                 <div className={styles.agendasContainer}>
                     {loading ? (
-                        <p>Cargando agendas...</p>
+                        <p  className={styles.loadingMsg}>Cargando agendas...</p>
                     ) : agendas.length === 0 ? (
-                        <p>No hay agendas disponibles.</p>
+                        <p className={styles.loadingMsg}>No hay agendas disponibles.</p>
                     ) : (
                         agendas.map((agenda) => (
                             <div className={styles.agendaBox} 

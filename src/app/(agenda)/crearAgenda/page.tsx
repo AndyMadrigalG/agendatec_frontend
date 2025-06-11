@@ -4,51 +4,79 @@ import styles from './crearAgenda.module.css';
 import Image from 'next/image';
 import addIcon from '/public/addCircle.svg';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
+import {useRouter} from 'next/navigation';
 
 export default function CrearAgendaPage() {
+
+    const router = useRouter();
 
     const tipoSesion = [
         {value: 'ordinaria', label: 'Ordinaria'},
         {value: 'extraordinaria', label: 'Extraordinaria'}
     ];
-    
 
-    const [nombre, setNombre] = useState('');
-    const [fecha, setFecha] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [convocados, setConvocados] = useState<string[]>([]);
-    const [lugar, setLugar] = useState('');
+    const [formulario, setFormulario] = useState({
+        nombre: '',
+        fecha: '',
+        tipo: '',
+        convocados: [] as string[],
+        lugar: '',
+        puntos: [] as any[],
+    });
 
+    const camposVacios = Object.values(formulario).some((valor) => {
+            if (typeof valor === 'string') {
+                return valor.trim() === '';
+            }
+            return false;
+        });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setFormulario({ ...formulario, [e.target.name]: e.target.value });
+    };
 
     const handleGuardar = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && tipo && convocados && lugar){
-            const formData = new FormData();
-            formData.append('nombre', nombre);
-            formData.append('fecha', fecha);
-            formData.append('tipo', tipo);
-            formData.append('lugar', lugar)
-            convocados.forEach((convocado) => {
-                formData.append('convocados[]', convocado);
+        if (camposVacios) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campos vacíos',
+                text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
             });
-            
-            console.log('Formulario enviado:', {nombre, fecha, tipo, lugar, convocados})
-        } 
-
-        else{
-            alert('Por favor, complete todos los campos obligatorios.');
             return;
         }
-            
+        
+        Swal.fire({
+                icon: 'success',
+                title: 'Agenda guardada con éxito',
+                text: 'Se ha guardado la agenda correctamente.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            }).then(() => {
+                router.push('/agendaInicio'); 
+            });
+        
     };
 
     const handleCrear = (e: React.FormEvent) => {
         e.preventDefault();
-        if (nombre && fecha && tipo && convocados && lugar){
-            console.log('Formulario enviado:', {nombre, fecha, tipo, convocados})
-        } 
-        else{
-            alert('Por favor, complete todos los campos obligatorios.');
+        if (camposVacios){
+            Swal.fire({
+                icon: 'error',
+                title: 'Campos vacíos',
+                text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
             return;
         }
     }
@@ -67,19 +95,22 @@ export default function CrearAgendaPage() {
                             <div className= {styles.columna}> 
                                 <label htmlFor="nombre">Nombre de la Agenda:</label>
                                 <input 
+                                    placeholder='Digite el nombre de la agenda'
+                                    value={formulario.nombre}
                                     type="text" 
                                     id="nombre" 
                                     name="nombre" 
-                                    onChange={(e) => setNombre(e.target.value)} 
+                                    onChange={handleChange} 
                                     required />
 
                                 <label htmlFor="fecha">Fecha de Inicio:</label>
                                 <input 
+                                    value={formulario.fecha}
                                     className={styles.fechaInput} 
                                     type="date" 
                                     id="fecha" 
                                     name="fecha"
-                                    onChange={(e) => setFecha(e.target.value)}  
+                                    onChange={handleChange}  
                                     required />
 
 
@@ -96,10 +127,13 @@ export default function CrearAgendaPage() {
                                 <label htmlFor="tipo">Tipo de Sesion</label>
 
                                 <select 
+                                    value={formulario.tipo}
                                     id='tipo' 
                                     name='tipo'
-                                    onChange={(e) => setTipo(e.target.value)}  
-                                    required>
+                                    onChange={handleChange}  
+                                    required
+                                >
+                                    <option value="">Seleccionar el tipo</option>
                                     {tipoSesion.map((tipo, index) => (
                                         <option key={tipo.value} value={tipo.value}>
                                             {tipo.label}
@@ -109,12 +143,14 @@ export default function CrearAgendaPage() {
 
                                 <label htmlFor="lugar">Lugar de Reunion</label>
                                 <input 
+                                    placeholder='Digite el lugar de la reunion'
+                                    value={formulario.lugar}
                                     type="text" 
                                     id='lugar' 
                                     name='lugar'
-                                    onChange={(e) => setLugar(e.target.value)} 
+                                    onChange={handleChange} 
                                     required
-                                    />
+                                />
 
                                 <label htmlFor="miembros">Convocar Miembros</label>
                                 <button className={styles.miembrosButton}>Seleccionar Miembros</button>
