@@ -1,0 +1,305 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--background);
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.actaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1000px;
+  width: 100%;
+  padding: 40px;
+  background-color: rgba(249, 250, 251, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.puntoCard {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.puntoHeader {
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+}
+
+.puntoHeader:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.tituloContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tituloContainer h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #f9fafb;
+  font-weight: 500;
+}
+
+.flecha {
+  color: #d1d5db;
+  font-size: 0.9rem;
+}
+
+.puntoContent {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.enunciadoContainer {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.subtitulo {
+  color: #d1d5db;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.enunciadoTexto {
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #f3f4f6;
+  border-left: 3px solid #4f46e5;
+  font-style: italic;
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  color: #f3f4f6;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.textarea {
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  color: #f9fafb;
+  font-family: inherit;
+  min-height: 150px;
+  resize: vertical;
+  border-left: 4px solid #4f46e5;
+}
+
+.select {
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 10px;
+  color: #f9fafb;
+  border-left: 4px solid #4f46e5;
+
+}
+
+.select option {
+  color: #000000;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.contenido {
+  color: #e5e7eb;
+  line-height: 1.6;
+  white-space: pre-line;
+  margin-bottom: 20px;
+}
+
+.vacio {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.resultado {
+  margin-top: 15px;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #f9fafb;
+}
+
+.resultado strong {
+  color: #d1d5db;
+}
+
+.aprobado {
+  color: #34d399;
+  font-weight: 600;
+}
+
+.rechazado {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.botonesEdicion {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.botonEditar, .botonPrimario, .botonSecundario {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botonEditar {
+  background-color: var(--buttonColor);
+  color: white;
+}
+
+.botonEditar:hover {
+  background-color: var(--hoverButton);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.botonPrimario {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.botonPrimario:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.botonSecundario {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f9fafb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.botonSecundario:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.botonesAccion {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.botonCancelar, .botonGuardar {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.botonCancelar {
+  background-color: rgba(239, 68, 68, 0.9);
+  color: white;
+}
+
+.botonCancelar:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.botonGuardar {
+  background-color: rgba(16, 185, 129, 0.9);
+  color: white;
+}
+
+.botonGuardar:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.encabezadoContainer {
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 30px;
+}
+
+.tituloPrincipal {
+  font-size: 2rem;
+  color: #f9fafb;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.datosActa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.tituloActa {
+  font-size: 1.25rem;
+  color: #f9fafb;
+}
+
+.infoActa {
+  color: #d1d5db;
+  font-size: 1rem;
+}
+
+.separador {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 20px 0;
+}
+
+.tituloPunto {
+  font-size: 1.3rem;
+  color: #f9fafb;
+  margin: 20px 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
