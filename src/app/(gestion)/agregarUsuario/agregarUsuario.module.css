@@ -1,0 +1,174 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modalContent {
+  background-color: var(--background);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #f9fafb;
+  cursor: pointer;
+  padding: 0.5rem;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+.modalTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #f9fafb;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Mantén los estilos existentes del formulario */
+.formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  font-size: 0.95rem;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.input::placeholder {
+  color: rgba(249, 250, 251, 0.5);
+}
+
+/* Estilos para los botones del modal */
+.modalButtons {
+  grid-column: span 2;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #f9fafb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--buttonColor);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.submitButton:hover {
+  background-color: var(--hoverButton);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.checkboxContainer {
+  margin: 1rem 0;
+  grid-column: span 2;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #f3f4f6;
+  font-size: 0.95rem;
+}
+
+.checkboxInput {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 0.5rem;
+  accent-color: var(--buttonColor);
+  cursor: pointer;
+}
+
+.campo label::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 0.2rem;
+  opacity: 0.8;
+}
+
+.formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
