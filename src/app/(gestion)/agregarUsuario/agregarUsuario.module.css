@@ -52,7 +52,6 @@
   text-align: center;
 }
 
-/* Mantén los estilos existentes del formulario */
 .formulario {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -93,7 +92,6 @@
   color: rgba(249, 250, 251, 0.5);
 }
 
-/* Estilos para los botones del modal */
 .modalButtons {
   grid-column: span 2;
   display: flex;

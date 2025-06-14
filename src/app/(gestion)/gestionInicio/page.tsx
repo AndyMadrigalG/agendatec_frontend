@@ -4,11 +4,14 @@ import React, { useState } from "react";
 import Image from 'next/image';
 import agregarMiembro from '/public/agregarMiembro.svg';
 import ModalAgregarUsuario from '../agregarUsuario/page';
+import ModalVerUsuario from '../usuario/verUsuario/[idUsuario]/page';
+import ModalEditarUsuario from '../usuario/editarUsuario/[idUsuario]/page';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
+
 
 interface Usuario {
   Id_Usuario: number;
-  cedula: string;
   nombre: string;
   apellidos: string;
   email: string;
@@ -26,7 +29,6 @@ interface MiembroDeJunta {
 const usuarios: Usuario[] = [
   {
     Id_Usuario: 1,
-    cedula: '123456789',
     nombre: 'Juan',
     apellidos: 'Pérez García',
     email: 'juan.perez@example.com',
@@ -36,7 +38,6 @@ const usuarios: Usuario[] = [
     Id_Usuario: 2,
     nombre: 'María',
     apellidos: 'López Martínez',
-    cedula: '987654321',
     email: 'maria.lopez@example.com',
     telefono: 5557654321
   },
@@ -44,7 +45,6 @@ const usuarios: Usuario[] = [
     Id_Usuario: 3,
     nombre: 'Carlos',
     apellidos: 'González Fernández',
-    cedula: '456789123',
     email: 'carlos.gonzalez@example.com',
     telefono: 5554567890
   },
@@ -52,7 +52,6 @@ const usuarios: Usuario[] = [
     Id_Usuario: 4,
     nombre: 'Ana',
     apellidos: 'Rodríguez Sánchez',
-    cedula: '321654987',
     email: 'ana.rodriguez@example.com',
     telefono: 5553216549
   }
@@ -77,7 +76,11 @@ export default function GestionUsuarios() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [usuariosState, setUsuariosState] = useState<Usuario[]>(usuarios);
+  const [modalVerAbierto, setModalVerAbierto] = useState(false);
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<Usuario | null>(null);
+  const [miembroSeleccionado, setMiembroSeleccionado] = useState<MiembroDeJunta | null>(null);
+
   
   const usuariosConRol = usuarios.map(usuario => {
     const miembro = miembrosJunta.find(m => m.Usuario_id === usuario.Id_Usuario && m.fecha_fin === null);
@@ -104,10 +107,51 @@ export default function GestionUsuarios() {
     return cargo.charAt(0).toUpperCase() + cargo.slice(1).toLowerCase();
   };
 
-    const handleAgregarUsuario = (nuevoUsuario: any) => {
+  const handleAgregarUsuario = (nuevoUsuario: any) => {
+    console.log('Nuevo usuario:', nuevoUsuario);
     
   };
 
+  const handleVerUsuario = (usuario: Usuario) => {
+    setUsuarioSeleccionado(usuario);
+    const miembro = miembrosJunta.find(m => m.Usuario_id === usuario.Id_Usuario);
+    setMiembroSeleccionado(miembro || null);
+    setModalVerAbierto(true);
+  };
+
+  const handleEliminarUsuario = () => {
+    if (!usuarioSeleccionado) return;
+      setModalVerAbierto(false);
+  };
+
+
+  const handleEliminarDeJunta = () => {
+    if (!usuarioSeleccionado) return;
+    
+    setMiembroSeleccionado(null);
+  };
+
+  const handleEditarClick = () => {
+    setModalVerAbierto(false);
+    setModalEditarAbierto(true);
+  };
+
+  const handleSaveUsuario = (usuarioActualizado: Usuario, miembroActualizado: MiembroDeJunta | null) => {
+    // Aquí iría la lógica para actualizar los datos
+    console.log('Usuario actualizado:', usuarioActualizado);
+    console.log('Miembro actualizado:', miembroActualizado);
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Usuario actualizado',
+      text: 'Los cambios se han guardado correctamente',
+      confirmButtonColor: '#7b6ef6',
+      background: 'var(--background)',
+      color: '#f9fafb',
+    });
+    
+    setModalEditarAbierto(false);
+  };
 
   return (
     <div className={styles['miembros-container']}>
@@ -133,13 +177,10 @@ export default function GestionUsuarios() {
         </button>
       </div>
 
-      <ModalAgregarUsuario
+            <ModalAgregarUsuario
         isOpen={modalAbierto}
         onClose={() => setModalAbierto(false)}
-        onSuccess={() => {
-          handleAgregarUsuario;
-          setModalAbierto(false);
-        }}
+        onSuccess={handleAgregarUsuario}
       />
 
       {filteredUsers.length === 0 ? (
@@ -157,7 +198,7 @@ export default function GestionUsuarios() {
               <div className={styles['card-actions']}>
                 <button 
                   className={styles['ver-btn']}
-                  onClick={() => router.push(`/usuarios/${user.Id_Usuario}`)}
+                  onClick={() => handleVerUsuario(user)}
                 >
                   Ver detalles
                 </button>
@@ -165,6 +206,29 @@ export default function GestionUsuarios() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Modal para ver usuario */}
+      {usuarioSeleccionado && (
+        <ModalVerUsuario
+          isOpen={modalVerAbierto}
+          onClose={() => setModalVerAbierto(false)}
+          usuario={usuarioSeleccionado}
+          miembroJunta={miembroSeleccionado}
+          onEditar={handleEditarClick}
+          onEliminar={handleEliminarUsuario}
+          onEliminarDeJunta={handleEliminarDeJunta}
+        />
+      )}
+      {/* Modal para editar usuario */}
+      {usuarioSeleccionado && (
+        <ModalEditarUsuario
+          isOpen={modalEditarAbierto}
+          onClose={() => setModalEditarAbierto(false)}
+          usuario={usuarioSeleccionado}
+          miembroJunta={miembroSeleccionado}
+          onSave={handleSaveUsuario}
+        />
       )}
     </div>
   );

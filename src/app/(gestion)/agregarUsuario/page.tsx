@@ -89,7 +89,6 @@ export default function ModalAgregarUsuario({ isOpen, onClose, onSuccess }: Moda
       return;
     }
 
-    // Preparar datos del usuario
     const usuarioData = {
       ...formulario,
       esMiembroJunta,
@@ -109,7 +108,6 @@ export default function ModalAgregarUsuario({ isOpen, onClose, onSuccess }: Moda
     }).then(() => {
       onSuccess(usuarioData);
       onClose();
-      // Resetear formulario
       setEsMiembroJunta(false);
       setFormulario({
         nombre: '',
