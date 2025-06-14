@@ -108,33 +108,8 @@
 }
 
 .columna label {
-    margin-bottom: 10px;
+    margin: 0;
     font-size: 22px;
-}
-
-.columna input {
-    width: 80%;
-    height: 32px;
-}
-
-.izquierda input {
-  margin-bottom: 30px;
-}
-
-.columna select {
-    width: 80%;
-    height: 40px;
-    color: white;
-    padding-left: 8px;
-    padding-right: 8px;
-    background-color: var(--background);
-    border: 2px, rgb(126, 126, 126);
-    border-style:solid;
-    margin: 5px;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: 0.2s;
-    margin-bottom: 40px;
 }
 
 .columna select:focus{
@@ -143,15 +118,7 @@
   outline: none;
 }
 
-
-.columna select option {
-    color: white;
-    background-color: var(--background);
-}
-
 .addPuntoButton {
-      margin-right: 8px;
-      margin-bottom: 10px;
       display: inline-flex;
       width: 165px;
       height: 45px;
@@ -168,26 +135,15 @@
       transition: background-color 0.2s ease-in-out;
 }
 
-
+.addPuntoButton svg {
+  width: 20px;
+  height: 20px;
+}
 
 .addPuntoButton:hover {
   background-color: #7c6ef650
 }
 
-
-.miembrosButton {
-  width: 250px;
-  height: 45px;
-  padding: 10px;
-  background-color: var(--buttonColor);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-  margin-left: 5px; 
-  margin-bottom: 20px;
-}
 
 .guardarButton {
   width: 250px;
@@ -219,7 +175,6 @@
 
 .crearButton {
   background-color: var(--buttonColor);
-  border: var(--buttonColor);
 }
 
 .crearButton:hover {
@@ -227,68 +182,19 @@
 }
 
 .guardarButton:hover {
-  background-color: green
-}
-
-.listaPuntos {
-  width: 90%;
-  height:100px;
-  overflow-y: auto;
-  margin-top: 20px;
-  border-radius: 8px;
-}
-
-.derecha input {
-  margin-bottom: 10px;
-}
-
-.listaMiembros {
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-  width: 88%;
-  height: 320px;
-  overflow-y: auto;
-  margin: 0px;
-  background-color: var(--background);
-
-}
-
-.miembro {
-    padding: 20px 10px 20px 10px;
-    width: 94%;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid #ffffff1d;
-    background-color: var(--background);
-    list-style: none;
-    margin: 0;
-    justify-content: space-between;
-}
-
-.miembro input {
-  
-    width: 20px;
-    height: 20px;
-    margin: 0;
+  background-color: green;
 }
 
 
-.listaPuntos::-webkit-scrollbar, .listaMiembros::-webkit-scrollbar {
-    width: 8px;
-}
-
-.listaPuntos::-webkit-scrollbar-track, .listaMiembros::-webkit-scrollbar-track {
-    background: #23232b;
-    border-radius: 8px;
-}
-
-.listaMiembros::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
-    background: var(--buttonColor);
-    border-radius: 8px;
+.form p {
+    color: gray;
+    font-size: 20px;
+    margin: 10px 0px 30px 20px;
 }
 
 
-.listaMiembros::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
-    background: #6257c4;
+.miembrosLista {
+    max-width: 400px; 
+    word-break: break-word;
+    white-space: normal;
 }

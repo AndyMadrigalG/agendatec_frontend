@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './editarPunto.module.css';
+import styles from './punto.module.css';
 import { useEffect, useState } from 'react';
 
 import { useRouter, useParams } from 'next/navigation';

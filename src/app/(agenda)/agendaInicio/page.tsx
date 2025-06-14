@@ -3,8 +3,11 @@
 import styles from './agendaInicio.module.css';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; 
+import { useRouter } from 'next/navigation';
 
 export default function AgendaPage() {
+    const router = useRouter();
+
     interface Agenda {
         id: number;
         nombre: string;
@@ -19,6 +22,18 @@ export default function AgendaPage() {
     const filteredAgendas = agendas.filter(agenda =>
         agenda.nombre.toLowerCase().includes(search.toLowerCase())
     );
+
+    const handleCrearAgenda = () => {
+        router.push('/crearAgenda');
+    };
+
+    const handleSeleccionarAgenda = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const agendaId = e.currentTarget.getAttribute('data-id');
+        if (agendaId) {
+            router.push(`/agenda/${agendaId}`);
+        }
+    };
 
     useEffect(() => {
         const fetchAgendas = async () => {
@@ -58,7 +73,7 @@ export default function AgendaPage() {
                             type="text" 
                             onChange={e => setSearch(e.target.value)}
                         />
-                        <button>Crear Agenda</button>
+                        <button onClick={handleCrearAgenda}>Crear Agenda</button>
                     </div>
                 </div>
 
@@ -68,15 +83,18 @@ export default function AgendaPage() {
                     ) : agendas.length === 0 ? (
                         <p className={styles.loadingMsg}>No hay agendas disponibles.</p>
                     ) : (
-                        agendas.map((agenda) => (
-                            <div className={styles.agendaBox} 
-                                key={agenda.id}>
+                        filteredAgendas.map((agenda) => (
+                            <div
+                                className={styles.agendaBox}
+                                key={agenda.id}
+                                data-id={agenda.id}
+                                tabIndex={0}
+                                role="button"
+                                onClick={handleSeleccionarAgenda}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <h3>{agenda.nombre}</h3>
                                 <p>{agenda.fecha}</p>
-                                <div className={styles.agendaDerecha}>
-                                    <p>Editar</p>
-                                    <p>Descargar</p>
-                                </div>
                             </div>
                         ))
                     )}
