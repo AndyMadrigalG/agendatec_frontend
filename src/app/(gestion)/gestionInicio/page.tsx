@@ -3,9 +3,9 @@ import styles from './gestionInicio.module.css';
 import React, { useState } from "react";
 import Image from 'next/image';
 import agregarMiembro from '/public/agregarMiembro.svg';
-import ModalAgregarUsuario from '../agregarUsuario/page';
-import ModalVerUsuario from '../usuario/verUsuario/[idUsuario]/page';
-import ModalEditarUsuario from '../usuario/editarUsuario/[idUsuario]/page';
+import ModalAgregarUsuario from '../(usuario)/(agregarUsuario)/agregarUsuario';
+import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
+import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
