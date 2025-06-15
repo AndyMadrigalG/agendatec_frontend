@@ -1,8 +1,29 @@
+'use client';
+
 import styles from './login.module.css';
 import Image from 'next/image';
 import logo from '/public/logo.png';
+import {useState} from 'react';
 
 export default function LoginPage() {
+
+  const [usuario, setUsuario] = useState('');
+  const [contrasena, setContrasena] = useState('');
+
+  const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsuario(e.target.value);
+  };
+
+  const handleContrasenaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setContrasena(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('Usuario:', usuario);
+    console.log('Contraseña:', contrasena);
+  };
+  
 
   return (
     <div className={styles.principalContainer}>
@@ -16,9 +37,23 @@ export default function LoginPage() {
           </div>
           <div className={styles.right}>
                       <h2>Iniciar Sesión</h2>
-                      <form className={styles.form}>
-                          <input id="email" type="text" placeholder="Usuario" />
-                          <input type="password" placeholder="Contraseña" />
+                      <form className={styles.form} onSubmit={handleSubmit}>
+
+                          <input 
+                            id="email" 
+                            type="text" 
+                            placeholder="Usuario"
+                            onChange={handleUsuarioChange} 
+                            required
+                          />
+
+                          <input 
+                            type="password" 
+                            placeholder="Contraseña" 
+                            onChange={handleContrasenaChange} 
+                            required
+                          />
+
                           <button type="submit">Ingresar</button>
                       </form>
               </div>

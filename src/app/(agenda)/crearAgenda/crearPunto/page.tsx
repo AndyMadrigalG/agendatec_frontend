@@ -1,10 +1,13 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {useRouter} from 'next/navigation';
 
 import styles from './crearPunto.module.css';
+import Swal from 'sweetalert2'
 
 export default function CrearPuntoPage() {
+    const router = useRouter();
 
     const tipos = [
         { value: 'informativo', label: 'Informativo' },
@@ -12,20 +15,74 @@ export default function CrearPuntoPage() {
         { value: 'decisional', label: 'Decisional' },  
     ];
 
-    const personas = [
-        { value: 'expositor1', label: 'Expositor 1' },
-        { value: 'expositor2', label: 'Expositor 2' },
-        { value: 'expositor3', label: 'Expositor 3' },
-    ]
-
+    
     const [titulo, setTitulo] = useState('');
     const [duracion, setDuracion] = useState('');
     const [tipo, setTipo] = useState('');
     const [archivos, setArchivos] = useState<File[]>([]);
     const [expositor, setExpositor] = useState('');
 
+    
+    const [personas, setPersonas] = useState<{ value: string; label: string }[]>([]);
+    
+    useEffect(() => {
+        const fetchPersonas = async () => {
+
+            // const response = await fetch('/api/personas');
+            // const data = await response.json();
+            // setPersonas(data);
+            
+            setPersonas([
+                { value: 'expositor1', label: 'Expositor 1' },
+                { value: 'expositor2', label: 'Expositor 2' },
+                { value: 'expositor3', label: 'Expositor 3' },
+            ]);
+        };
+        fetchPersonas();
+    }, []);
+
+    const camposVacios = 
+        titulo.trim() === '' ||
+        duracion.trim() === '' ||
+        tipo.trim() === '' ||
+        expositor.trim() === '';
+    
+    const handleCancelar = (e: React.FormEvent) => {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Cancelar creación de punto',
+            text: '¿Está seguro de que desea cancelar la creación del punto?',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'No, continuar',
+            confirmButtonColor: 'var(--buttonColor)',
+            background: 'var(--background)',
+            color: '#f9fafb',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                router.push('/crearAgenda'); 
+            }
+        });
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (camposVacios) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Campos vacíos',
+                text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
+            return;
+        }
+
+        
+
         const formData = new FormData();
         formData.append('titulo', titulo);
         formData.append('duracion', duracion);
@@ -36,8 +93,20 @@ export default function CrearPuntoPage() {
             formData.append('archivos', archivo);
             });
         }
-        console.log('Formulario enviado:', {titulo, duracion, tipo, archivos, expositor});
+        
+        Swal.fire({
+                        icon: 'success',
+                        title: 'Punto creado con exito',
+                        text: 'Se ha creado el punto correctamente.',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#7b6ef6',
+                        background: 'var(--background)',
+                        color: '#f9fafb',
+                    }).then(() => {
+                        router.push('/crearAgenda'); 
+                    });
     };
+    
 
     return (
         <div>
@@ -52,6 +121,7 @@ export default function CrearPuntoPage() {
                             <div className= {styles.columna}> 
                                 <label htmlFor="titulo">Titulo</label>
                                 <input 
+                                    placeholder="Ingrese el título del punto"
                                     type="text" 
                                     id="titulo" 
                                     name="titulo" 
@@ -97,6 +167,7 @@ export default function CrearPuntoPage() {
                             <div className={styles.columna}>
                                 <label htmlFor="tiempo">Tiempo estimado de duracion (minutos)</label>
                                 <input 
+                                    placeholder="Ingrese el tiempo estimado de duración"
                                     type="number" 
                                     id="tiempo" 
                                     name="tiempo" 
@@ -109,30 +180,21 @@ export default function CrearPuntoPage() {
                                 <div className={styles.archivoContainer}>
 
                                     <div className={styles.container}>
-                                        <div>
-
-                                            <div className={styles.folder}>
-                                                <div className={styles.frontside}>
-                                                <div className={styles.tip}></div>
-                                                <div className={styles.cover}></div>
-                                                </div>
-                                                <div className={`${styles.backside} ${styles.cover}`}></div>
-                                            </div>
-                                            <label className={styles.customfileupload}>
-                                                <input className={styles.title} 
-                                                type="file"
-                                                id="archivos" 
-                                                name="archivos"
-                                                multiple
-                                                onChange={(e) => {
-                                                    if (e.target.files && e.target.files.length > 0) {
-                                                        setArchivos(Array.from(e.target.files));
-                                                    }
-                                                }} 
-                                            />
-                                            Escoge los archivos
-                                            </label>
-                                        </div>
+                                        <label className={styles.fileInput}>
+                                            <input className={styles.title} 
+                                            type="file"
+                                            id="archivos" 
+                                            name="archivos"
+                                            multiple
+                                            onChange={(e) => {
+                                                if (e.target.files && e.target.files.length > 0) {
+                                                    setArchivos(Array.from(e.target.files));
+                                                }
+                                            }} 
+                                        />
+                                        Seleccionar archivos
+                                        </label>
+                                        
                                         <div className={styles.archivosList}>
                                             {archivos.slice(0, 2).map((archivo, index) => (
                                                 <h3 key={index}>{archivo.name}</h3>
@@ -142,10 +204,12 @@ export default function CrearPuntoPage() {
                                             )}
                                         </div>
                                     </div>
-
-
                                 </div>
                                 <div className={styles.botonContainer}>
+                                    <button 
+                                    className={styles.cancelarButton}
+                                    onClick={handleCancelar}
+                                    >Cancelar</button>
                                     <button 
                                     className={styles.crearButton}
                                     onClick={handleSubmit}
