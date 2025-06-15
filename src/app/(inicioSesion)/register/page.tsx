@@ -99,7 +99,7 @@ return (
                     <input  name="contrasena" value={formulario.contrasena} type="password" placeholder="Contraseña" onChange={handleChange}/>
                     <input  name="correo" value={formulario.correo} type="text" placeholder="Correo Electronico" onChange={handleChange}/>
                     <input  name="telefono" value={formulario.telefono} type="number" placeholder="Telefono" onChange={handleChange}/>
-                    <button type="submit">Ingresar</button>
+                    <button type="submit">Registrar</button>
                 </form>
             </div>
         </div>
