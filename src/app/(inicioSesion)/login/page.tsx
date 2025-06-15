@@ -5,7 +5,7 @@ import Image from 'next/image';
 import logo from '/public/logo.png';
 import {useState} from 'react';
 
-const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
+export const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function LoginPage() {
 
@@ -35,12 +35,16 @@ export default function LoginPage() {
                 }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Login exitoso:', data);
-                // Aquí puedes redirigir o manejar la respuesta
-            } else {
+            if (response.status === 400) {
                 console.error('Error en el login:', response.statusText);
+            } else {
+                const data = await response.json();
+                if (data.idToken?.length > 0 && data.refreshToken?.length > 0) {
+                    localStorage.setItem('idToken', data.idToken);
+                    localStorage.setItem('refreshToken', data.refreshToken);
+                }
+                console.log('Login exitoso');
+                window.location.href = '/home';
             }
         } catch (error) {
             console.error('Error de red:', error);
