@@ -5,6 +5,8 @@ import Image from 'next/image';
 import logo from '/public/logo.png';
 import {useState} from 'react';
 
+const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
+
 export default function LoginPage() {
 
   const [usuario, setUsuario] = useState('');
@@ -18,11 +20,32 @@ export default function LoginPage() {
     setContrasena(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log('Usuario:', usuario);
-    console.log('Contraseña:', contrasena);
-  };
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(BACKEND_URL+'/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    usuario,
+                    contrasena,
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Login exitoso:', data);
+                // Aquí puedes redirigir o manejar la respuesta
+            } else {
+                console.error('Error en el login:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error de red:', error);
+        }
+    };
   
 
   return (
