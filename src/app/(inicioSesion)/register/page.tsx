@@ -22,7 +22,7 @@ export default function RegisterPage() {
         setFormulario({ ...formulario, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const camposVacios = Object.values(formulario).some((valor) => valor.trim() === '');
@@ -40,16 +40,15 @@ export default function RegisterPage() {
             return;
         }
 
-        
         if (!/^\d{8,}$/.test(formulario.telefono)) {
             Swal.fire({
-            icon: 'error',
-            title: 'Teléfono inválido',
-            text: 'Por favor ingrese un número de teléfono válido (debe tener al menos 8 dígitos)',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#7b6ef6',
-            background: 'var(--background)',
-            color: '#f9fafb',
+                icon: 'error',
+                title: 'Teléfono inválido',
+                text: 'Por favor ingrese un número de teléfono válido (debe tener al menos 8 dígitos)',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
             });
             return;
         }
@@ -57,29 +56,61 @@ export default function RegisterPage() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formulario.correo)) {
             Swal.fire({
-            icon: 'error',
-            title: 'Correo inválido',
-            text: 'Por favor ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)',
-            confirmButtonText: 'Aceptar',
-            confirmButtonColor: '#7b6ef6',
-            background: 'var(--background)',
-            color: '#f9fafb',
+                icon: 'error',
+                title: 'Correo inválido',
+                text: 'Por favor ingrese un correo electrónico válido (ejemplo: usuario@dominio.com)',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
             });
             return;
         }
 
-        Swal.fire({
-              icon: 'success',
-              title: 'Miembro agregado con éxito',
-              text: 'El nuevo miembro de la junta directiva se ha agregado con éxito.',
-              confirmButtonText: 'Aceptar',
-              confirmButtonColor: '#7b6ef6',
-              background: 'var(--background)',
-              color: '#f9fafb',
-            }).then(() => {
-              router.push('/login'); 
+        try {
+            const response = await fetch(BACKEND_URL+'/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formulario),
             });
 
+            if (response.ok) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registro exitoso',
+                    text: 'El usuario se ha registrado correctamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#7b6ef6',
+                    background: 'var(--background)',
+                    color: '#f9fafb',
+                }).then(() => {
+                    router.push('/login');
+                });
+            } else {
+                const errorData = await response.json();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error en el registro',
+                    text: errorData.message || 'Ocurrió un error al registrar el usuario.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#7b6ef6',
+                    background: 'var(--background)',
+                    color: '#f9fafb',
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de red',
+                text: 'No se pudo conectar con el servidor.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
+        }
     };
 
 return (
