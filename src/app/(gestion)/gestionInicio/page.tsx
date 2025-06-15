@@ -2,8 +2,6 @@
 import styles from './gestionInicio.module.css';
 import React, { useState } from "react";
 import Image from 'next/image';
-import agregarMiembro from '/public/agregarMiembro.svg';
-import ModalAgregarUsuario from '../(usuario)/(agregarUsuario)/agregarUsuario';
 import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
 import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
@@ -167,21 +165,7 @@ export default function GestionUsuarios() {
             className={styles.searchInput}
           />
         </div>
-        
-        <button 
-          className={styles.addButton} 
-          onClick={() => setModalAbierto(true)} 
-        >
-          <Image src={agregarMiembro} alt="Agregar usuario" width={20} height={20} />
-          <span>Agregar usuario</span>
-        </button>
       </div>
-
-            <ModalAgregarUsuario
-        isOpen={modalAbierto}
-        onClose={() => setModalAbierto(false)}
-        onSuccess={handleAgregarUsuario}
-      />
 
       {filteredUsers.length === 0 ? (
         <div className={styles.noMembers}>
