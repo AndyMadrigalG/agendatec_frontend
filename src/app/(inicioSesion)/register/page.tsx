@@ -7,6 +7,8 @@ import {useState} from 'react';
 import Swal from 'sweetalert2';
 import {useRouter} from 'next/navigation';
 
+const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
+
 export default function RegisterPage() {
 
     const router = useRouter();
