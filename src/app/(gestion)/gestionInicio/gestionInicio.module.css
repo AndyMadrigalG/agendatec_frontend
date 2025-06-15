@@ -102,6 +102,7 @@
   width: 100%;
   background-color: white;
   transition: border 0.2s ease;
+  color : #374151;
 }
 
 .searchInput:focus {
