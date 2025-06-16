@@ -7,7 +7,9 @@ import {useState} from 'react';
 import Swal from 'sweetalert2';
 import {useRouter} from 'next/navigation';
 
-const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
+// Change variable on .env for local testing with the backend
+// otherwise is going to use the prod URL
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function RegisterPage() {
 
