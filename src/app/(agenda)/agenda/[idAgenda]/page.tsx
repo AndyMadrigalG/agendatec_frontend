@@ -1,120 +1,108 @@
 'use client';
 
-import styles from './agenda.module.css';
-import { useState, useEffect, use } from 'react';
-import Image from 'next/image';
-import addIcon from '/public/addCircle.svg';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import Swal from 'sweetalert2';
 
-export default function AgendaPage() {
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
-    const { idAgenda } = useParams();
-
-    const tipoSesion = [
-        {value: 'ordinaria', label: 'Ordinaria'},
-        {value: 'extraordinaria', label: 'Extraordinaria'}
-    ];
-
-    const [agenda, setAgenda] = useState({
-        nombre: '',
-        fecha: '',
-        tipo: '',
-        lugar: '',
-        miembros: [] as string[],
-    });
-
-    const [puntos, setPuntos] = useState({
-        id: '',
-        titulo: '',
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setAgenda({
-            ...agenda,
-            [name]: value
-        });
-    };
-
-
-    const handleGuardar = (e: React.FormEvent) => {
-        e.preventDefault();
-    }
-
-    const handleCrear = (e: React.FormEvent) => {
-        e.preventDefault();
-    }
-
-    useEffect(() => {
-        async function fetchAgenda() {
-            
-            const data = {
-                nombre: 'Agenda de Junta Directiva',
-                fecha: '2024-06-01',
-                tipo: 'Ordinaria',
-                lugar: 'Sala de reuniones',
-                miembros: ['Juan Pérez', 'María López','Juan Pérez', 'María López', 'Carlos García'],
-            };
-            setAgenda(data);
-        }
-
-        fetchAgenda();
-    }, []);
-
-    return (
-        <div>
-            <div className={styles.mainContainer}>
-                <div className={styles.menu}>
-                    <h2>{agenda.nombre}</h2>
-                </div>
-
-                <div className={styles.formContainer}>
-                    <form className={styles.form}>
-                        <div className={styles.formColumns}>
-                            <div className= {styles.columna}> 
-                                <label>Nombre de la Agenda:</label>
-                                <p>{agenda.nombre}</p>
-                                
-
-                                <label>Fecha de Inicio:</label>
-                                <p>{agenda.fecha}</p>
-
-
-                                <label>Puntos</label>
-                                <button className={styles.addPuntoButton}>
-                                    <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
-                                    Agregar Punto
-                                </button>  
-                                
-                            </div>
-
-                            <div className={styles.columna}>
-                                <label>Tipo de Sesion</label>
-                                <p>{agenda.tipo}</p>
-
-                                <label>Lugar de Reunion</label>
-                                <p>{agenda.lugar}</p>
-
-
-                                <label>Miembros convocados</label>
-                                <p className={styles.miembrosLista}>{agenda.miembros.join(', ')}</p>
-                            </div>
-
-                        </div>
-
-                        <div className={styles.botonesContainer}> 
-                            <button className={styles.crearButton}
-                                onClick={handleCrear}
-                            >Guardar</button>
-                        </div>
-
-                    </form>
-                </div>
-
-
-
-            </div>
-        </div>
-    )
+interface Punto {
+  id_Punto: number;
+  titulo: string;
+  tipo: string;
+  duracionMin: number;
+  expositorId: number;
 }
 
+interface AgendaDetalle {
+  id_Agenda: number;
+  numero: string;
+  tipo: string;
+  fechaHora: string;
+  modalidad: string;
+  lugar: string;
+  link: string | null;
+  convocarMiembros: number[] | string;
+  juntaDirectiva: boolean;
+  puntos: Punto[];
+}
+
+export default function DetalleAgendaPage() {
+  const { id_Agenda } = useParams();
+  const [agenda, setAgenda] = useState<AgendaDetalle | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAgenda() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/agendas/${id_Agenda}`);
+        if (!res.ok) throw new Error('No se encontró la agenda');
+        const data: AgendaDetalle = await res.json();
+        setAgenda(data);
+      } catch (error: any) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: error.message || 'No se pudo cargar la agenda',
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAgenda();
+  }, [id_Agenda]);
+
+  if (loading) return <p style={{ padding: '40px', color: '#ccc' }}>Cargando agenda...</p>;
+  if (!agenda) return null;
+
+  // Convocados: números o cadena (otros)
+  const convocados = agenda.juntaDirectiva
+    ? (agenda.convocarMiembros as number[]).join(', ')
+    : (agenda.convocarMiembros as string);
+
+  return (
+    <div style={{ padding: 40, color: 'white', fontFamily: 'sans-serif' }}>
+      <h1 style={{ borderBottom: '1px solid #444', paddingBottom: 10 }}>
+        Agenda: {agenda.numero}
+      </h1>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginTop: 30 }}>
+        {[
+          ['Fecha y Hora', new Date(agenda.fechaHora).toLocaleString('es-CR')],
+          ['Tipo de Sesión', agenda.tipo.replace('SessionType.', '')],
+          ['Modalidad', agenda.modalidad.replace('Modalidad.', '')],
+          ['Lugar / Link', agenda.lugar || agenda.link || 'No especificado'],
+          ['Convocados', convocados],
+        ].map(([label, value]) => (
+          <div key={label} style={{ flex: '1 1 45%' }}>
+            <p style={{ fontSize: 18, color: '#aaa', marginBottom: 4 }}>{label}</p>
+            <p style={{ fontSize: 20 }}>{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <h2 style={{ marginTop: 40 }}>Puntos</h2>
+      {agenda.puntos.length > 0 ? (
+        <ul style={{ padding: 0, marginTop: 10 }}>
+          {agenda.puntos.map(p => (
+            <li key={p.id_Punto} style={{
+              marginBottom: 16,
+              padding: 12,
+              background: '#222',
+              borderRadius: 6,
+              border: '1px solid #333'
+            }}>
+              <p><strong>{p.titulo}</strong></p>
+              <p>Tipo: {p.tipo.replace('PuntoType.', '')}</p>
+              <p>Duración: {p.duracionMin} min</p>
+              <p>Expositor: {p.expositorId}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p style={{ color: '#aaa', marginTop: 10 }}>No hay puntos definidos.</p>
+      )}
+    </div>
+  );
+}
