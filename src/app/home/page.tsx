@@ -14,6 +14,27 @@ const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160
 
 export default function HomePage() {
     const router = useRouter();
+    const fetchAuthData = async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/auth`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Si necesitas enviar cookies
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error('Error fetching auth data:', error);
+        }
+    };
+
 
     const handleNavigation = (path: string) => {
         router.push(path);
