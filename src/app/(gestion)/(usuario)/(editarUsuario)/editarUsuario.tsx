@@ -26,6 +26,8 @@ interface ModalEditarUsuarioProps {
   onSave: (usuario: Usuario, miembroJunta: MiembroDeJunta | null) => void;
 }
 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
+
 export default function ModalEditarUsuario({ 
   isOpen, 
   onClose, 
@@ -124,7 +126,7 @@ export default function ModalEditarUsuario({
     try {
       console.log('Es miembro: ', esMiembroJunta);
       // Actualizar usuario
-      const usuarioResponse = await fetch(`http://localhost:3000/usuarios/${usuario.Id_Usuario}`, {
+      const usuarioResponse = await fetch(`${BACKEND_URL}/usuarios/${usuario.Id_Usuario}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +146,7 @@ export default function ModalEditarUsuario({
       if (esMiembroJunta) {
         if (!initialMiembroJunta) {
           // Crear nuevo miembro de junta
-          const miembroResponse = await fetch(`http://localhost:3000/miembro-junta`, {
+          const miembroResponse = await fetch(`${BACKEND_URL}/miembro-junta`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -163,7 +165,7 @@ export default function ModalEditarUsuario({
         } else {
           // Actualizar miembro existente
           console.log('Actualizando miembro de junta:', miembroJunta);
-          const miembroResponse = await fetch(`http://localhost:3000/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`, {
+          const miembroResponse = await fetch(`${BACKEND_URL}/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

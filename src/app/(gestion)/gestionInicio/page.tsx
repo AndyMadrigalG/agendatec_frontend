@@ -23,7 +23,7 @@ interface MiembroDeJunta {
   fecha_fin: string | null;
 }
 
-const BACKEND_URL = 'http://localhost:3000'; 
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function GestionUsuarios() {
   const [searchTerm, setSearchTerm] = useState("");
