@@ -41,7 +41,7 @@ export default function HomePage() {
                     </div>
                     <div
                         className={styles.card}
-                        onClick={() => handleNavigation('/acta')}
+                        onClick={() => handleNavigation('/actas')}
                     >
                         <Image src={actasLogo} alt="Actas Logo" />
                         <span>Actas</span>
