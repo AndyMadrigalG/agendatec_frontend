@@ -1,7 +1,8 @@
 'use client';
 import styles from './gestionInicio.module.css';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from 'next/image';
+import agregarMiembro from '/public/agregarMiembro.svg';
 import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
 import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
@@ -24,51 +25,15 @@ interface MiembroDeJunta {
 }
 
 // Datos de prueba
-const usuarios: Usuario[] = [
-  {
-    Id_Usuario: 1,
-    nombre: 'Juan',
-    apellidos: 'Pérez García',
-    email: 'juan.perez@example.com',
-    telefono: 5551234567
-  },
-  {
-    Id_Usuario: 2,
-    nombre: 'María',
-    apellidos: 'López Martínez',
-    email: 'maria.lopez@example.com',
-    telefono: 5557654321
-  },
-  {
-    Id_Usuario: 3,
-    nombre: 'Carlos',
-    apellidos: 'González Fernández',
-    email: 'carlos.gonzalez@example.com',
-    telefono: 5554567890
-  },
-  {
-    Id_Usuario: 4,
-    nombre: 'Ana',
-    apellidos: 'Rodríguez Sánchez',
-    email: 'ana.rodriguez@example.com',
-    telefono: 5553216549
-  }
+const usuariosIniciales: Usuario[] = [
+  
 ];
 
-const miembrosJunta: MiembroDeJunta[] = [
-  {
-    Usuario_id: 1,
-    cargo: 'Presidente',
-    fecha_inicio: '2023-01-15',
-    fecha_fin: null
-  },
-  {
-    Usuario_id: 2,
-    cargo: 'Secretario',
-    fecha_inicio: '2023-01-15',
-    fecha_fin: null
-  }
+const miembrosJuntaInicial: MiembroDeJunta[] = [
+  
 ];
+
+const BACKEND_URL = 'http://localhost:3000'; 
 
 export default function GestionUsuarios() {
   const router = useRouter();
@@ -78,8 +43,58 @@ export default function GestionUsuarios() {
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<Usuario | null>(null);
   const [miembroSeleccionado, setMiembroSeleccionado] = useState<MiembroDeJunta | null>(null);
+  const [usuarios, setUsuarios] = useState<Usuario[]>(usuariosIniciales);
+  const [miembrosJunta, setMiembrosJunta] = useState<MiembroDeJunta[]>(miembrosJuntaInicial);
 
-  
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const res = await fetch(BACKEND_URL + '/usuarios', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const usuariosData = await res.json();
+        console.log('Usuarios cargados:', usuariosData);
+
+        const miembrosRes = await fetch(BACKEND_URL + '/junta/1/miembros', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const nuevosUsuarios = usuariosData.map((usuario: any) => ({
+          Id_Usuario: usuario.id,
+          nombre: usuario.nombre,
+          apellidos: usuario.apellidos,
+          email: usuario.email,
+          telefono: usuario.telefono
+        }));
+
+        const miembrosData = await miembrosRes.json();
+        console.log('Miembros de junta cargados:', miembrosData);
+
+        const nuevosMiembros = miembrosData.map((miembro: any) => ({
+          Usuario_id: miembro.usuario.id_Usuario,
+          cargo: miembro.cargo,
+          fecha_inicio: miembro.fecha_inicio,
+          fecha_fin: miembro.fecha_fin || null,
+        }));
+
+        setUsuarios(prevUsuarios => [...prevUsuarios, ...nuevosUsuarios]);
+        setMiembrosJunta(prevMiembros => [...prevMiembros, ...nuevosMiembros]);
+        console.log('Usuarios actualizados:', nuevosUsuarios);
+        console.log('Miembros de junta actualizados:', nuevosMiembros);
+
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+      }
+    };
+    fetchUsuarios();
+  }, []);
+
   const usuariosConRol = usuarios.map(usuario => {
     const miembro = miembrosJunta.find(m => m.Usuario_id === usuario.Id_Usuario && m.fecha_fin === null);
     return {
@@ -107,7 +122,6 @@ export default function GestionUsuarios() {
 
   const handleAgregarUsuario = (nuevoUsuario: any) => {
     console.log('Nuevo usuario:', nuevoUsuario);
-    
   };
 
   const handleVerUsuario = (usuario: Usuario) => {
@@ -165,6 +179,14 @@ export default function GestionUsuarios() {
             className={styles.searchInput}
           />
         </div>
+        
+        <button 
+          className={styles.addButton} 
+          onClick={() => setModalAbierto(true)} 
+        >
+          <Image src={agregarMiembro} alt="Agregar usuario" width={20} height={20} />
+          <span>Agregar usuario</span>
+        </button>
       </div>
 
       {filteredUsers.length === 0 ? (
