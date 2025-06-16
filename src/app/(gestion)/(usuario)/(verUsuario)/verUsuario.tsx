@@ -7,7 +7,6 @@ import { useRouter, useParams } from 'next/navigation';
 interface Usuario {
   Id_Usuario: number;
   nombre: string;
-  apellidos: string;
   email: string;
   telefono: number;
 }
@@ -48,7 +47,7 @@ export default function ModalVerUsuario({
     
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `¿Deseas eliminar al usuario ${usuario.nombre} ${usuario.apellidos}?`,
+      text: `¿Deseas eliminar al usuario ${usuario.nombre}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
@@ -70,7 +69,7 @@ export default function ModalVerUsuario({
     
     Swal.fire({
       title: '¿Estás seguro?',
-      text: `¿Deseas remover a ${usuario.nombre} ${usuario.apellidos} de la junta directiva?`,
+      text: `¿Deseas remover a ${usuario.nombre} de la junta directiva?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
@@ -109,7 +108,7 @@ export default function ModalVerUsuario({
         <div className={styles.infoContainer}>
           <div className={styles.campo}>
             <label>Nombre completo:</label>
-            <p className={styles.valor}>{usuario.nombre} {usuario.apellidos}</p>
+            <p className={styles.valor}>{usuario.nombre}</p>
           </div>
 
           <div className={styles.campo}>

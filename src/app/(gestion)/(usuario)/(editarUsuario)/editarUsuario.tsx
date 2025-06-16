@@ -6,12 +6,12 @@ import styles from './editarUsuario.module.css';
 interface Usuario {
   Id_Usuario: number;
   nombre: string;
-  apellidos: string;
   email: string;
   telefono: number;
 }
 
 interface MiembroDeJunta {
+  id_Miembro_De_Junta?: number; // Opcional para crear nuevo miembro
   Usuario_id: number;
   cargo: string;
   fecha_inicio: string;
@@ -79,10 +79,10 @@ export default function ModalEditarUsuario({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!usuario.nombre || !usuario.apellidos || !usuario.email) {
+
+    if (!usuario.nombre || !usuario.email) {
       Swal.fire({
         icon: 'error',
         title: 'Campos incompletos',
@@ -121,8 +121,87 @@ export default function ModalEditarUsuario({
       return;
     }
 
-    onSave(usuario, esMiembroJunta ? miembroJunta : null);
-    onClose();
+    try {
+      console.log('Es miembro: ', esMiembroJunta);
+      // Actualizar usuario
+      const usuarioResponse = await fetch(`http://localhost:3000/usuarios/${usuario.Id_Usuario}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: usuario.nombre,
+          email: usuario.email,
+          telefono: usuario.telefono,
+        }),
+      });
+
+      if (!usuarioResponse.ok) {
+        throw new Error('Error al actualizar el usuario');
+      }
+
+      // Si es miembro de junta, manejar creación o actualización
+      if (esMiembroJunta) {
+        if (!initialMiembroJunta) {
+          // Crear nuevo miembro de junta
+          const miembroResponse = await fetch(`http://localhost:3000/miembro-junta`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              usuario_id: usuario.Id_Usuario,
+              junta_id: 1, 
+              cargo: miembroJunta?.cargo,
+              fecha_inicio: miembroJunta?.fecha_inicio,
+            }),
+          });
+
+          if (!miembroResponse.ok) {
+            throw new Error('Error al crear el miembro de junta');
+          }
+        } else {
+          // Actualizar miembro existente
+          console.log('Actualizando miembro de junta:', miembroJunta);
+          const miembroResponse = await fetch(`http://localhost:3000/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              cargo: miembroJunta?.cargo,
+              fecha_inicio: miembroJunta?.fecha_inicio,
+            }),
+          });
+
+          if (!miembroResponse.ok) {
+            throw new Error('Error al actualizar el miembro de junta');
+          }
+        }
+      }
+      
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Usuario actualizado',
+        text: 'Los datos del usuario se han actualizado correctamente',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+
+      onSave(usuario, esMiembroJunta ? miembroJunta : null);
+      onClose();
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al actualizar los datos. Intente nuevamente.',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+    }
   };
 
   if (!isOpen) return null;
@@ -147,16 +226,6 @@ export default function ModalEditarUsuario({
             />
           </div>
 
-          <div className={styles.campo}>
-            <label>Apellidos*</label>
-            <input
-              name="apellidos"
-              value={usuario.apellidos}
-              onChange={handleChange}
-              className={styles.input}
-              required
-            />
-          </div>
 
           <div className={styles.campo}>
             <label>Correo Electrónico*</label>

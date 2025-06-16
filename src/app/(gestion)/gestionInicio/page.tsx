@@ -8,46 +8,36 @@ import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
-
 interface Usuario {
   Id_Usuario: number;
   nombre: string;
-  apellidos: string;
   email: string;
   telefono: number;
 }
 
 interface MiembroDeJunta {
+  id_Miembro_De_Junta?: number;
   Usuario_id: number;
   cargo: string;
   fecha_inicio: string;
   fecha_fin: string | null;
 }
 
-// Datos de prueba
-const usuariosIniciales: Usuario[] = [
-  
-];
-
-const miembrosJuntaInicial: MiembroDeJunta[] = [
-  
-];
-
 const BACKEND_URL = 'http://localhost:3000'; 
 
 export default function GestionUsuarios() {
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [modalAbierto, setModalAbierto] = useState(false);
   const [modalVerAbierto, setModalVerAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<Usuario | null>(null);
   const [miembroSeleccionado, setMiembroSeleccionado] = useState<MiembroDeJunta | null>(null);
-  const [usuarios, setUsuarios] = useState<Usuario[]>(usuariosIniciales);
-  const [miembrosJunta, setMiembrosJunta] = useState<MiembroDeJunta[]>(miembrosJuntaInicial);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [miembrosJunta, setMiembrosJunta] = useState<MiembroDeJunta[]>([]);
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchUsuarios = async () => {
+      setIsLoading(true); // Activa el estado de carga
       try {
         const res = await fetch(BACKEND_URL + '/usuarios', {
           method: 'GET',
@@ -68,7 +58,6 @@ export default function GestionUsuarios() {
         const nuevosUsuarios = usuariosData.map((usuario: any) => ({
           Id_Usuario: usuario.id,
           nombre: usuario.nombre,
-          apellidos: usuario.apellidos,
           email: usuario.email,
           telefono: usuario.telefono
         }));
@@ -77,19 +66,22 @@ export default function GestionUsuarios() {
         console.log('Miembros de junta cargados:', miembrosData);
 
         const nuevosMiembros = miembrosData.map((miembro: any) => ({
+          id_Miembro_De_Junta: miembro.id_Miembro_De_Junta,
           Usuario_id: miembro.usuario.id_Usuario,
           cargo: miembro.cargo,
           fecha_inicio: miembro.fecha_inicio,
           fecha_fin: miembro.fecha_fin || null,
         }));
 
-        setUsuarios(prevUsuarios => [...prevUsuarios, ...nuevosUsuarios]);
-        setMiembrosJunta(prevMiembros => [...prevMiembros, ...nuevosMiembros]);
+        setUsuarios(nuevosUsuarios);
+        setMiembrosJunta(nuevosMiembros);
         console.log('Usuarios actualizados:', nuevosUsuarios);
         console.log('Miembros de junta actualizados:', nuevosMiembros);
 
       } catch (error) {
         console.error('Error al cargar usuarios:', error);
+      } finally {
+        setIsLoading(false);  // Desactiva el estado de carga
       }
     };
     fetchUsuarios();
@@ -109,8 +101,6 @@ export default function GestionUsuarios() {
     const searchText = searchTerm.toLowerCase();
     return (
       user.nombre.toLowerCase().includes(searchText) ||
-      user.apellidos.toLowerCase().includes(searchText) ||
-      `${user.nombre} ${user.apellidos}`.toLowerCase().includes(searchText) ||
       (user.cargo && user.cargo.toLowerCase().includes(searchText))
     );
   });
@@ -136,7 +126,6 @@ export default function GestionUsuarios() {
       setModalVerAbierto(false);
   };
 
-
   const handleEliminarDeJunta = () => {
     if (!usuarioSeleccionado) return;
     
@@ -149,7 +138,6 @@ export default function GestionUsuarios() {
   };
 
   const handleSaveUsuario = (usuarioActualizado: Usuario, miembroActualizado: MiembroDeJunta | null) => {
-    // Aquí iría la lógica para actualizar los datos
     console.log('Usuario actualizado:', usuarioActualizado);
     console.log('Miembro actualizado:', miembroActualizado);
     
@@ -179,17 +167,13 @@ export default function GestionUsuarios() {
             className={styles.searchInput}
           />
         </div>
-        
-        <button 
-          className={styles.addButton} 
-          onClick={() => setModalAbierto(true)} 
-        >
-          <Image src={agregarMiembro} alt="Agregar usuario" width={20} height={20} />
-          <span>Agregar usuario</span>
-        </button>
       </div>
 
-      {filteredUsers.length === 0 ? (
+      {isLoading ? ( 
+        <div className={styles.noMembers}>
+          <p>Cargando usuarios...</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
         <div className={styles.noMembers}>
           <p>No se encontraron usuarios que coincidan con la búsqueda</p>
         </div>
@@ -198,7 +182,7 @@ export default function GestionUsuarios() {
           {filteredUsers.map((user) => (
             <div key={user.Id_Usuario} className={`${styles.card} ${user.esMiembroJunta ? styles.miembroJunta : styles.usuarioRegular}`}>
               <div className={styles['card-content']}>
-                <h2 className={styles.nombre}>Nombre: {user.nombre} {user.apellidos}</h2>
+                <h2 className={styles.nombre}>Nombre: {user.nombre}</h2>
                 <p className={styles.rol}>Rol: {formatCargo(user.cargo)}</p>
               </div>
               <div className={styles['card-actions']}>
