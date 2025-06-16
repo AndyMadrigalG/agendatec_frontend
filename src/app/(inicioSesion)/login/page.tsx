@@ -5,8 +5,9 @@ import Image from 'next/image';
 import logo from '/public/logo.png';
 import {useState} from 'react';
 
-// Idealmente podriamos cambiar esta url quemada por una variable de ambiente e inyectarla junto a las demas
-const BACKEND_URL = 'https://agendatec-backend-371160271556.us-central1.run.app';
+// Change variable on .env for local testing with the backend
+// otherwise is going to use the prod URL
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function LoginPage() {
 
