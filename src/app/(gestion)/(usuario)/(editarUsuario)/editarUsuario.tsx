@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import styles from './editarUsuario.module.css';
 
@@ -28,12 +28,12 @@ interface ModalEditarUsuarioProps {
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
-export default function ModalEditarUsuario({ 
-  isOpen, 
-  onClose, 
-  usuario: initialUsuario, 
+export default function ModalEditarUsuario({
+  isOpen,
+  onClose,
+  usuario: initialUsuario,
   miembroJunta: initialMiembroJunta,
-  onSave
+  onSave,
 }: ModalEditarUsuarioProps) {
   const [usuario, setUsuario] = useState<Usuario>(initialUsuario);
   const [miembroJunta, setMiembroJunta] = useState<MiembroDeJunta | null>(initialMiembroJunta);
@@ -45,10 +45,9 @@ export default function ModalEditarUsuario({
     setEsMiembroJunta(!!initialMiembroJunta);
   }, [initialUsuario, initialMiembroJunta]);
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUsuario(prev => ({ ...prev, [name]: value }));
+    setUsuario((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleMiembroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +59,7 @@ export default function ModalEditarUsuario({
         Usuario_id: usuario.Id_Usuario,
         cargo: value,
         fecha_inicio: new Date().toISOString().split('T')[0],
-        fecha_fin: null
+        fecha_fin: null,
       });
     }
   };
@@ -68,7 +67,7 @@ export default function ModalEditarUsuario({
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setEsMiembroJunta(checked);
-    
+
     if (!checked) {
       setMiembroJunta(null);
     } else if (!miembroJunta) {
@@ -76,7 +75,7 @@ export default function ModalEditarUsuario({
         Usuario_id: usuario.Id_Usuario,
         cargo: '',
         fecha_inicio: new Date().toISOString().split('T')[0],
-        fecha_fin: null
+        fecha_fin: null,
       });
     }
   };
@@ -84,6 +83,7 @@ export default function ModalEditarUsuario({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validación de campos requeridos
     if (!usuario.nombre || !usuario.email) {
       Swal.fire({
         icon: 'error',
@@ -124,7 +124,6 @@ export default function ModalEditarUsuario({
     }
 
     try {
-      console.log('Es miembro: ', esMiembroJunta);
       // Actualizar usuario
       const usuarioResponse = await fetch(`${BACKEND_URL}/usuarios/${usuario.Id_Usuario}`, {
         method: 'PATCH',
@@ -139,7 +138,37 @@ export default function ModalEditarUsuario({
       });
 
       if (!usuarioResponse.ok) {
-        throw new Error('Error al actualizar el usuario');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al actualizar el usuario. Intente nuevamente.',
+          confirmButtonColor: '#7b6ef6',
+          background: 'var(--background)',
+          color: '#f9fafb',
+        });
+        return;
+      }
+
+      // Si se desmarcó la opción de miembro de junta y era miembro inicialmente, eliminarlo
+      if (!esMiembroJunta && initialMiembroJunta) {
+        const miembroResponse = await fetch(
+          `${BACKEND_URL}/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`,
+          {
+            method: 'DELETE',
+          }
+        );
+
+        if (!miembroResponse.ok) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar al miembro de la junta. Intente nuevamente.',
+            confirmButtonColor: '#7b6ef6',
+            background: 'var(--background)',
+            color: '#f9fafb',
+          });
+          return;
+        }
       }
 
       // Si es miembro de junta, manejar creación o actualización
@@ -153,35 +182,52 @@ export default function ModalEditarUsuario({
             },
             body: JSON.stringify({
               usuario_id: usuario.Id_Usuario,
-              junta_id: 1, 
+              junta_id: 1,
               cargo: miembroJunta?.cargo,
               fecha_inicio: miembroJunta?.fecha_inicio,
             }),
           });
 
           if (!miembroResponse.ok) {
-            throw new Error('Error al crear el miembro de junta');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Hubo un problema al crear el miembro de junta. Intente nuevamente.',
+              confirmButtonColor: '#7b6ef6',
+              background: 'var(--background)',
+              color: '#f9fafb',
+            });
+            return;
           }
         } else {
           // Actualizar miembro existente
-          console.log('Actualizando miembro de junta:', miembroJunta);
-          const miembroResponse = await fetch(`${BACKEND_URL}/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              cargo: miembroJunta?.cargo,
-              fecha_inicio: miembroJunta?.fecha_inicio,
-            }),
-          });
+          const miembroResponse = await fetch(
+            `${BACKEND_URL}/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`,
+            {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                cargo: miembroJunta?.cargo,
+                fecha_inicio: miembroJunta?.fecha_inicio,
+              }),
+            }
+          );
 
           if (!miembroResponse.ok) {
-            throw new Error('Error al actualizar el miembro de junta');
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Hubo un problema al actualizar los datos del miembro de junta. Intente nuevamente.',
+              confirmButtonColor: '#7b6ef6',
+              background: 'var(--background)',
+              color: '#f9fafb',
+            });
+            return;
           }
         }
       }
-      
 
       Swal.fire({
         icon: 'success',
@@ -228,7 +274,6 @@ export default function ModalEditarUsuario({
             />
           </div>
 
-
           <div className={styles.campo}>
             <label>Correo Electrónico*</label>
             <input
@@ -268,7 +313,7 @@ export default function ModalEditarUsuario({
             <>
               <div className={styles.separador}></div>
               <h3 className={styles.subtitulo}>Información de Junta Directiva</h3>
-              
+
               <div className={styles.campo}>
                 <label>Cargo*</label>
                 <input
@@ -283,22 +328,24 @@ export default function ModalEditarUsuario({
               <div className={styles.campo}>
                 <label>Fecha de inicio</label>
                 <p className={styles.valor}>
-                  {miembroJunta?.fecha_inicio ? new Date(miembroJunta.fecha_inicio).toLocaleDateString() : 'N/A'}
+                  {miembroJunta?.fecha_inicio
+                    ? new Date(miembroJunta.fecha_inicio).toLocaleDateString()
+                    : 'N/A'}
                 </p>
               </div>
             </>
           )}
 
           <div className={styles.modalButtons}>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className={`${styles.actionButton} ${styles.cancelButton}`}
               onClick={onClose}
             >
               Cancelar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={`${styles.actionButton} ${styles.saveButton}`}
             >
               Guardar Cambios
