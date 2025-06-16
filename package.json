@@ -1,12 +1,12 @@
 {
-  "name": "agendatec",
-  "version": "0.1.0",
+  "name": "AgendaTec",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "up": "next build && next start",
     "build": "next build",
     "start": "next start",
-    "dev": "next dev"
+    "dev": "next dev -p 3001"
   },
   "dependencies": {
     "next": "15.3.2",
