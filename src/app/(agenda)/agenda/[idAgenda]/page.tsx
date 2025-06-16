@@ -1,120 +1,125 @@
 'use client';
 
 import styles from './agenda.module.css';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import addIcon from '/public/addCircle.svg';
 import { useParams } from 'next/navigation';
+import Swal from 'sweetalert2';
+
+const BACKEND_URL = 'http://localhost:3000';
 
 export default function AgendaPage() {
-
     const { idAgenda } = useParams();
 
-    const tipoSesion = [
-        {value: 'ordinaria', label: 'Ordinaria'},
-        {value: 'extraordinaria', label: 'Extraordinaria'}
-    ];
-
     const [agenda, setAgenda] = useState({
-        nombre: '',
-        fecha: '',
+        id_Agenda: idAgenda || '',
+        numero: '',
         tipo: '',
+        fechaHora: '',
         lugar: '',
-        miembros: [] as string[],
     });
 
-    const [puntos, setPuntos] = useState({
-        id: '',
-        titulo: '',
-    });
+    const [loading, setLoading] = useState(true);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setAgenda({
-            ...agenda,
-            [name]: value
-        });
+    const fetchAgenda = async (id: string) => {
+        setLoading(true); // Activa el estado de carga
+        try {
+            const response = await fetch(`${BACKEND_URL}/agendas/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar la agenda');
+            }
+
+            const data = await response.json();
+            setAgenda(data);
+            console.log('Agenda cargada:', data);
+        } catch (error) {
+            console.error('Error al cargar la agenda:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al cargar la agenda',
+                text: 'Ocurrió un error al cargar la agenda',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
+        } finally {
+            setLoading(false); // Desactiva el estado de carga
+        }
     };
 
+    useEffect(() => {
+        if (typeof idAgenda === 'string') {
+            fetchAgenda(idAgenda);
+        }
+    }, [idAgenda]);
 
     const handleGuardar = (e: React.FormEvent) => {
         e.preventDefault();
-    }
+        console.log('Guardar cambios en la agenda:', agenda);
+    };
 
     const handleCrear = (e: React.FormEvent) => {
         e.preventDefault();
-    }
-
-    useEffect(() => {
-        async function fetchAgenda() {
-            
-            const data = {
-                nombre: 'Agenda de Junta Directiva',
-                fecha: '2024-06-01',
-                tipo: 'Ordinaria',
-                lugar: 'Sala de reuniones',
-                miembros: ['Juan Pérez', 'María López','Juan Pérez', 'María López', 'Carlos García'],
-            };
-            setAgenda(data);
-        }
-
-        fetchAgenda();
-    }, []);
+        console.log('Crear nuevo punto en la agenda');
+    };
 
     return (
         <div>
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
-                    <h2>{agenda.nombre}</h2>
+                    <h2>{loading ? 'Cargando agenda...' : `Agenda: ${agenda.numero}`}</h2>
                 </div>
 
-                <div className={styles.formContainer}>
-                    <form className={styles.form}>
-                        <div className={styles.formColumns}>
-                            <div className= {styles.columna}> 
-                                <label>Nombre de la Agenda:</label>
-                                <p>{agenda.nombre}</p>
-                                
+                {loading ? (
+                    <p className={styles.loadingMsg}>Cargando datos de la agenda...</p>
+                ) : (
+                    <div className={styles.formContainer}>
+                        <form className={styles.form}>
+                            <div className={styles.formColumns}>
+                                <div className={styles.columna}>
+                                    <label>Nombre de la Agenda:</label>
+                                    <p>{agenda.numero}</p>
 
-                                <label>Fecha de Inicio:</label>
-                                <p>{agenda.fecha}</p>
+                                    <label>Fecha y Hora:</label>
+                                    <p>{new Date(agenda.fechaHora).toLocaleString()}</p>
 
+                                    <label>Puntos</label>
+                                    <button className={styles.addPuntoButton}>
+                                        <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
+                                        Agregar Punto
+                                    </button>
+                                </div>
 
-                                <label>Puntos</label>
-                                <button className={styles.addPuntoButton}>
-                                    <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
-                                    Agregar Punto
-                                </button>  
-                                
+                                <div className={styles.columna}>
+                                    <label>Tipo de Sesión:</label>
+                                    <p>{agenda.tipo}</p>
+
+                                    <label>Lugar de Reunión:</label>
+                                    <p>{agenda.lugar}</p>
+
+                                    <label>Miembros Convocados:</label>
+                                    
+                                </div>
                             </div>
 
-                            <div className={styles.columna}>
-                                <label>Tipo de Sesion</label>
-                                <p>{agenda.tipo}</p>
-
-                                <label>Lugar de Reunion</label>
-                                <p>{agenda.lugar}</p>
-
-
-                                <label>Miembros convocados</label>
-                                <p className={styles.miembrosLista}>{agenda.miembros.join(', ')}</p>
+                            <div className={styles.botonesContainer}>
+                                <button className={styles.crearButton} onClick={handleGuardar}>
+                                    Guardar
+                                </button>
                             </div>
-
-                        </div>
-
-                        <div className={styles.botonesContainer}> 
-                            <button className={styles.crearButton}
-                                onClick={handleCrear}
-                            >Guardar</button>
-                        </div>
-
-                    </form>
-                </div>
-
-
-
+                        </form>
+                    </div>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
