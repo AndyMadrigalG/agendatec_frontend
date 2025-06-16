@@ -35,55 +35,56 @@ export default function GestionUsuarios() {
   const [miembrosJunta, setMiembrosJunta] = useState<MiembroDeJunta[]>([]);
   const [isLoading, setIsLoading] = useState(true); 
 
+  const fetchUsuarios = async () => {
+    setIsLoading(true); // Activa el estado de carga
+    try {
+      const res = await fetch(BACKEND_URL + '/usuarios', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+      const usuariosData = await res.json();
+      console.log('Usuarios cargados:', usuariosData);
+
+      const miembrosRes = await fetch(BACKEND_URL + '/junta/1/miembros', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      const nuevosUsuarios = usuariosData.map((usuario: any) => ({
+        Id_Usuario: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        telefono: usuario.telefono
+      }));
+
+      const miembrosData = await miembrosRes.json();
+      console.log('Miembros de junta cargados:', miembrosData);
+
+      const nuevosMiembros = miembrosData.map((miembro: any) => ({
+        id_Miembro_De_Junta: miembro.id_Miembro_De_Junta,
+        Usuario_id: miembro.usuario.id_Usuario,
+        cargo: miembro.cargo,
+        fecha_inicio: miembro.fecha_inicio,
+        fecha_fin: miembro.fecha_fin || null,
+      }));
+
+      setUsuarios(nuevosUsuarios);
+      setMiembrosJunta(nuevosMiembros);
+      console.log('Usuarios actualizados:', nuevosUsuarios);
+      console.log('Miembros de junta actualizados:', nuevosMiembros);
+
+    } catch (error) {
+      console.error('Error al cargar usuarios:', error);
+    } finally {
+      setIsLoading(false);  // Desactiva el estado de carga
+    }
+  };
+
   useEffect(() => {
-    const fetchUsuarios = async () => {
-      setIsLoading(true); // Activa el estado de carga
-      try {
-        const res = await fetch(BACKEND_URL + '/usuarios', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        const usuariosData = await res.json();
-        console.log('Usuarios cargados:', usuariosData);
-
-        const miembrosRes = await fetch(BACKEND_URL + '/junta/1/miembros', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        const nuevosUsuarios = usuariosData.map((usuario: any) => ({
-          Id_Usuario: usuario.id,
-          nombre: usuario.nombre,
-          email: usuario.email,
-          telefono: usuario.telefono
-        }));
-
-        const miembrosData = await miembrosRes.json();
-        console.log('Miembros de junta cargados:', miembrosData);
-
-        const nuevosMiembros = miembrosData.map((miembro: any) => ({
-          id_Miembro_De_Junta: miembro.id_Miembro_De_Junta,
-          Usuario_id: miembro.usuario.id_Usuario,
-          cargo: miembro.cargo,
-          fecha_inicio: miembro.fecha_inicio,
-          fecha_fin: miembro.fecha_fin || null,
-        }));
-
-        setUsuarios(nuevosUsuarios);
-        setMiembrosJunta(nuevosMiembros);
-        console.log('Usuarios actualizados:', nuevosUsuarios);
-        console.log('Miembros de junta actualizados:', nuevosMiembros);
-
-      } catch (error) {
-        console.error('Error al cargar usuarios:', error);
-      } finally {
-        setIsLoading(false);  // Desactiva el estado de carga
-      }
-    };
     fetchUsuarios();
   }, []);
 
@@ -121,19 +122,20 @@ export default function GestionUsuarios() {
     setModalVerAbierto(true);
   };
 
-  const handleEliminarUsuario = () => {
+  const handleEliminarUsuario = async () => {
     if (!usuarioSeleccionado) return;
-      setModalVerAbierto(false);
-  };
 
-  
+    // Aquí puedes agregar lógica para eliminar el usuario del backend si es necesario
+    setModalVerAbierto(false);
+    await fetchUsuarios(); // Recargar los datos después de eliminar
+  };
 
   const handleEditarClick = () => {
     setModalVerAbierto(false);
     setModalEditarAbierto(true);
   };
 
-  const handleSaveUsuario = (usuarioActualizado: Usuario, miembroActualizado: MiembroDeJunta | null) => {
+  const handleSaveUsuario = async (usuarioActualizado: Usuario, miembroActualizado: MiembroDeJunta | null) => {
     console.log('Usuario actualizado:', usuarioActualizado);
     console.log('Miembro actualizado:', miembroActualizado);
     
@@ -147,6 +149,7 @@ export default function GestionUsuarios() {
     });
     
     setModalEditarAbierto(false);
+    await fetchUsuarios(); // Recargar los datos después de guardar cambios
   };
 
   return (
