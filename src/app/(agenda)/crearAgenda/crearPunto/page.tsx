@@ -1,226 +1,140 @@
 'use client';
 
-import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
-
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './crearPunto.module.css';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+
+const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function CrearPuntoPage() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const tipos = [
-        { value: 'informativo', label: 'Informativo' },
-        { value: 'discusion', label: 'Discusión' },
-        { value: 'decisional', label: 'Decisional' },  
-    ];
+  const tipos = [
+    { value: 'informativo', label: 'Informativo' },
+    { value: 'discusion', label: 'Discusión' },
+    { value: 'decisional', label: 'Decisional' },
+  ];
 
-    
-    const [titulo, setTitulo] = useState('');
-    const [duracion, setDuracion] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [archivos, setArchivos] = useState<File[]>([]);
-    const [expositor, setExpositor] = useState('');
+  const [titulo, setTitulo] = useState('');
+  const [duracion, setDuracion] = useState('');
+  const [tipo, setTipo] = useState('');
+  const [archivos, setArchivos] = useState<File[]>([]);
+  const [expositor, setExpositor] = useState('');
+  const [personas, setPersonas] = useState<{ value: string; label: string }[]>([]);
 
-    
-    const [personas, setPersonas] = useState<{ value: string; label: string }[]>([]);
-    
-    useEffect(() => {
-        const fetchPersonas = async () => {
+  const camposVacios = !titulo.trim() || !duracion.trim() || !tipo.trim() || !expositor.trim();
 
-            // const response = await fetch('/api/personas');
-            // const data = await response.json();
-            // setPersonas(data);
-            
-            setPersonas([
-                { value: 'expositor1', label: 'Expositor 1' },
-                { value: 'expositor2', label: 'Expositor 2' },
-                { value: 'expositor3', label: 'Expositor 3' },
-            ]);
-        };
-        fetchPersonas();
-    }, []);
+  useEffect(() => {
+    const fetchPersonas = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/usuarios`);
+        const data = await res.json();
+        setPersonas(data.map((u: any) => ({ value: u.id, label: u.nombre })));
+      } catch {
+        setPersonas([]);
+      }
+    };
+    fetchPersonas();
+  }, []);
 
-    const camposVacios = 
-        titulo.trim() === '' ||
-        duracion.trim() === '' ||
-        tipo.trim() === '' ||
-        expositor.trim() === '';
-    
-    const handleCancelar = (e: React.FormEvent) => {
-        e.preventDefault();
-        Swal.fire({
-            icon: 'warning',
-            title: 'Cancelar creación de punto',
-            text: '¿Está seguro de que desea cancelar la creación del punto?',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, cancelar',
-            cancelButtonText: 'No, continuar',
-            confirmButtonColor: 'var(--buttonColor)',
-            background: 'var(--background)',
-            color: '#f9fafb',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                router.push('/crearAgenda'); 
-            }
-        });
+  const handleCancelar = (e: React.FormEvent) => {
+    e.preventDefault();
+    Swal.fire({
+      icon: 'warning',
+      title: '¿Cancelar?',
+      text: '¿Desea cancelar la creación del punto?',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, continuar',
+    }).then(result => {
+      if (result.isConfirmed) router.push('/crearAgenda');
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (camposVacios) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Campos vacíos',
+        text: 'Complete todos los campos.',
+      });
+      return;
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (camposVacios) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Campos vacíos',
-                text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor: '#7b6ef6',
-                background: 'var(--background)',
-                color: '#f9fafb',
-            });
-            return;
-        }
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('duracionMin', duracion);
+    formData.append('tipo', tipo);
+    formData.append('expositorId', expositor);
 
-        
+    archivos.forEach(file => formData.append('archivos', file));
 
-        const formData = new FormData();
-        formData.append('titulo', titulo);
-        formData.append('duracion', duracion);
-        formData.append('tipo', tipo);
-        formData.append('expositor', expositor);
-        if (archivos && archivos.length > 0) {
-            archivos.forEach((archivo) => {
-            formData.append('archivos', archivo);
-            });
-        }
-        
-        Swal.fire({
-                        icon: 'success',
-                        title: 'Punto creado con exito',
-                        text: 'Se ha creado el punto correctamente.',
-                        confirmButtonText: 'Aceptar',
-                        confirmButtonColor: '#7b6ef6',
-                        background: 'var(--background)',
-                        color: '#f9fafb',
-                    }).then(() => {
-                        router.push('/crearAgenda'); 
-                    });
-    };
-    
+    Swal.fire({ title: 'Creando punto...', didOpen: () => Swal.showLoading() });
 
-    return (
-        <div>
-            <div className={styles.mainContainer}>
-                <div className={styles.menu}>
-                    <h2>Crear Punto</h2>
-                </div>
+    try {
+      const res = await fetch(`${BACKEND_URL}/puntos`, {
+        method: 'POST',
+        body: formData,
+      });
 
-                <div className={styles.formContainer}>
+      const punto = await res.json();
+      const almacenados = JSON.parse(localStorage.getItem('puntosAgenda') || '[]');
+      localStorage.setItem('puntosAgenda', JSON.stringify([...almacenados, punto]));
 
-                    <form className={styles.form}>
-                            <div className= {styles.columna}> 
-                                <label htmlFor="titulo">Titulo</label>
-                                <input 
-                                    placeholder="Ingrese el título del punto"
-                                    type="text" 
-                                    id="titulo" 
-                                    name="titulo" 
-                                    value={titulo} 
-                                    onChange={(e) => setTitulo(e.target.value)} 
-                                    required
-                                />
+      Swal.close();
+      Swal.fire({ icon: 'success', title: 'Punto creado' }).then(() => {
+        router.push('/crearAgenda');
+      });
+    } catch {
+      Swal.fire({ icon: 'error', title: 'Error al guardar el punto' });
+    }
+  };
 
-                                <label htmlFor="expositor">Expositor del punto</label>
-                                <select 
-                                    name="expositor" 
-                                    id="expositor"
-                                    value={expositor}
-                                    onChange={(e) => setExpositor(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Seleccionar expositor</option>
-                                    {personas.map((persona) => (
-                                        <option key={persona.value} value={persona.value}>
-                                            {persona.label}
-                                        </option>
-                                    ))}
-                                </select>
+  return (
+    <div className={styles.mainContainer}>
+      <div className={styles.menu}><h2>Crear Punto</h2></div>
+      <div className={styles.formContainer}>
+        <form className={styles.form}>
+          <div className={styles.columna}>
+            <label>Título</label>
+            <input value={titulo} onChange={e => setTitulo(e.target.value)} />
 
-                                <label htmlFor="tipo">Tipo</label>
-                                <select 
-                                    id="tipo" 
-                                    name="tipo" 
-                                    value={tipo} 
-                                    onChange={(e) => setTipo(e.target.value)} 
-                                    required
-                                >
-                                    <option value="">Seleccionar tipo</option>
-                                    {tipos.map((t) => (
-                                        <option key={t.value} value={t.value}>
-                                            {t.label}
-                                        </option>
-                                    ))}
-                                </select>
+            <label>Expositor</label>
+            <select value={expositor} onChange={e => setExpositor(e.target.value)}>
+              <option value="">Seleccione</option>
+              {personas.map(p => (
+                <option key={p.value} value={p.value}>{p.label}</option>
+              ))}
+            </select>
 
-                            </div>
-                                
-                            <div className={styles.columna}>
-                                <label htmlFor="tiempo">Tiempo estimado de duracion (minutos)</label>
-                                <input 
-                                    placeholder="Ingrese el tiempo estimado de duración"
-                                    type="number" 
-                                    id="tiempo" 
-                                    name="tiempo" 
-                                    value={duracion} 
-                                    onChange={(e) => setDuracion(e.target.value)} 
-                                    required
-                                />
+            <label>Tipo</label>
+            <select value={tipo} onChange={e => setTipo(e.target.value)}>
+              <option value="">Seleccione</option>
+              {tipos.map(t => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
 
-                                <label htmlFor="archivos">Adjuntar archivos (opcional)</label>
-                                <div className={styles.archivoContainer}>
+          <div className={styles.columna}>
+            <label>Duración (minutos)</label>
+            <input type="number" value={duracion} onChange={e => setDuracion(e.target.value)} />
 
-                                    <div className={styles.container}>
-                                        <label className={styles.fileInput}>
-                                            <input className={styles.title} 
-                                            type="file"
-                                            id="archivos" 
-                                            name="archivos"
-                                            multiple
-                                            onChange={(e) => {
-                                                if (e.target.files && e.target.files.length > 0) {
-                                                    setArchivos(Array.from(e.target.files));
-                                                }
-                                            }} 
-                                        />
-                                        Seleccionar archivos
-                                        </label>
-                                        
-                                        <div className={styles.archivosList}>
-                                            {archivos.slice(0, 2).map((archivo, index) => (
-                                                <h3 key={index}>{archivo.name}</h3>
-                                            ))}
-                                            {archivos.length > 2 && (
-                                                <span>+{archivos.length - 2}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={styles.botonContainer}>
-                                    <button 
-                                    className={styles.cancelarButton}
-                                    onClick={handleCancelar}
-                                    >Cancelar</button>
-                                    <button 
-                                    className={styles.crearButton}
-                                    onClick={handleSubmit}
-                                    >Crear</button>
-                                </div>
-                            </div>
+            <label>Archivos (opcional)</label>
+            <input type="file" multiple onChange={e => {
+              if (e.target.files) setArchivos(Array.from(e.target.files));
+            }} />
 
-                    </form>
-
-                </div>
+            <div className={styles.botonContainer}>
+              <button className={styles.cancelarButton} onClick={handleCancelar}>Cancelar</button>
+              <button className={styles.crearButton} onClick={handleSubmit}>Crear</button>
             </div>
-        </div>
-    );
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }

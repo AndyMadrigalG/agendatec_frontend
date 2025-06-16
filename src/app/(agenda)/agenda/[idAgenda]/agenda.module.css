@@ -1,200 +1,65 @@
-@media screen and (max-width: 950px) {
-  .mainContainer {
-    padding-top: 20px !important;
-    margin: 0 !important;
-  }
-
-  .menu {
-    width: 90%;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 !important;
-  }
-
-  .formContainer {
-    width: 100% !important;
-    margin: 0 !important;
-  }
-
-  .form {
-    flex-direction: column !important;
-    width: 100% !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin: 0 !important;
-  }
-
-  .formColumns{
-    flex-direction: column !important;
-    width: 100% !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .columna {
-    margin-top: 20px !important;
-    margin-left: 0 !important;
-    
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-  }
-
-  .botonesContainer {
-    width: 100% !important;
-    align-items: center !important;
-    justify-items: center !important;
-    margin: 0 !important;
-    margin: 20px !important;
-  }
-
-  .botonesContainer button {
-    width: 90% !important;
-  }
-}
-
-.mainContainer {
-  padding-top: 80px;
+.agendaContainer {
+  padding: 60px;
+  color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
 }
 
-.menu{
+.header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.infoGrid {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  width: 70%;
-  border-bottom: rgb(91, 91, 91) 1px solid;
-  padding-bottom: 20px;
-
-}
-
-.menu h2 {
-  margin-bottom: 0px;
-  font-size: 50px;
-}
-
-.formContainer {
-  box-shadow: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 70%;
-}
-
-.form{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.formColumns {
   width: 100%;
-  display: flex;
-  flex-direction: row;
+  max-width: 1000px;
 }
 
-.columna {
-    display: flex;
-    width: 50%;
-    flex-direction: column;
-    margin-top: 50px;
-    margin-left: 60px;
-    justify-content: start;
+.infoItem {
+  flex: 1 1 45%;
+  margin-bottom: 20px;
 }
 
-.columna label {
-    margin: 0;
-    font-size: 22px;
+.label {
+  font-size: 20px;
+  color: #aaa;
 }
 
-.columna select:focus{
-  transform: scale(1.02);
-  border-color: rgb(255, 255, 255);
-  outline: none;
+.value {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 5px;
 }
 
-.addPuntoButton {
-      display: inline-flex;
-      width: 165px;
-      height: 45px;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 2px solid var(--borderInputColor);
-      border-radius: 12px;
-      background-color: var(--background);
-      font-family: sans-serif;
-      font-size: 14px;
-      color: #ffffff;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
+.puntosContainer {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 40px;
 }
 
-.addPuntoButton svg {
-  width: 20px;
-  height: 20px;
+.punto {
+  background-color: #1e1e1e;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
 }
 
-.addPuntoButton:hover {
-  background-color: #7c6ef650
+.punto h3 {
+  margin: 0 0 10px 0;
 }
 
-
-.guardarButton {
-  width: 250px;
-  height: 45px;
-  padding: 10px;
-  background-color: var(--background);
-  color: white;
-  border: 3px solid green;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-
-.botonesContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: center;
-  width: 92%;
-  margin-top: 60px;
-}
-
-.botonesContainer button {
-  margin-left: 10px;
-  width: 170px;
-  height: 50px;
-}
-
-.crearButton {
-  background-color: var(--buttonColor);
-}
-
-.crearButton:hover {
-  background-color: var(--hoverButton);
-}
-
-.guardarButton:hover {
-  background-color: green;
-}
-
-
-.form p {
-    color: gray;
-    font-size: 20px;
-    margin: 10px 0px 30px 20px;
-}
-
-
-.miembrosLista {
-    max-width: 400px; 
-    word-break: break-word;
-    white-space: normal;
+.punto p {
+  margin: 5px 0;
 }

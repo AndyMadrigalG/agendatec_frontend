@@ -1,9 +1,19 @@
 // src/app/api/agendas/route.ts
-export async function GET() {
-  const agendas = [
-    { id: 1, nombre: 'Agenda 1', fecha: '2025-06-10' },
-    { id: 2, nombre: 'Agenda 2', fecha: '2025-06-12' },
-  ];
+import { NextResponse } from 'next/server';
 
-  return Response.json(agendas);
+export async function GET() {
+  const res = await fetch('http://localhost:3001/agendas');
+  const data = await res.json();
+  return NextResponse.json(data);
+}
+
+export async function POST(req: Request) {
+  const body = await req.json();
+  const res = await fetch('http://localhost:3001/agendas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
