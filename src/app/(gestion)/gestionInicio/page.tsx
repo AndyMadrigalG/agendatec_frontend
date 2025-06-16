@@ -1,85 +1,92 @@
 'use client';
 import styles from './gestionInicio.module.css';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from 'next/image';
+import agregarMiembro from '/public/agregarMiembro.svg';
 import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
 import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 
-
 interface Usuario {
   Id_Usuario: number;
   nombre: string;
-  apellidos: string;
   email: string;
   telefono: number;
 }
 
 interface MiembroDeJunta {
+  id_Miembro_De_Junta?: number;
   Usuario_id: number;
   cargo: string;
   fecha_inicio: string;
   fecha_fin: string | null;
 }
 
-// Datos de prueba
-const usuarios: Usuario[] = [
-  {
-    Id_Usuario: 1,
-    nombre: 'Juan',
-    apellidos: 'Pérez García',
-    email: 'juan.perez@example.com',
-    telefono: 5551234567
-  },
-  {
-    Id_Usuario: 2,
-    nombre: 'María',
-    apellidos: 'López Martínez',
-    email: 'maria.lopez@example.com',
-    telefono: 5557654321
-  },
-  {
-    Id_Usuario: 3,
-    nombre: 'Carlos',
-    apellidos: 'González Fernández',
-    email: 'carlos.gonzalez@example.com',
-    telefono: 5554567890
-  },
-  {
-    Id_Usuario: 4,
-    nombre: 'Ana',
-    apellidos: 'Rodríguez Sánchez',
-    email: 'ana.rodriguez@example.com',
-    telefono: 5553216549
-  }
-];
-
-const miembrosJunta: MiembroDeJunta[] = [
-  {
-    Usuario_id: 1,
-    cargo: 'Presidente',
-    fecha_inicio: '2023-01-15',
-    fecha_fin: null
-  },
-  {
-    Usuario_id: 2,
-    cargo: 'Secretario',
-    fecha_inicio: '2023-01-15',
-    fecha_fin: null
-  }
-];
+const BACKEND_URL = 'http://localhost:3000'; 
 
 export default function GestionUsuarios() {
-  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [modalAbierto, setModalAbierto] = useState(false);
   const [modalVerAbierto, setModalVerAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<Usuario | null>(null);
   const [miembroSeleccionado, setMiembroSeleccionado] = useState<MiembroDeJunta | null>(null);
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [miembrosJunta, setMiembrosJunta] = useState<MiembroDeJunta[]>([]);
+  const [isLoading, setIsLoading] = useState(true); 
 
-  
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      setIsLoading(true); // Activa el estado de carga
+      try {
+        const res = await fetch(BACKEND_URL + '/usuarios', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        const usuariosData = await res.json();
+        console.log('Usuarios cargados:', usuariosData);
+
+        const miembrosRes = await fetch(BACKEND_URL + '/junta/1/miembros', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const nuevosUsuarios = usuariosData.map((usuario: any) => ({
+          Id_Usuario: usuario.id,
+          nombre: usuario.nombre,
+          email: usuario.email,
+          telefono: usuario.telefono
+        }));
+
+        const miembrosData = await miembrosRes.json();
+        console.log('Miembros de junta cargados:', miembrosData);
+
+        const nuevosMiembros = miembrosData.map((miembro: any) => ({
+          id_Miembro_De_Junta: miembro.id_Miembro_De_Junta,
+          Usuario_id: miembro.usuario.id_Usuario,
+          cargo: miembro.cargo,
+          fecha_inicio: miembro.fecha_inicio,
+          fecha_fin: miembro.fecha_fin || null,
+        }));
+
+        setUsuarios(nuevosUsuarios);
+        setMiembrosJunta(nuevosMiembros);
+        console.log('Usuarios actualizados:', nuevosUsuarios);
+        console.log('Miembros de junta actualizados:', nuevosMiembros);
+
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+      } finally {
+        setIsLoading(false);  // Desactiva el estado de carga
+      }
+    };
+    fetchUsuarios();
+  }, []);
+
   const usuariosConRol = usuarios.map(usuario => {
     const miembro = miembrosJunta.find(m => m.Usuario_id === usuario.Id_Usuario && m.fecha_fin === null);
     return {
@@ -94,8 +101,6 @@ export default function GestionUsuarios() {
     const searchText = searchTerm.toLowerCase();
     return (
       user.nombre.toLowerCase().includes(searchText) ||
-      user.apellidos.toLowerCase().includes(searchText) ||
-      `${user.nombre} ${user.apellidos}`.toLowerCase().includes(searchText) ||
       (user.cargo && user.cargo.toLowerCase().includes(searchText))
     );
   });
@@ -107,7 +112,6 @@ export default function GestionUsuarios() {
 
   const handleAgregarUsuario = (nuevoUsuario: any) => {
     console.log('Nuevo usuario:', nuevoUsuario);
-    
   };
 
   const handleVerUsuario = (usuario: Usuario) => {
@@ -122,7 +126,6 @@ export default function GestionUsuarios() {
       setModalVerAbierto(false);
   };
 
-
   const handleEliminarDeJunta = () => {
     if (!usuarioSeleccionado) return;
     
@@ -135,7 +138,6 @@ export default function GestionUsuarios() {
   };
 
   const handleSaveUsuario = (usuarioActualizado: Usuario, miembroActualizado: MiembroDeJunta | null) => {
-    // Aquí iría la lógica para actualizar los datos
     console.log('Usuario actualizado:', usuarioActualizado);
     console.log('Miembro actualizado:', miembroActualizado);
     
@@ -167,7 +169,11 @@ export default function GestionUsuarios() {
         </div>
       </div>
 
-      {filteredUsers.length === 0 ? (
+      {isLoading ? ( 
+        <div className={styles.noMembers}>
+          <p>Cargando usuarios...</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
         <div className={styles.noMembers}>
           <p>No se encontraron usuarios que coincidan con la búsqueda</p>
         </div>
@@ -176,7 +182,7 @@ export default function GestionUsuarios() {
           {filteredUsers.map((user) => (
             <div key={user.Id_Usuario} className={`${styles.card} ${user.esMiembroJunta ? styles.miembroJunta : styles.usuarioRegular}`}>
               <div className={styles['card-content']}>
-                <h2 className={styles.nombre}>Nombre: {user.nombre} {user.apellidos}</h2>
+                <h2 className={styles.nombre}>Nombre: {user.nombre}</h2>
                 <p className={styles.rol}>Rol: {formatCargo(user.cargo)}</p>
               </div>
               <div className={styles['card-actions']}>
