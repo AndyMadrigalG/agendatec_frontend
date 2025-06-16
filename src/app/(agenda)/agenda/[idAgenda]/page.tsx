@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
+import styles from './agenda.module.css';
 
 const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
@@ -53,55 +54,73 @@ export default function DetalleAgendaPage() {
     fetchAgenda();
   }, [id_Agenda]);
 
-  if (loading) return <p style={{ padding: '40px', color: '#ccc' }}>Cargando agenda...</p>;
-  if (!agenda) return null;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <p>Cargando agenda...</p>
+      </div>
+    );
+  }
 
-  // Convocados: números o cadena (otros)
+  if (!agenda) {
+    return (
+      <div className={styles.noAgenda}>
+        <p>No se encontró la agenda.</p>
+      </div>
+    );
+  }
+
   const convocados = agenda.juntaDirectiva
     ? (agenda.convocarMiembros as number[]).join(', ')
     : (agenda.convocarMiembros as string);
 
   return (
-    <div style={{ padding: 40, color: 'white', fontFamily: 'sans-serif' }}>
-      <h1 style={{ borderBottom: '1px solid #444', paddingBottom: 10 }}>
-        Agenda: {agenda.numero}
-      </h1>
+    <div className={styles['agenda-container']}>
+      <h1 className={styles.titulo}>Detalle de la Agenda</h1>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, marginTop: 30 }}>
-        {[
-          ['Fecha y Hora', new Date(agenda.fechaHora).toLocaleString('es-CR')],
-          ['Tipo de Sesión', agenda.tipo.replace('SessionType.', '')],
-          ['Modalidad', agenda.modalidad.replace('Modalidad.', '')],
-          ['Lugar / Link', agenda.lugar || agenda.link || 'No especificado'],
-          ['Convocados', convocados],
-        ].map(([label, value]) => (
-          <div key={label} style={{ flex: '1 1 45%' }}>
-            <p style={{ fontSize: 18, color: '#aaa', marginBottom: 4 }}>{label}</p>
-            <p style={{ fontSize: 20 }}>{value}</p>
-          </div>
-        ))}
+      <div className={styles['info-container']}>
+        <div className={styles['info-card']}>
+          <h2>Número de Agenda</h2>
+          <p>{agenda.numero}</p>
+        </div>
+        <div className={styles['info-card']}>
+          <h2>Fecha y Hora</h2>
+          <p>{new Date(agenda.fechaHora).toLocaleString('es-CR')}</p>
+        </div>
+        <div className={styles['info-card']}>
+          <h2>Tipo de Sesión</h2>
+          <p>{agenda.tipo.replace('SessionType.', '')}</p>
+        </div>
+        <div className={styles['info-card']}>
+          <h2>Modalidad</h2>
+          <p>{agenda.modalidad.replace('Modalidad.', '')}</p>
+        </div>
+        <div className={styles['info-card']}>
+          <h2>Lugar / Link</h2>
+          <p>{agenda.lugar || agenda.link || 'No especificado'}</p>
+        </div>
+        <div className={styles['info-card']}>
+          <h2>Convocados</h2>
+          <p>{convocados}</p>
+        </div>
       </div>
 
-      <h2 style={{ marginTop: 40 }}>Puntos</h2>
+      <h2 className={styles.subtitulo}>Puntos</h2>
       {agenda.puntos.length > 0 ? (
-        <ul style={{ padding: 0, marginTop: 10 }}>
-          {agenda.puntos.map(p => (
-            <li key={p.id_Punto} style={{
-              marginBottom: 16,
-              padding: 12,
-              background: '#222',
-              borderRadius: 6,
-              border: '1px solid #333'
-            }}>
-              <p><strong>{p.titulo}</strong></p>
-              <p>Tipo: {p.tipo.replace('PuntoType.', '')}</p>
-              <p>Duración: {p.duracionMin} min</p>
-              <p>Expositor: {p.expositorId}</p>
-            </li>
+        <div className={styles['puntos-container']}>
+          {agenda.puntos.map((punto) => (
+            <div key={punto.id_Punto} className={styles['punto-card']}>
+              <h3>{punto.titulo}</h3>
+              <p><strong>Tipo:</strong> {punto.tipo.replace('PuntoType.', '')}</p>
+              <p><strong>Duración:</strong> {punto.duracionMin} min</p>
+              <p><strong>Expositor:</strong> {punto.expositorId}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p style={{ color: '#aaa', marginTop: 10 }}>No hay puntos definidos.</p>
+        <div className={styles.noPuntos}>
+          <p>No hay puntos definidos.</p>
+        </div>
       )}
     </div>
   );
