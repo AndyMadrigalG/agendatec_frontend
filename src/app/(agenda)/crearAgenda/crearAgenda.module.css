@@ -24,7 +24,7 @@
     margin: 0 !important;
   }
 
-  .formColumns {
+  .formColumns{
     flex-direction: column !important;
     width: 100% !important;
     align-items: center !important;
@@ -34,6 +34,7 @@
   .columna {
     margin-top: 20px !important;
     margin-left: 0 !important;
+    
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
@@ -62,13 +63,14 @@
   height: 100%;
 }
 
-.menu {
+.menu{
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 70%;
   border-bottom: rgb(91, 91, 91) 1px solid;
   padding-bottom: 20px;
+
 }
 
 .menu h2 {
@@ -84,10 +86,10 @@
   width: 70%;
 }
 
-.form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+.form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .formColumns {
@@ -97,22 +99,22 @@
 }
 
 .columna {
-  display: flex;
-  width: 50%;
-  flex-direction: column;
-  margin-top: 50px;
-  margin-left: 60px;
-  justify-content: start;
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    margin-top: 50px;
+    margin-left: 60px;
+    justify-content: start;
 }
 
 .columna label {
-  margin-bottom: 10px;
-  font-size: 22px;
+    margin-bottom: 10px;
+    font-size: 22px;
 }
 
 .columna input {
-  width: 80%;
-  height: 32px;
+    width: 80%;
+    height: 32px;
 }
 
 .izquierda input {
@@ -120,51 +122,58 @@
 }
 
 .columna select {
-  width: 80%;
-  height: 40px;
-  color: white;
-  padding-left: 8px;
-  padding-right: 8px;
-  background-color: var(--background);
-  border: 2px solid rgb(126, 126, 126);
-  border-radius: 8px;
-  font-size: 15px;
-  margin-bottom: 40px;
+    width: 80%;
+    height: 40px;
+    color: white;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: var(--background);
+    border: 2px, rgb(126, 126, 126);
+    border-style:solid;
+    margin: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.2s;
+    margin-bottom: 40px;
 }
 
-.columna select:focus {
+.columna select:focus{
   transform: scale(1.02);
-  border-color: white;
+  border-color: rgb(255, 255, 255);
   outline: none;
 }
 
+
 .columna select option {
-  color: white;
-  background-color: var(--background);
+    color: white;
+    background-color: var(--background);
 }
 
 .addPuntoButton {
-  margin-right: 8px;
-  margin-bottom: 10px;
-  display: inline-flex;
-  width: 165px;
-  height: 45px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 2px solid var(--borderInputColor);
-  border-radius: 12px;
-  background-color: var(--background);
-  font-family: sans-serif;
-  font-size: 14px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+      margin-right: 8px;
+      margin-bottom: 10px;
+      display: inline-flex;
+      width: 165px;
+      height: 45px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 2px solid var(--borderInputColor);
+      border-radius: 12px;
+      background-color: var(--background);
+      font-family: sans-serif;
+      font-size: 14px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
 }
 
+
+
 .addPuntoButton:hover {
-  background-color: #7c6ef650;
+  background-color: #7c6ef650
 }
+
 
 .miembrosButton {
   width: 250px;
@@ -175,7 +184,8 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-left: 5px;
+  transition: 0.2s;
+  margin-left: 5px; 
   margin-bottom: 20px;
 }
 
@@ -188,7 +198,9 @@
   border: 3px solid green;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
 }
+
 
 .botonesContainer {
   display: flex;
@@ -215,18 +227,23 @@
 }
 
 .guardarButton:hover {
-  background-color: green;
+  background-color: green
 }
 
 .listaPuntos {
   width: 90%;
-  height: 100px;
+  height:100px;
   overflow-y: auto;
   margin-top: 20px;
   border-radius: 8px;
 }
 
+.derecha input {
+  margin-bottom: 10px;
+}
+
 .listaMiembros {
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
   width: 88%;
@@ -234,61 +251,44 @@
   overflow-y: auto;
   margin: 0px;
   background-color: var(--background);
+
 }
 
 .miembro {
-  padding: 20px 10px;
-  width: 94%;
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid #ffffff1d;
-  background-color: var(--background);
-  list-style: none;
-  margin: 0;
-  justify-content: space-between;
+    padding: 20px 10px 20px 10px;
+    width: 94%;
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #ffffff1d;
+    background-color: var(--background);
+    list-style: none;
+    margin: 0;
+    justify-content: space-between;
 }
 
 .miembro input {
-  width: 20px;
-  height: 20px;
-  margin: 0;
+  
+    width: 20px;
+    height: 20px;
+    margin: 0;
 }
 
-.listaPuntos::-webkit-scrollbar,
-.listaMiembros::-webkit-scrollbar {
-  width: 8px;
+
+.listaPuntos::-webkit-scrollbar, .listaMiembros::-webkit-scrollbar {
+    width: 8px;
 }
 
-.listaPuntos::-webkit-scrollbar-track,
-.listaMiembros::-webkit-scrollbar-track {
-  background: #23232b;
-  border-radius: 8px;
+.listaPuntos::-webkit-scrollbar-track, .listaMiembros::-webkit-scrollbar-track {
+    background: #23232b;
+    border-radius: 8px;
 }
 
-.listaMiembros::-webkit-scrollbar-thumb,
-.listaPuntos::-webkit-scrollbar-thumb {
-  background: var(--buttonColor);
-  border-radius: 8px;
+.listaMiembros::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
+    background: var(--buttonColor);
+    border-radius: 8px;
 }
 
-.listaMiembros::-webkit-scrollbar-thumb:hover,
-.listaPuntos::-webkit-scrollbar-thumb:hover {
-  background: #6257c4;
-}
 
-.convocarOpciones {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
-.radioOption {
-  display: flex;
-  align-items: center;
-  margin: 5px 0;
-  font-size: 16px;
-}
-
-.radioOption input {
-  margin-right: 10px;
+.listaMiembros::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
+    background: #6257c4;
 }

@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter, usePathname } from 'next/navigation';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function CrearAgendaPage() {
   const router = useRouter();
@@ -16,28 +15,32 @@ export default function CrearAgendaPage() {
 
   const [loading, setLoading] = useState(true);
   const [miembros, setMiembros] = useState<{ id: number; nombre: string }[]>([]);
+  const [busqueda, setBusqueda] = useState('');
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
-  const [modalidad, setModalidad] = useState('Presencial');
-  const [juntaDirectiva, setJuntaDirectiva] = useState(true);
-  const [otrosConvocados, setOtrosConvocados] = useState('');
-  const [puntos, setPuntos] = useState<any[]>([]);
 
   const tipoSesion = [
     { value: 'ordinaria', label: 'Ordinaria' },
     { value: 'extraordinaria', label: 'Extraordinaria' }
   ];
-  const modalidades = ['Presencial', 'Remota', 'Híbrida'];
 
   const [formulario, setFormulario] = useState({
-    numeroSession: '',
+    nombre: '',
     fecha: '',
     tipo: '',
+    convocados: [] as string[],
     lugar: '',
+    puntos: [] as any[],
   });
 
-  const camposVacios = Object.values(formulario).some((valor) =>
-    typeof valor === 'string' && valor.trim() === ''
-  ) || (!juntaDirectiva && otrosConvocados.trim() === '');
+  const camposVacios = Object.values(formulario).some((valor) => {
+    if (typeof valor === 'string') {
+      if (valor.trim() === '' || seleccionados.length === 0) {
+        return true;
+      }
+      return valor.trim() === '';
+    }
+    return false;
+  });
 
   const handleCrearPunto = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -50,12 +53,12 @@ export default function CrearAgendaPage() {
 
   const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (camposVacios) {
       Swal.fire({
         icon: 'error',
         title: 'Campos vacíos',
-        text: 'Complete todos los campos y la convocatoria.',
+        text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+        confirmButtonText: 'Aceptar',
         confirmButtonColor: '#7b6ef6',
         background: 'var(--background)',
         color: '#f9fafb',
@@ -66,172 +69,232 @@ export default function CrearAgendaPage() {
     Swal.fire({
       title: 'Guardando agenda...',
       allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
       background: 'var(--background)',
       color: '#f9fafb',
+      didOpen: () => {
+        Swal.showLoading();
+      }
     });
 
     try {
-      const puntosGuardados = JSON.parse(localStorage.getItem('puntosAgenda') || '[]');
-
       const nuevaAgenda = {
-        numero: formulario.numeroSession,
+        numero: formulario.nombre,
         tipo: formulario.tipo === 'ordinaria' ? 'SessionType.Ordinaria' : 'SessionType.Extraordinaria',
         fechaHora: new Date(formulario.fecha).toISOString(),
-        modalidad: modalidad === 'Presencial' ? 'Modalidad.Presencial' : 'Modalidad.Virtual',
+        modalidad: 'Modalidad.Presencial',
         lugar: formulario.lugar,
         link: '',
-        convocarMiembros: juntaDirectiva ? seleccionados : otrosConvocados,
-        juntaDirectiva,
-        puntos: puntosGuardados,
+        convocarMiembros: '',
+        juntaDirectiva: true,
+        puntos: [], // Agrega puntos si los tienes
       };
 
-      const res = await fetch(`${BACKEND_URL}/agendas`, {
+      const res = await fetch('/api/agendas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(nuevaAgenda),
       });
 
-      if (!res.ok) throw new Error('Fallo al guardar');
+      if (!res.ok) throw new Error('Error al guardar');
 
-      localStorage.removeItem('puntosAgenda');
       Swal.close();
+
       Swal.fire({
         icon: 'success',
-        title: 'Agenda creada con éxito',
+        title: 'Agenda guardada con éxito',
+        text: 'Se ha guardado la agenda correctamente.',
+        confirmButtonText: 'Aceptar',
         confirmButtonColor: '#7b6ef6',
-      }).then(() => router.push('/agendaInicio'));
+        background: 'var(--background)',
+        color: '#f9fafb',
+      }).then(() => {
+        router.push('/agendaInicio');
+      });
 
     } catch (error) {
+      console.error(error);
       Swal.fire({
         icon: 'error',
-        title: 'Error al guardar agenda',
-        text: 'No se pudo conectar al backend.',
+        title: 'Error al guardar',
+        text: 'Ocurrió un problema al guardar la agenda.',
+        confirmButtonText: 'Aceptar',
         confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
       });
     }
   };
 
-  useEffect(() => {
-    const cargarMiembros = async () => {
-      try {
-        const res = await fetch(`${BACKEND_URL}/usuarios/miembros-junta`);
-        const data = await res.json();
-        setMiembros(data);
-      } catch {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al cargar miembros',
-          text: 'No se pudieron obtener los miembros.',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarMiembros();
-
-    const puntosGuardados = localStorage.getItem('puntosAgenda');
-    if (puntosGuardados) {
-      try {
-        setPuntos(JSON.parse(puntosGuardados));
-      } catch {
-        setPuntos([]);
-      }
+  const handleCrear = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (camposVacios) {
+      Swal.fire({
+        cancelButtonText: 'Aceptar',
+        confirmButtonText: 'Cancelar',
+        icon: 'error',
+        title: 'Campos vacíos',
+        text: 'Asegúrese de que todos los campos estén llenos y tengan la información adecuada.',
+        confirmButtonColor: 'var(--buttonColor)',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return;
     }
+
+    Swal.fire({
+      icon: 'info',
+      title: 'Enviar convocatoria.',
+      showCancelButton: true,
+      text: 'Favor de enviar la convocatoria a los miembros activos de la junta. Una vez enviada, no se podrá editar la agenda.',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Enviar',
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#7b6ef6',
+      background: 'var(--background)',
+      color: '#f9fafb',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push('/');
+      }
+    });
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setMiembros([
+        { id: 1, nombre: 'Juan Perez' },
+        { id: 2, nombre: 'Ana Gómez' },
+        { id: 3, nombre: 'Luis Díaz' },
+      ]);
+      setLoading(false);
+    }, 1200);
   }, []);
+
+  const miembrosFiltrados = miembros.filter(m =>
+    m.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
   const handleCheck = (id: number) => {
     setSeleccionados(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter(selId => selId !== id)
+        : [...prev, id]
     );
   };
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.menu}>
-        <h2>Crear Agenda</h2>
-      </div>
+    <div>
+      <div className={styles.mainContainer}>
+        <div className={styles.menu}>
+          <h2>Crear Agenda</h2>
+        </div>
 
-      <div className={styles.formContainer}>
-        <form className={styles.form}>
-          <div className={styles.formColumns}>
-            <div className={`${styles.columna} ${styles.izquierda}`}>
-              <label>Número:</label>
-              <input name="numeroSession" value={formulario.numeroSession} onChange={handleChange} />
+        <div className={styles.formContainer}>
+          <form className={styles.form}>
+            <div className={styles.formColumns}>
+              <div className={`${styles.columna} ${styles.izquierda}`}>
+                <label htmlFor="nombre">Nombre de la Agenda:</label>
+                <input
+                  placeholder='Digite el nombre de la agenda'
+                  value={formulario.nombre}
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  onChange={handleChange}
+                />
 
-              <label>Fecha:</label>
-              <input type="date" name="fecha" value={formulario.fecha} onChange={handleChange} />
+                <label htmlFor="fecha">Fecha de Inicio:</label>
+                <input
+                  value={formulario.fecha}
+                  className={styles.fechaInput}
+                  type="date"
+                  id="fecha"
+                  name="fecha"
+                  onChange={handleChange}
+                />
 
-              <label>Tipo:</label>
-              <select name="tipo" value={formulario.tipo} onChange={handleChange}>
-                <option value="">Seleccionar tipo</option>
-                {tipoSesion.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-              </select>
+                <label htmlFor="tipo">Tipo de Sesión</label>
+                <select
+                  value={formulario.tipo}
+                  id='tipo'
+                  name='tipo'
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccionar el tipo</option>
+                  {tipoSesion.map((tipo) => (
+                    <option key={tipo.value} value={tipo.value}>
+                      {tipo.label}
+                    </option>
+                  ))}
+                </select>
 
-              <label>Modalidad:</label>
-              <select value={modalidad} onChange={e => setModalidad(e.target.value)}>
-                {modalidades.map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
+                <label htmlFor="lugar">Lugar de Reunión</label>
+                <input
+                  placeholder='Digite el lugar de la reunión'
+                  value={formulario.lugar}
+                  type="text"
+                  id='lugar'
+                  name='lugar'
+                  onChange={handleChange}
+                />
 
-              <label>Lugar / Link de la sesión:</label>
-              <input name="lugar" value={formulario.lugar} onChange={handleChange} />
-
-              <label>Puntos:</label>
-              <div className={styles.listaPuntos}>
-                {puntos.map((punto, index) => (
-                  <button key={index} className={styles.addPuntoButton}>
+                <label htmlFor="puntos">Puntos</label>
+                <div className={styles.listaPuntos}>
+                  <button className={styles.addPuntoButton}>
                     <Image src={editIcon} alt="Editar Punto" width={20} height={20} />
-                    {punto.titulo || `Punto ${index + 1}`}
+                    Punto 1
                   </button>
-                ))}
-                <button onClick={handleCrearPunto} className={styles.addPuntoButton}>
-                  <Image src={addIcon} alt="Agregar" width={20} height={20} />
-                  Agregar Punto
-                </button>
-              </div>
-            </div>
 
-            <div className={`${styles.columna} ${styles.derecha}`}>
-              <label>Convocar miembros:</label>
-              <div style={{ marginBottom: '20px' }}>
-                <label>
-                  <input
-                    type="radio"
-                    name="convocarTipo"
-                    checked={juntaDirectiva}
-                    onChange={() => setJuntaDirectiva(true)}
-                  />
-                  {' '} Miembros de la Junta Directiva
-                </label>
-                <br />
-                <label>
-                  <input
-                    type="radio"
-                    name="convocarTipo"
-                    checked={!juntaDirectiva}
-                    onChange={() => setJuntaDirectiva(false)}
-                  />
-                  {' '} Otros:
-                </label>
-                {!juntaDirectiva && (
-                  <input
-                    type="text"
-                    placeholder="correo1, correo2..."
-                    value={otrosConvocados}
-                    onChange={e => setOtrosConvocados(e.target.value)}
-                  />
-                )}
+                  <button onClick={handleCrearPunto} className={styles.addPuntoButton}>
+                    <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
+                    Agregar Punto
+                  </button>
+                </div>
               </div>
 
-              <div className={styles.botonesContainer}>
-                <button onClick={handleGuardar} className={styles.guardarButton}>Guardar</button>
+              <div className={`${styles.columna} ${styles.derecha}`}>
+                <label htmlFor="miembros">Convocar Miembros</label>
+                <input
+                  id='busquedaInput'
+                  type="text"
+                  placeholder="Buscar miembro..."
+                  value={busqueda}
+                  onChange={e => setBusqueda(e.target.value)}
+                />
+                <div className={styles.listaMiembros}>
+                  {loading ? (
+                    <p>Cargando miembros...</p>
+                  ) : miembrosFiltrados.length === 0 ? (
+                    <p>No se encontró ningún miembro</p>
+                  ) : (
+                    <ul style={{ listStyleType: 'none', margin: 0, padding: 0, width: '100%' }}>
+                      {miembrosFiltrados.map(m => (
+                        <li className={styles.miembro} key={m.id}>
+                          <span>{m.nombre}</span>
+                          <input
+                            type="checkbox"
+                            checked={seleccionados.includes(m.id)}
+                            onChange={() => handleCheck(m.id)}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className={styles.botonesContainer}>
+                  <button className={styles.guardarButton} onClick={handleGuardar}>Guardar</button>
+                  <button className={styles.crearButton} onClick={handleCrear}>Crear</button>
+                </div>
               </div>
+
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
