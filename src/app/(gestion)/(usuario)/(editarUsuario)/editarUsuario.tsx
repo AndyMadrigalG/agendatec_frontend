@@ -149,6 +149,28 @@ export default function ModalEditarUsuario({
         return;
       }
 
+      // Si se desmarcó la opción de miembro de junta y era miembro inicialmente, eliminarlo
+      if (!esMiembroJunta && initialMiembroJunta) {
+        const miembroResponse = await fetch(
+          `${BACKEND_URL}/miembro-junta/${initialMiembroJunta.id_Miembro_De_Junta}`,
+          {
+            method: 'DELETE',
+          }
+        );
+
+        if (!miembroResponse.ok) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar al miembro de la junta. Intente nuevamente.',
+            confirmButtonColor: '#7b6ef6',
+            background: 'var(--background)',
+            color: '#f9fafb',
+          });
+          return;
+        }
+      }
+
       // Si es miembro de junta, manejar creación o actualización
       if (esMiembroJunta) {
         if (!initialMiembroJunta) {

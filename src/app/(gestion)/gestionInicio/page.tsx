@@ -126,11 +126,7 @@ export default function GestionUsuarios() {
       setModalVerAbierto(false);
   };
 
-  const handleEliminarDeJunta = () => {
-    if (!usuarioSeleccionado) return;
-    
-    setMiembroSeleccionado(null);
-  };
+  
 
   const handleEditarClick = () => {
     setModalVerAbierto(false);
@@ -207,7 +203,6 @@ export default function GestionUsuarios() {
           miembroJunta={miembroSeleccionado}
           onEditar={handleEditarClick}
           onEliminar={handleEliminarUsuario}
-          onEliminarDeJunta={handleEliminarDeJunta}
         />
       )}
       {/* Modal para editar usuario */}
