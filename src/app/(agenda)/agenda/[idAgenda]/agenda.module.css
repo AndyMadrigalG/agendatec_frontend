@@ -119,8 +119,10 @@
 }
 
 .addPuntoButton {
+      margin-right: 8px;
+      margin-bottom: 10px;
       display: inline-flex;
-      width: 165px;
+      width: 450px;
       height: 45px;
       align-items: center;
       justify-content: center;
@@ -181,10 +183,14 @@
   background-color: var(--hoverButton);
 }
 
-.guardarButton:hover {
-  background-color: green;
+.cancelarButton:hover {
+  background-color: red;
 }
 
+.cancelarButton {
+  background-color: var(--background);
+  border: 2px solid red;
+}
 
 .form p {
     color: gray;
@@ -197,4 +203,47 @@
     max-width: 400px; 
     word-break: break-word;
     white-space: normal;
+}
+
+.listaPuntos {
+  width: 90%;
+  height:110px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  padding-left: 5px;
+}
+
+.listaPuntos p {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+}
+
+.listaMiembros {
+  max-width: 400px;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.listaPuntos::-webkit-scrollbar, .listaMiembros::-webkit-scrollbar {
+    width: 8px;
+}
+
+.listaPuntos::-webkit-scrollbar-track, .listaMiembros::-webkit-scrollbar-track {
+    background: #23232b;
+    border-radius: 8px;
+}
+
+.listaMiembros::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
+    background: var(--buttonColor);
+    border-radius: 8px;
+}
+
+
+.listaMiembros::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
+    background: #6257c4;
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; 
 import { useRouter } from 'next/navigation';
 
-const BACKEND_URL = 'http://localhost:3000'; // Cambia esto por tu URL de backend
+const BACKEND_URL = 'http://localhost:8080'; // Cambia esto por tu URL de backend
 
 export default function AgendaPage() {
     const router = useRouter();

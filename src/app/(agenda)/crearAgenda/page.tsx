@@ -203,7 +203,7 @@ export default function CrearAgendaPage() {
                                     
 
                                     <button className={styles.addPuntoButton}>
-                                        <Image src={editIcon} alt="Agregar Punto" width={20} height={20} />
+                                        <Image src={editIcon} alt="Editar Punto" width={20} height={20} />
                                         Punto 1
                                     </button>  
 
