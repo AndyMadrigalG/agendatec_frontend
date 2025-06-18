@@ -110,7 +110,7 @@ export default function CrearAgendaPage() {
 
             }).then((result) => {
                 if (result.isConfirmed) {
-                    router.push('/');
+                    router.push('/AgendaInicio');
                 } else if (result.isDismissed) {
 
                 }

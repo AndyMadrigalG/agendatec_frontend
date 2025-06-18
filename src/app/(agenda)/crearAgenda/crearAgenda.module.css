@@ -51,6 +51,13 @@
   .botonesContainer button {
     width: 90% !important;
   }
+  
+  .listaPuntos {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 }
 
 .mainContainer {
@@ -232,10 +239,11 @@
 
 .listaPuntos {
   width: 90%;
-  height:100px;
+  height:110px;
   overflow-y: auto;
   margin-top: 20px;
   border-radius: 8px;
+  padding-left: 5px;
 }
 
 .derecha input {

@@ -37,6 +37,7 @@
   background-color: var(--buttonColor);
   color: white;
   cursor: pointer;
+  border: none;
 }
 
 .menu button:hover {

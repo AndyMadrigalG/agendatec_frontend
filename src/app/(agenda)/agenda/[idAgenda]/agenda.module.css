@@ -51,6 +51,13 @@
   .botonesContainer button {
     width: 90% !important;
   }
+
+  .listaPuntos {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 }
 
 .mainContainer {
@@ -122,7 +129,7 @@
       margin-right: 8px;
       margin-bottom: 10px;
       display: inline-flex;
-      width: 450px;
+      width: 85%;
       height: 45px;
       align-items: center;
       justify-content: center;
@@ -177,6 +184,7 @@
 
 .crearButton {
   background-color: var(--buttonColor);
+  border: none;
 }
 
 .crearButton:hover {
@@ -223,27 +231,43 @@
   font-size: 18px;
 }
 
-.listaMiembros {
-  max-width: 400px;
+.listaConvocados {
+  padding-left: 5px;
+  margin-top: 10px;
+  width: 90%;
+  height: 110px;
   word-break: break-word;
   white-space: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.listaPuntos::-webkit-scrollbar, .listaMiembros::-webkit-scrollbar {
+.listaConvocados p {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+  margin: 10px 0px 10px 20px;
+  margin-right: 20px;
+}
+
+
+.listaPuntos::-webkit-scrollbar, .listaConvocados::-webkit-scrollbar {
     width: 8px;
 }
 
-.listaPuntos::-webkit-scrollbar-track, .listaMiembros::-webkit-scrollbar-track {
+.listaPuntos::-webkit-scrollbar-track, .listaConvocados::-webkit-scrollbar-track {
     background: #23232b;
     border-radius: 8px;
 }
 
-.listaMiembros::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
+.listaConvocados::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
     background: var(--buttonColor);
     border-radius: 8px;
 }
 
 
-.listaMiembros::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
+.listaConvocados::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
     background: #6257c4;
 }
