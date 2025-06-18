@@ -5,7 +5,7 @@ import Image from 'next/image';
 import logo from '/public/logo.png';
 import {useState} from 'react';
 
-// Change variable on .env for local testing with the backend
+// Change variable on .env for testing with the backend
 // otherwise is going to use the prod URL
 const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
@@ -13,6 +13,7 @@ export default function LoginPage() {
 
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
+
 
   const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsuario(e.target.value);
@@ -71,7 +72,7 @@ export default function LoginPage() {
                           <input 
                             id="email" 
                             type="text" 
-                            placeholder="Usuario"
+                            placeholder="Email"
                             onChange={handleUsuarioChange} 
                             required
                           />

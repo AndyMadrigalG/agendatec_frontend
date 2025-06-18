@@ -130,10 +130,10 @@ return (
             <div className={styles.right}>
                 <h2>Crear Cuenta</h2>
                 <form className={styles.form} onSubmit={handleSubmit}>
-                    <input  name="usuario" value={formulario.usuario} type="text" placeholder="Usuario" onChange={handleChange} />
-                    <input  name="contrasena" value={formulario.contrasena} type="password" placeholder="Contraseña" onChange={handleChange}/>
+                    <input  name="usuario" value={formulario.usuario} type="text" placeholder="Nombre Completo" onChange={handleChange} />
                     <input  name="correo" value={formulario.correo} type="text" placeholder="Correo Electronico" onChange={handleChange}/>
                     <input  name="telefono" value={formulario.telefono} type="number" placeholder="Telefono" onChange={handleChange}/>
+                    <input  name="contrasena" value={formulario.contrasena} type="password" placeholder="Contraseña" onChange={handleChange}/>
                     <button type="submit">Registrar</button>
                 </form>
             </div>
