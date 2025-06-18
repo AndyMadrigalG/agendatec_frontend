@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
 
-
   const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsuario(e.target.value);
   };
