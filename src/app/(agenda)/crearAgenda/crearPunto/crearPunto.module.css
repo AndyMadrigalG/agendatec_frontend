@@ -135,6 +135,35 @@
     height: 32px;
 }
 
+.columna textarea {
+    padding: 10px;
+    width: 80%;
+    height: 60px; 
+    max-height: 150px; 
+    overflow-y: auto; 
+    resize: none; 
+    margin-bottom: 40px;
+}
+
+.columna textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.columna textarea::-webkit-scrollbar-track {
+    background: #23232b;
+    border-radius: 8px;
+}
+
+.columna textarea::-webkit-scrollbar-thumb {
+    background: var(--buttonColor);
+    border-radius: 8px;
+}
+
+
+.columna textarea::-webkit-scrollbar-thumb:hover {
+    background: #6257c4;
+}
+
 .columna select {
     width: 80%;
     height: 40px;
