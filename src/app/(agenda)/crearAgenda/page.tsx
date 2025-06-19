@@ -4,10 +4,13 @@ import styles from './crearAgenda.module.css';
 import Image from 'next/image';
 import addIcon from '/public/addCircle.svg';
 import editIcon from '/public/editIcon.svg';
+import backIcon from '/public/backIcon.svg';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePuntos } from './puntosContext';
+import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
+import CrearPuntoPage from './crearPunto/page'; // Importa el contenido de CrearPuntoPage
 
 const BACKEND_URL = 'http://localhost:8080'; // URL del backend
 
@@ -27,19 +30,19 @@ export default function CrearAgendaPage() {
   const [miembros, setMiembros] = useState<Miembro[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
 
   const tipoSesion = [
-    { value: 'ordinaria', label: 'Ordinaria' },
-    { value: 'extraordinaria', label: 'Extraordinaria' },
+    { value: 'Ordinaria', label: 'Ordinaria' },
+    { value: 'Extraordinaria', label: 'Extraordinaria' },
   ];
 
   const [formulario, setFormulario] = useState({
-    nombre: '',
-    fecha: '',
+    numero: '',
+    fechaHora: '',
     tipo: '',
     convocados: [] as string[],
     lugar: '',
-    puntos: [] as any[],
   });
 
   const camposVacios = Object.values(formulario).some((valor) => {
@@ -52,6 +55,8 @@ export default function CrearAgendaPage() {
     return false;
   });
 
+  
+
   const handleCrearPunto = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push(`${pathname}/crearPunto`);
@@ -61,7 +66,7 @@ export default function CrearAgendaPage() {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
   };
 
-  const handleGuardar = (e: React.FormEvent) => {
+  const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
     if (camposVacios) {
       Swal.fire({
@@ -76,34 +81,110 @@ export default function CrearAgendaPage() {
       return;
     }
 
-    Swal.fire({
-      title: 'Guardando agenda...',
-      allowOutsideClick: false,
-      background: 'var(--background)',
-      color: '#f9fafb',
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+    const formularioCompleto = {
+        numero: formulario.numero,
+        fechaHora: formulario.fechaHora,
+        tipo: formulario.tipo,
+        lugar: formulario.lugar,
+    };
+
+    try {
+      const postAgenda = await fetch(`${BACKEND_URL}/agendas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formularioCompleto),
+      });
+
+      if (!postAgenda.ok) {
+        throw new Error('Error al guardar la agenda');
+      }
+
+      const data = await postAgenda.json();
+
+      const id_newAgenda = parseInt(data.id_Agenda);
+      console.log('Agenda guardada con ID:', id_newAgenda);
+
+      
+      const convocadosData = formulario.convocados.map((convocado) => ({
+        id_Convocado: parseInt(convocado),
+      }));
+
+      console.log('Convocados a guardar:', JSON.stringify(convocadosData));
+      
+      // Post Convocados
+      
+      const postConvocados = await fetch(`${BACKEND_URL}/agendas/${id_newAgenda}/convocados`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(convocadosData),
+      });
+
+      if (!postConvocados.ok) {
+        throw new Error('Error al guardar los convocados');
+      }
+
+      
+      // Post Puntos
+      for (const punto of puntos) {
+        const puntoData = {
+          expositorId: parseInt(punto.expositor, 10),
+          numeracion: punto.numeracion,
+          tipo: punto.tipo,
+          duracionMin: parseInt(punto.duracion, 10),
+          enunciado: punto.enunciado,
+          archivos: '',
+          contenido: '',
+          agendaId: id_newAgenda,
+        };
+
+        console.log('Punto a guardar:', JSON.stringify(puntoData));
+        
+      
+        const responsePuntos = await fetch(`${BACKEND_URL}/puntos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(puntoData),
+        });
+
+        if (!responsePuntos.ok) {
+          throw new Error('Error al guardar los puntos');
+        }
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Agenda guardada',
+        text: 'La agenda se ha guardado correctamente.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      }).then(() => {
+        router.push('/agendaInicio');
+      });
+
+    } catch (error) {
+      console.error('Error al guardar la agenda:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar la agenda',
+        text: 'Ocurrió un error al guardar la agenda.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+    }
   };
 
   const handleCrear = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const formularioCompleto = {
-      ...formulario,
-      puntos: puntos.map((punto) => ({
-        numeracion: punto.numeracion,
-        tipo: punto.tipo,
-        duracionMin: parseInt(punto.duracion, 10),
-        enunciado: punto.enunciado,
-        archivos: punto.archivos.map((archivo) => archivo.name),
-        contenido: '', 
-        expositorId: punto.expositor, 
-      })),
-    };
-
-    console.log('Formulario enviado:', formularioCompleto);
   }
 
   const fetchMiembros = async () => {
@@ -171,9 +252,42 @@ export default function CrearAgendaPage() {
     }));
   };
 
+  const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevenir el comportamiento predeterminado
+    setIsModalOpen(true); // Abrir el modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Cerrar el modal
+  };
+
+  const handleBack = () => {
+    Swal.fire({
+      title: '¿Desea regresar?',
+      text: 'Los cambios no guardados se perderán.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, regresar',
+      cancelButtonText: 'No, quedarme',
+      color: '#fff',
+      background: 'var(--background)',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push('/agendaInicio'); // Navega a agendaInicio
+      }
+    });
+  };
+
   return (
     <div>
       <div className={styles.mainContainer}>
+        {/* Flecha para regresar */}
+        <div className={styles.backButtonContainer}>
+          <button className={styles.backButton} onClick={handleBack}>
+            <Image src={backIcon} alt="Regresar" width={40} height={40} />
+          </button>
+        </div>
+
         <div className={styles.menu}>
           <h2>Crear Agenda</h2>
         </div>
@@ -182,23 +296,23 @@ export default function CrearAgendaPage() {
           <form className={styles.form}>
             <div className={styles.formColumns}>
               <div className={`${styles.columna} ${styles.izquierda}`}>
-                <label htmlFor="nombre">Nombre de la Agenda:</label>
+                <label htmlFor="numero">Nombre de la Agenda:</label>
                 <input
                   placeholder="Digite el nombre de la agenda"
-                  value={formulario.nombre}
+                  value={formulario.numero}
                   type="text"
-                  id="nombre"
-                  name="nombre"
+                  id="numero"
+                  name="numero"
                   onChange={handleChange}
                 />
 
-                <label htmlFor="fecha">Fecha de Inicio:</label>
+                <label htmlFor="fechaHora">Fecha de Inicio:</label>
                 <input
-                  value={formulario.fecha}
+                  value={formulario.fechaHora}
                   className={styles.fechaInput}
                   type="date"
-                  id="fecha"
-                  name="fecha"
+                  id="fechaHora"
+                  name="fechaHora"
                   onChange={handleChange}
                 />
 
@@ -233,11 +347,14 @@ export default function CrearAgendaPage() {
                   {puntos.map((punto, index) => (
                     <button key={index} className={styles.addPuntoButton}>
                       <Image src={editIcon} alt="Editar Punto" width={20} height={20} />
-                      {punto.numeracion}. {punto.enunciado} {/* Mostrar numeración y enunciado */}
+                      <p>{punto.numeracion}. {punto.enunciado}</p>
                     </button>
                   ))}
 
-                  <button onClick={handleCrearPunto} className={styles.addPuntoButton}>
+                  <button
+                    onClick={(e) => handleOpenModal(e)} // Llama a la función con el evento
+                    className={styles.addPuntoButton}
+                  >
                     <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
                     Agregar Punto
                   </button>
@@ -260,6 +377,30 @@ export default function CrearAgendaPage() {
                     <p>No se encontró ningún miembro</p>
                   ) : (
                     <ul style={{ listStyleType: 'none', margin: 0, padding: 0, width: '100%' }}>
+                      <li className={styles.miembro}>
+                        <span>Seleccionar todos</span>
+                        <input
+                          type="checkbox"
+                          className={styles.seleccionarTodo} 
+                          checked={seleccionados.length === miembros.length && miembros.length > 0}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSeleccionados(miembros.map((m) => m.id));
+                              setFormulario((prevFormulario) => ({
+                                ...prevFormulario,
+                                convocados: miembros.map((m) => m.id.toString()),
+                              }));
+                            } else {
+                              setSeleccionados([]);
+                              setFormulario((prevFormulario) => ({
+                                ...prevFormulario,
+                                convocados: [],
+                              }));
+                            }
+                          }}
+                        />
+                      </li>
+
                       {miembrosFiltrados.map((m) => (
                         <li className={styles.miembro} key={m.id}>
                           <span>{m.nombre} - {m.cargo}</span>
@@ -287,6 +428,13 @@ export default function CrearAgendaPage() {
           </form>
         </div>
       </div>
+
+      {/* Modal para CrearPunto */}
+      {isModalOpen && (
+        <Modal onClose={handleCloseModal}>
+          <CrearPuntoPage onClose={handleCloseModal} /> 
+        </Modal>
+      )}
     </div>
   );
 }

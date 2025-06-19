@@ -4,6 +4,8 @@ import styles from './agendaInicio.module.css';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import backIcon from '/public/backIcon.svg';
 
 const BACKEND_URL = 'http://localhost:8080'; // Cambia esto por tu URL de backend
 
@@ -114,9 +116,18 @@ export default function AgendaPage() {
         }
     };
 
+    const handleBack = () => {
+        router.push('/home');
+    };
+
     return (
         <div>
             <div className={styles.mainContainer}>
+                <div className={styles.backButtonContainer}>
+                    <button className={styles.backButton} onClick={handleBack}>
+                        <Image src={backIcon} alt="Regresar" width={40} height={40} />
+                    </button>
+                </div>
                 <div className={styles.menu}>
                     <h2>Agendas</h2>
                     <div className={styles.derecha}>

@@ -160,7 +160,7 @@
       margin-right: 8px;
       margin-bottom: 10px;
       display: inline-flex;
-      width: 165px;
+      width: 85%;
       height: 45px;
       align-items: center;
       justify-content: center;
@@ -241,7 +241,7 @@
   width: 90%;
   height:110px;
   overflow-y: auto;
-  margin-top: 20px;
+  margin-top: 10px;
   border-radius: 8px;
   padding-left: 5px;
 }
@@ -281,6 +281,15 @@
     margin: 0;
 }
 
+.listaPuntos p {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+}
+
 
 .listaPuntos::-webkit-scrollbar, .listaMiembros::-webkit-scrollbar {
     width: 8px;
@@ -299,4 +308,21 @@
 
 .listaMiembros::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
     background: #6257c4;
+}
+
+.backButtonContainer {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
 }

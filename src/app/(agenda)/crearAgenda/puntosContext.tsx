@@ -24,7 +24,7 @@ export const PuntosProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const agregarPunto = (punto: Omit<Punto, 'numeracion'>) => {
     const nuevoPunto = {
       ...punto,
-      numeracion: puntos.length + 1, // Asignar numeración basada en la longitud actual
+      numeracion: puntos.length + 1, 
     };
     setPuntos((prev) => [...prev, nuevoPunto]);
   };
