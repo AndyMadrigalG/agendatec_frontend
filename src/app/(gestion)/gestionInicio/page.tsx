@@ -3,6 +3,7 @@ import styles from './gestionInicio.module.css';
 import React, { useEffect, useState } from "react";
 import Image from 'next/image';
 import agregarMiembro from '/public/agregarMiembro.svg';
+import backIcon from '/public/backIcon.svg';
 import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
 import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
@@ -26,6 +27,8 @@ interface MiembroDeJunta {
 const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function GestionUsuarios() {
+  const router = useRouter();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [modalVerAbierto, setModalVerAbierto] = useState(false);
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
@@ -152,72 +155,85 @@ export default function GestionUsuarios() {
     await fetchUsuarios(); // Recargar los datos después de guardar cambios
   };
 
+  const handleBack = () => {
+    router.push('/home');
+  };
+
   return (
-    <div className={styles['miembros-container']}>
-      <h1 className={styles.titulo}>Gestión de Usuarios</h1>
-      
-      <div className={styles.searchContainer}>
-        <div className={styles.searchBar}>
-          <input
-            type="text"
-            placeholder="Buscar usuarios..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.searchInput}
-          />
-        </div>
+    <div>
+      <div className={styles.backButtonContainer}>
+        <button className={styles.backButton} onClick={handleBack}>
+          <Image src={backIcon} alt="Regresar" width={40} height={40} />
+        </button>
       </div>
 
-      {isLoading ? ( 
-        <div className={styles.noMembers}>
-          <p>Cargando usuarios...</p>
+      <div className={styles['miembros-container']}>
+        <h1 className={styles.titulo}>Gestión de Usuarios</h1>
+        
+        <div className={styles.searchContainer}>
+          <div className={styles.searchBar}>
+            <input
+              type="text"
+              placeholder="Buscar usuarios..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
         </div>
-      ) : filteredUsers.length === 0 ? (
-        <div className={styles.noMembers}>
-          <p>No se encontraron usuarios que coincidan con la búsqueda</p>
-        </div>
-      ) : (
-        <div className={styles['cards-container']}>
-          {filteredUsers.map((user) => (
-            <div key={user.Id_Usuario} className={`${styles.card} ${user.esMiembroJunta ? styles.miembroJunta : styles.usuarioRegular}`}>
-              <div className={styles['card-content']}>
-                <h2 className={styles.nombre}>Nombre: {user.nombre}</h2>
-                <p className={styles.rol}>Rol: {formatCargo(user.cargo)}</p>
-              </div>
-              <div className={styles['card-actions']}>
-                <button 
-                  className={styles['ver-btn']}
-                  onClick={() => handleVerUsuario(user)}
-                >
-                  Ver detalles
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
-      {/* Modal para ver usuario */}
-      {usuarioSeleccionado && (
-        <ModalVerUsuario
-          isOpen={modalVerAbierto}
-          onClose={() => setModalVerAbierto(false)}
-          usuario={usuarioSeleccionado}
-          miembroJunta={miembroSeleccionado}
-          onEditar={handleEditarClick}
-          onEliminar={handleEliminarUsuario}
-        />
-      )}
-      {/* Modal para editar usuario */}
-      {usuarioSeleccionado && (
-        <ModalEditarUsuario
-          isOpen={modalEditarAbierto}
-          onClose={() => setModalEditarAbierto(false)}
-          usuario={usuarioSeleccionado}
-          miembroJunta={miembroSeleccionado}
-          onSave={handleSaveUsuario}
-        />
-      )}
+        {isLoading ? ( 
+          <div className={styles.noMembers}>
+            <p>Cargando usuarios...</p>
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div className={styles.noMembers}>
+            <p>No se encontraron usuarios que coincidan con la búsqueda</p>
+          </div>
+        ) : (
+          <div className={styles['cards-container']}>
+            {filteredUsers.map((user) => (
+              <div key={user.Id_Usuario} className={`${styles.card} ${user.esMiembroJunta ? styles.miembroJunta : styles.usuarioRegular}`}>
+                <div className={styles['card-content']}>
+                  <h2 className={styles.nombre}>Nombre: {user.nombre}</h2>
+                  <p className={styles.rol}>Rol: {formatCargo(user.cargo)}</p>
+                </div>
+                <div className={styles['card-actions']}>
+                  <button 
+                    className={styles['ver-btn']}
+                    onClick={() => handleVerUsuario(user)}
+                  >
+                    Ver detalles
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Modal para ver usuario */}
+        {usuarioSeleccionado && (
+          <ModalVerUsuario
+            isOpen={modalVerAbierto}
+            onClose={() => setModalVerAbierto(false)}
+            usuario={usuarioSeleccionado}
+            miembroJunta={miembroSeleccionado}
+            onEditar={handleEditarClick}
+            onEliminar={handleEliminarUsuario}
+          />
+        )}
+        {/* Modal para editar usuario */}
+        {usuarioSeleccionado && (
+          <ModalEditarUsuario
+            isOpen={modalEditarAbierto}
+            onClose={() => setModalEditarAbierto(false)}
+            usuario={usuarioSeleccionado}
+            miembroJunta={miembroSeleccionado}
+            onSave={handleSaveUsuario}
+          />
+        )}
+      </div>
     </div>
+      
   );
 }
