@@ -7,7 +7,7 @@ import calendarImage from '/public/calendar.png';
 import gestionLogo from '/public/gestionLogo.png';
 import actasLogo from '/public/actas.png';
 import { useRouter } from 'next/navigation';
-import { BACKEND_URL } from '../../Constants/constants';
+import LogoutButton from "../logout/LogoutButton";
 
 export default function HomePage() {
     const router = useRouter();
@@ -18,7 +18,11 @@ export default function HomePage() {
 
     return (
         <div className={styles.principalContainer}>
-            <Image className={styles.logo} src={logo} alt="logo" />
+            <div className={styles.header}>
+                <Image className={styles.logo} src={logo} alt="logo" />
+                <LogoutButton />
+            </div>
+
             <div className={styles.container}>
                 <h1 className={styles.title}>Inicio</h1>
                 <div className={styles.menu}>

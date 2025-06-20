@@ -1,11 +1,15 @@
-
 .logo{
-  position: absolute; 
-  padding: 35px; 
-  width: 200px;
-  height: auto;
+    position: absolute;
+    width: 200px;
+    height: auto;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+}
 
 .container {
   text-align: center;
