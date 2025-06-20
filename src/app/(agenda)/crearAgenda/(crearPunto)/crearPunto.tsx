@@ -5,6 +5,7 @@ import { usePuntos } from '../puntosContext';
 import styles from './crearPunto.module.css';
 import Swal from 'sweetalert2';
 import { BACKEND_URL } from '../../../../Constants/constants';
+import { Punto } from '../puntosContext';
 
 interface Miembro {
   id: number;
@@ -14,11 +15,12 @@ interface Miembro {
 }
 
 interface CrearPuntoPageProps {
-  onClose: () => void; // Función para cerrar el modal
+  onClose: () => void; 
+  punto?: Punto | null;
 }
 
-export default function CrearPuntoPage({ onClose }: CrearPuntoPageProps) {
-  const { agregarPunto } = usePuntos(); // Usar el contexto
+export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) {
+  const { puntos, agregarPunto, setPuntos } = usePuntos(); 
 
   const tipos = [
     { value: 'aprobacion', label: 'Aprobación' },
@@ -27,13 +29,13 @@ export default function CrearPuntoPage({ onClose }: CrearPuntoPageProps) {
     { value: 'varios', label: 'Varios' },
   ];
 
-  const [enunciado, setEnunciado] = useState('');
-  const [duracion, setDuracion] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [archivos, setArchivos] = useState<File[]>([]);
-  const [expositor, setExpositor] = useState('');
-  const [miembros, setMiembros] = useState<Miembro[]>([]); // Estado para cargar los miembros
-  const [loading, setLoading] = useState(true); // Estado para mostrar el cargando
+  const [enunciado, setEnunciado] = useState(punto?.enunciado || '');
+  const [duracion, setDuracion] = useState(punto?.duracion || '');
+  const [tipo, setTipo] = useState(punto?.tipo || '');
+  const [archivos, setArchivos] = useState<File[]>(punto?.archivos || []);
+  const [expositor, setExpositor] = useState(punto?.expositor || '');
+  const [miembros, setMiembros] = useState<Miembro[]>([]); 
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const fetchMiembros = async () => {
@@ -121,20 +123,30 @@ export default function CrearPuntoPage({ onClose }: CrearPuntoPageProps) {
       return;
     }
 
-    const nuevoPunto = {
-      enunciado,
-      duracion,
-      tipo,
-      expositor,
-      archivos,
-    };
-
-    agregarPunto(nuevoPunto); // Agregar el punto al contexto
+    if (punto) {
+      // Actualizar el punto existente
+      const puntosActualizados = puntos.map((p) =>
+        p.numeracion === punto.numeracion
+          ? { ...p, enunciado, duracion, tipo, expositor, archivos }
+          : p
+      );
+      setPuntos(puntosActualizados);
+    } else {
+      // Crear un nuevo punto
+      const nuevoPunto = {
+        enunciado,
+        duracion,
+        tipo,
+        expositor,
+        archivos,
+      };
+      agregarPunto(nuevoPunto);
+    }
 
     Swal.fire({
       icon: 'success',
-      title: 'Punto creado con éxito',
-      text: 'Se ha creado el punto correctamente.',
+      title: punto ? 'Punto actualizado con éxito' : 'Punto creado con éxito',
+      text: punto ? 'Se ha actualizado el punto correctamente.' : 'Se ha creado el punto correctamente.',
       confirmButtonText: 'Aceptar',
       confirmButtonColor: '#7b6ef6',
       background: 'var(--background)',

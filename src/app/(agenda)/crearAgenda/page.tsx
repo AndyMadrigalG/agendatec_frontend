@@ -12,6 +12,7 @@ import { usePuntos } from './puntosContext';
 import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
 import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
 import { BACKEND_URL } from '../../../Constants/constants';
+import { Punto } from './puntosContext';
 
 interface Miembro {
   id: number;
@@ -23,13 +24,14 @@ interface Miembro {
 export default function CrearAgendaPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const { puntos, setPuntos} = usePuntos(); // Usar el contexto
+  const { puntos, setPuntos } = usePuntos();
 
   const [loading, setLoading] = useState(true);
   const [miembros, setMiembros] = useState<Miembro[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [seleccionados, setSeleccionados] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [puntoSeleccionado, setPuntoSeleccionado] = useState<Punto | null>(null); 
 
   const tipoSesion = [
     { value: 'Ordinaria', label: 'Ordinaria' },
@@ -163,7 +165,7 @@ export default function CrearAgendaPage() {
         }
       }
 
-      // Cerrar Swal de cargado y mostrar éxito
+      
       Swal.close();
       Swal.fire({
         icon: 'success',
@@ -180,7 +182,7 @@ export default function CrearAgendaPage() {
     } catch (error) {
       console.error('Error al guardar la agenda:', error);
 
-      // Cerrar Swal de cargado y mostrar error
+      
       Swal.close();
       Swal.fire({
         icon: 'error',
@@ -214,7 +216,7 @@ export default function CrearAgendaPage() {
 
       const data = await response.json();
 
-      // Mapear los datos al formato esperado
+      
       const miembrosFormateados = data.map((miembro: any) => ({
         id: miembro.usuario.id_Usuario,
         nombre: miembro.usuario.nombre,
@@ -246,7 +248,7 @@ export default function CrearAgendaPage() {
 
   useEffect(() => {
     return () => {
-      setPuntos([]); // Limpia los puntos cuando el componente se desmonte
+      setPuntos([]);
     };
   }, []);
 
@@ -255,12 +257,10 @@ export default function CrearAgendaPage() {
   );
 
   const handleCheck = (id: number) => {
-    // Actualizar la lista de seleccionados
     setSeleccionados((prev) =>
       prev.includes(id) ? prev.filter((selId) => selId !== id) : [...prev, id]
     );
 
-    // Actualizar la lista de convocados en el formulario
     setFormulario((prevFormulario) => ({
       ...prevFormulario,
       convocados: seleccionados.includes(id)
@@ -269,13 +269,15 @@ export default function CrearAgendaPage() {
     }));
   };
 
-  const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevenir el comportamiento predeterminado
-    setIsModalOpen(true); // Abrir el modal
+  const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
+    e.preventDefault(); 
+    setPuntoSeleccionado(punto || null); 
+    setIsModalOpen(true); 
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Cerrar el modal
+    setIsModalOpen(false);
+    setPuntoSeleccionado(null); 
   };
 
   const handleBack = () => {
@@ -298,7 +300,6 @@ export default function CrearAgendaPage() {
   return (
     <div>
       <div className={styles.mainContainer}>
-        {/* Flecha para regresar */}
         <div className={styles.backButtonContainer}>
           <button className={styles.backButton} onClick={handleBack}>
             <Image src={backIcon} alt="Regresar" width={40} height={40} />
@@ -362,14 +363,18 @@ export default function CrearAgendaPage() {
                 <label htmlFor="puntos">Puntos</label>
                 <div className={styles.listaPuntos}>
                   {puntos.map((punto, index) => (
-                    <button key={index} className={styles.addPuntoButton}>
+                    <button
+                      key={index}
+                      className={styles.addPuntoButton}
+                      onClick={(e) => handleOpenModal(e, punto)} 
+                    >
                       <Image src={editIcon} alt="Editar Punto" width={20} height={20} />
                       <p>{punto.numeracion}. {punto.enunciado}</p>
                     </button>
                   ))}
 
                   <button
-                    onClick={(e) => handleOpenModal(e)} // Llama a la función con el evento
+                    onClick={(e) => handleOpenModal(e)} 
                     className={styles.addPuntoButton}
                   >
                     <Image src={addIcon} alt="Agregar Punto" width={20} height={20} />
@@ -446,10 +451,12 @@ export default function CrearAgendaPage() {
         </div>
       </div>
 
-      {/* Modal para CrearPunto */}
       {isModalOpen && (
         <Modal onClose={handleCloseModal}>
-          <CrearPuntoPage onClose={handleCloseModal} /> 
+          <CrearPuntoPage
+            onClose={handleCloseModal}
+            punto={puntoSeleccionado}
+          />
         </Modal>
       )}
     </div>
