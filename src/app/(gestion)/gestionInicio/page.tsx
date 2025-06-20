@@ -8,6 +8,7 @@ import ModalVerUsuario from '../(usuario)/(verUsuario)/verUsuario';
 import ModalEditarUsuario from '../(usuario)/(editarUsuario)/editarUsuario';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
+import { BACKEND_URL } from '../../../Constants/constants';
 
 interface Usuario {
   Id_Usuario: number;
@@ -23,8 +24,6 @@ interface MiembroDeJunta {
   fecha_inicio: string;
   fecha_fin: string | null;
 }
-
-const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function GestionUsuarios() {
   const router = useRouter();

@@ -7,7 +7,7 @@ import editIcon from '/public/editIcon.svg';
 import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
-import { BACKEND_URL } from '@/Constants/constants';
+import { BACKEND_URL } from '../../../../Constants/constants';
 
 interface Agenda {
     id_Agenda: number | string | string[];
