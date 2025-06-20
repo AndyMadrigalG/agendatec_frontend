@@ -3,8 +3,9 @@
 import styles from './login.module.css';
 import Image from 'next/image';
 import logo from '/public/logo.png';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import { BACKEND_URL } from "../../../Constants/constants";
+import Swal from "sweetalert2";
 
 export default function LoginPage() {
 
@@ -34,16 +35,26 @@ export default function LoginPage() {
                 }),
             });
 
-            if (response.status === 400) {
-                console.error('Error en el login:', response.statusText);
-            } else {
+            if (response.status === 201 || response.status === 200) {
                 const data = await response.json();
                 if (data.idToken?.length > 0 && data.refreshToken?.length > 0) {
                     localStorage.setItem('idToken', data.idToken);
                     localStorage.setItem('refreshToken', data.refreshToken);
+                    localStorage.setItem('userEmail', data.email);
                 }
                 console.log('Login exitoso');
                 window.location.href = '/home';
+            } else {
+                console.error('Error en el login:', response.statusText);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Login inválido',
+                    text: 'Por favor ingrese un correo electrónico y contraseña válidos',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#7b6ef6',
+                    background: 'var(--background)',
+                    color: '#f9fafb',
+                });
             }
         } catch (error) {
             console.error('Error de red:', error);
@@ -68,7 +79,7 @@ export default function LoginPage() {
                           <input 
                             id="email" 
                             type="text" 
-                            placeholder="Usuario"
+                            placeholder="Email"
                             onChange={handleUsuarioChange} 
                             required
                           />
