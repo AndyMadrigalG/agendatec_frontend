@@ -34,8 +34,9 @@ export default function LoginPage() {
                     contrasena,
                 }),
             });
+            const data = await response.json();
 
-            if (response.status === 201 || response.status === 200) {
+            if (response.status === 201 && data.message !== 'Correo electrónico o contraseña inválidos') {
                 const data = await response.json();
                 if (data.idToken?.length > 0 && data.refreshToken?.length > 0) {
                     localStorage.setItem('idToken', data.idToken);
