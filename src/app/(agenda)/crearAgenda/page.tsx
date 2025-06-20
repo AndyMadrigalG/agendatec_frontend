@@ -24,7 +24,7 @@ interface Miembro {
 export default function CrearAgendaPage() {
   const router = useRouter();
   const pathname = usePathname();
-  const { puntos } = usePuntos(); // Usar el contexto
+  const { puntos, setPuntos} = usePuntos(); // Usar el contexto
 
   const [loading, setLoading] = useState(true);
   const [miembros, setMiembros] = useState<Miembro[]>([]);
@@ -55,8 +55,6 @@ export default function CrearAgendaPage() {
     return false;
   });
 
-  
-
   const handleCrearPunto = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     router.push(`${pathname}/crearPunto`);
@@ -82,13 +80,26 @@ export default function CrearAgendaPage() {
     }
 
     const formularioCompleto = {
-        numero: formulario.numero,
-        fechaHora: formulario.fechaHora,
-        tipo: formulario.tipo,
-        lugar: formulario.lugar,
+      numero: formulario.numero,
+      fechaHora: formulario.fechaHora,
+      tipo: formulario.tipo,
+      lugar: formulario.lugar,
     };
 
     try {
+      Swal.fire({
+        title: 'Guardando agenda...',
+        text: 'Por favor, espere mientras se guarda la agenda.',
+        background: 'var(--background)',
+        icon: 'info',
+        color: '#fff',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const postAgenda = await fetch(`${BACKEND_URL}/agendas`, {
         method: 'POST',
         headers: {
@@ -106,15 +117,13 @@ export default function CrearAgendaPage() {
       const id_newAgenda = parseInt(data.id_Agenda);
       console.log('Agenda guardada con ID:', id_newAgenda);
 
-      
       const convocadosData = formulario.convocados.map((convocado) => ({
         id_Convocado: parseInt(convocado),
       }));
 
       console.log('Convocados a guardar:', JSON.stringify(convocadosData));
-      
+
       // Post Convocados
-      
       const postConvocados = await fetch(`${BACKEND_URL}/agendas/${id_newAgenda}/convocados`, {
         method: 'POST',
         headers: {
@@ -127,7 +136,6 @@ export default function CrearAgendaPage() {
         throw new Error('Error al guardar los convocados');
       }
 
-      
       // Post Puntos
       for (const punto of puntos) {
         const puntoData = {
@@ -142,8 +150,7 @@ export default function CrearAgendaPage() {
         };
 
         console.log('Punto a guardar:', JSON.stringify(puntoData));
-        
-      
+
         const responsePuntos = await fetch(`${BACKEND_URL}/puntos`, {
           method: 'POST',
           headers: {
@@ -157,6 +164,8 @@ export default function CrearAgendaPage() {
         }
       }
 
+      // Cerrar Swal de cargado y mostrar éxito
+      Swal.close();
       Swal.fire({
         icon: 'success',
         title: 'Agenda guardada',
@@ -171,6 +180,9 @@ export default function CrearAgendaPage() {
 
     } catch (error) {
       console.error('Error al guardar la agenda:', error);
+
+      // Cerrar Swal de cargado y mostrar error
+      Swal.close();
       Swal.fire({
         icon: 'error',
         title: 'Error al guardar la agenda',
@@ -231,6 +243,12 @@ export default function CrearAgendaPage() {
 
   useEffect(() => {
     fetchMiembros();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      setPuntos([]); // Limpia los puntos cuando el componente se desmonte
+    };
   }, []);
 
   const miembrosFiltrados = miembros.filter((m) =>

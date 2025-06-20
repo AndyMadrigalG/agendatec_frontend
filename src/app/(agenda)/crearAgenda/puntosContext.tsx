@@ -14,6 +14,7 @@ interface Punto {
 interface PuntosContextProps {
   puntos: Punto[];
   agregarPunto: (punto: Omit<Punto, 'numeracion'>) => void;
+  setPuntos: (puntos: Punto[]) => void; // Agregar setPuntos al contexto
 }
 
 const PuntosContext = createContext<PuntosContextProps | undefined>(undefined);
@@ -30,7 +31,7 @@ export const PuntosProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   return (
-    <PuntosContext.Provider value={{ puntos, agregarPunto }}>
+    <PuntosContext.Provider value={{ puntos, agregarPunto, setPuntos }}>
       {children}
     </PuntosContext.Provider>
   );
