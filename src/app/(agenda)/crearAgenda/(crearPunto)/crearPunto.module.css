@@ -121,7 +121,7 @@
     flex-direction: column;
     margin-top: 50px;
     margin-left: 60px;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .columna label {
@@ -224,7 +224,7 @@
     margin-top: 70px;
     display: flex;
     justify-content: center;
-    align-items: end;    
+    align-items: flex-end;    
 }
 
 .form button{

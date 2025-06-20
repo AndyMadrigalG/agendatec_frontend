@@ -111,7 +111,7 @@
     flex-direction: column;
     margin-top: 50px;
     margin-left: 60px;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .columna label {
@@ -170,7 +170,7 @@
 .botonesContainer {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   width: 92%;
   margin-top: 60px;
