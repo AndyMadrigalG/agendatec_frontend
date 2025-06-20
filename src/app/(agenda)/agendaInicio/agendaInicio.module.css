@@ -37,6 +37,7 @@
   background-color: var(--buttonColor);
   color: white;
   cursor: pointer;
+  border: none;
 }
 
 .menu button:hover {
@@ -98,3 +99,19 @@
   font-size: 20px;
 }
 
+.backButtonContainer {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
+}

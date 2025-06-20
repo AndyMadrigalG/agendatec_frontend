@@ -31,10 +31,11 @@ interface Punto {
 
 interface Convocado {
     id_Convocado: string;
-    nombre: string;
-    apellido: string;
-    cargo: string;
-    agendaId: string | number | string[];
+    Convocado: {
+        nombre: string;
+        email: string;
+        telefono: string;
+    };
 }
 
 export default function AgendaPage() {
@@ -50,6 +51,7 @@ export default function AgendaPage() {
     });
 
     const [puntos, setPuntos] = useState<Punto[]>([]);
+    const [convocados, setConvocados] = useState<Convocado[]>([]); 
     const [loading, setLoading] = useState(true);
 
     const fetchAgenda = async (id: string) => {
@@ -115,7 +117,6 @@ export default function AgendaPage() {
         }
     };
 
-
     const fetchConvocados = async (id: string) => {
         try {
             const response = await fetch(`${BACKEND_URL}/agendas/${id}/convocados`, {
@@ -130,6 +131,7 @@ export default function AgendaPage() {
             }
 
             const data = await response.json();
+            setConvocados(data); 
             console.log('Convocados cargados:', data);
         } catch (error) {
             console.error('Error al cargar los convocados:', error);
@@ -149,6 +151,7 @@ export default function AgendaPage() {
         if (typeof idAgenda === 'string') {
             fetchAgenda(idAgenda);
             fetchPuntos(idAgenda);
+            fetchConvocados(idAgenda); // Cargar convocados
         }
     }, [idAgenda]);
 
@@ -179,7 +182,6 @@ export default function AgendaPage() {
 
     return (
         <div>
-
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
                     <h2>{loading ? 'Cargando agenda...' : `Agenda: ${agenda.numero}`}</h2>
@@ -221,7 +223,14 @@ export default function AgendaPage() {
 
                                     <label>Miembros Convocados:</label>
                                     <div className={styles.listaConvocados}>
-                                        
+                                        {convocados.map((convocado) => (
+                                            <p key={convocado.id_Convocado}>
+                                                {convocado.Convocado.nombre} - {convocado.Convocado.email}
+                                            </p>
+                                        ))}
+                                        <p>
+                                            {convocados.length === 0 ? 'No hay miembros convocados' : ''}
+                                        </p>
                                     </div>
                                 </div>
                             </div>

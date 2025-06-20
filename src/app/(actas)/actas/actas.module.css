@@ -108,3 +108,20 @@
 .descargarButton:hover {
   background-color: rgba(255, 255, 255, 0.059);
 }
+
+.backButtonContainer {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
+}

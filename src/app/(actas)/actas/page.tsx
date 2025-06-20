@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import downloadIcon from '/public/downloadIcon.svg';
+import backIcon from '/public/backIcon.svg';
 
 const data = [
     { id: 1, nombre: 'Acta de Junta 1', fecha: '2023-10-01' },
@@ -32,7 +33,9 @@ export default function ActasPage() {
     );
 
     
-    
+    const handleBack = () => {
+        router.push('/home');
+    };
 
     const handleDescargarActa = (id: number) => {
         // Lógica para descargar el acta
@@ -71,6 +74,11 @@ export default function ActasPage() {
 
     return (
         <div>
+            <div className={styles.backButtonContainer}>
+                <button className={styles.backButton} onClick={handleBack}>
+                    <Image src={backIcon} alt="Regresar" width={40} height={40} />
+                </button>
+            </div>
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
                     <h2>Actas</h2>
