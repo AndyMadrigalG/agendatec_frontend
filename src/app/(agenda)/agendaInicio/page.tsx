@@ -6,8 +6,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import backIcon from '/public/backIcon.svg';
-
-const BACKEND_URL = 'http://localhost:8080'; // Cambia esto por tu URL de backend
+import { BACKEND_URL } from '@/Constants/constants';
 
 export default function AgendaPage() {
     const router = useRouter();

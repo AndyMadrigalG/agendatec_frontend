@@ -7,8 +7,7 @@ import editIcon from '/public/editIcon.svg';
 import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
-
-const BACKEND_URL = 'http://localhost:8080';
+import { BACKEND_URL } from '@/Constants/constants';
 
 interface Agenda {
     id_Agenda: number | string | string[];

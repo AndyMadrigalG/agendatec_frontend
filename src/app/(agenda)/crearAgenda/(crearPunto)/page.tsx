@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePuntos } from '../puntosContext'; // Importar el contexto de puntos
+import { usePuntos } from '../puntosContext';
 import styles from './crearPunto.module.css';
 import Swal from 'sweetalert2';
+import { BACKEND_URL } from '@/Constants/constants';
 
 interface Miembro {
   id: number;
@@ -15,8 +16,6 @@ interface Miembro {
 interface CrearPuntoPageProps {
   onClose: () => void; // Función para cerrar el modal
 }
-
-const BACKEND_URL = 'http://localhost:8080';
 
 export default function CrearPuntoPage({ onClose }: CrearPuntoPageProps) {
   const { agregarPunto } = usePuntos(); // Usar el contexto
