@@ -11,8 +11,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { usePuntos } from './puntosContext';
 import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
 import CrearPuntoPage from './(crearPunto)/page'; // Importa el contenido de CrearPuntoPage
-
-const BACKEND_URL = 'http://localhost:8080'; // URL del backend
+import { BACKEND_URL } from '@/Constants/constants';
 
 interface Miembro {
   id: number;
