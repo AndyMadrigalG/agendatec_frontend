@@ -48,18 +48,13 @@ export default function CrearAgendaPage() {
 
   const camposVacios = Object.values(formulario).some((valor) => {
     if (typeof valor === 'string') {
-      if (valor.trim() === '' || seleccionados.length === 0) {
+      if (valor.trim() === '' || seleccionados.length === 0 || puntos.length === 0) {
         return true;
       }
       return valor.trim() === '';
     }
     return false;
   });
-
-  const handleCrearPunto = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    router.push(`${pathname}/crearPunto`);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormulario({ ...formulario, [e.target.name]: e.target.value });
@@ -116,13 +111,10 @@ export default function CrearAgendaPage() {
       const data = await postAgenda.json();
 
       const id_newAgenda = parseInt(data.id_Agenda);
-      console.log('Agenda guardada con ID:', id_newAgenda);
 
       const convocadosData = formulario.convocados.map((convocado) => ({
         id_Convocado: parseInt(convocado),
       }));
-
-      console.log('Convocados a guardar:', JSON.stringify(convocadosData));
 
       // Post Convocados
       const postConvocados = await fetch(`${BACKEND_URL}/agendas/${id_newAgenda}/convocados`, {
@@ -149,8 +141,6 @@ export default function CrearAgendaPage() {
           contenido: '',
           agendaId: id_newAgenda,
         };
-
-        console.log('Punto a guardar:', JSON.stringify(puntoData));
 
         const responsePuntos = await fetch(`${BACKEND_URL}/puntos`, {
           method: 'POST',
@@ -244,9 +234,6 @@ export default function CrearAgendaPage() {
 
   useEffect(() => {
     fetchMiembros();
-  }, []);
-
-  useEffect(() => {
     return () => {
       setPuntos([]);
     };
