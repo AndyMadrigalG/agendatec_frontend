@@ -11,7 +11,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { usePuntos } from './puntosContext';
 import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
 import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
-import { BACKEND_URL } from '@/Constants/constants';
+import { BACKEND_URL } from '../../../Constants/constants';
 
 interface Miembro {
   id: number;

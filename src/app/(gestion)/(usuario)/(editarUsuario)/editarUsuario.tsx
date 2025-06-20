@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import styles from './editarUsuario.module.css';
+import { BACKEND_URL } from '../../../../Constants/constants';
 
 interface Usuario {
   Id_Usuario: number;
@@ -25,8 +26,6 @@ interface ModalEditarUsuarioProps {
   miembroJunta: MiembroDeJunta | null;
   onSave: (usuario: Usuario, miembroJunta: MiembroDeJunta | null) => void;
 }
-
-const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
 
 export default function ModalEditarUsuario({
   isOpen,

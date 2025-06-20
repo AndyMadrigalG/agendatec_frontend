@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import backIcon from '/public/backIcon.svg';
-import { BACKEND_URL } from '@/Constants/constants';
+import { BACKEND_URL } from '../../../Constants/constants';
 
 export default function AgendaPage() {
     const router = useRouter();

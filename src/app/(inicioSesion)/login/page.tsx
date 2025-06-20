@@ -4,10 +4,7 @@ import styles from './login.module.css';
 import Image from 'next/image';
 import logo from '/public/logo.png';
 import {useState} from 'react';
-
-// Change variable on .env for local testing with the backend
-// otherwise is going to use the prod URL
-const BACKEND_URL = process.env.BACKEND_URL || 'https://agendatec-backend-371160271556.us-central1.run.app';
+import { BACKEND_URL } from "../../../Constants/constants";
 
 export default function LoginPage() {
 
