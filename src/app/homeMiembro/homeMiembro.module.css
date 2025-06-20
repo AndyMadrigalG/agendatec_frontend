@@ -1,0 +1,95 @@
+
+.logo{
+  position: absolute; 
+  padding: 35px; 
+  width: 200px;
+  height: auto;
+}
+
+
+.container {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: var(--background);
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 70px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    background-color: var(--buttonColor);
+    border: 1px solid  var(--buttonColor);
+    box-shadow: 30px 30px 30px rgba(0, 0, 0, 0.701);
+    border-radius: 8px;
+    width: 120px;
+    padding: 120px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    transition:  0.2s;
+    cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+    width: 150px;
+    height: 150px;
+  font-size: 20px;
+  margin-bottom: 60px;
+}
+
+.card span {
+    font-size: 30px;
+}
+
+.notifButton {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background-color: var(--buttonColor);
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.notifButton:hover {
+  background-color: var(--hoverButton);
+}
+
+.notifImage {
+  width: 24px;
+  height: 24px;
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: #e63946;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
