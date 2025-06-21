@@ -60,6 +60,13 @@
   }
 }
 
+/* Estilo para el icono del input */
+.fechaInput::-webkit-calendar-picker-indicator {
+    filter: invert(100%); /* Cambia el color del icono a blanco */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el icono */
+    margin-right: 5px; /* Agrega separación del borde derecho */
+}
+
 .mainContainer {
   padding-top: 80px;
   display: flex;
