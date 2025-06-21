@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 
-interface Punto {
+export interface Punto {
   enunciado: string;
   duracion: string;
   tipo: string;
@@ -14,7 +14,7 @@ interface Punto {
 interface PuntosContextProps {
   puntos: Punto[];
   agregarPunto: (punto: Omit<Punto, 'numeracion'>) => void;
-  setPuntos: (puntos: Punto[]) => void; // Agregar setPuntos al contexto
+  setPuntos: (puntos: Punto[]) => void;
 }
 
 const PuntosContext = createContext<PuntosContextProps | undefined>(undefined);

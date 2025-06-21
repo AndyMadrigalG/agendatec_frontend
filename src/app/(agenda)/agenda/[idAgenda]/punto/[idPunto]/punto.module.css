@@ -100,3 +100,20 @@
 .guardarBtn:hover {
     background: var(--hoverButton);
 }
+
+.votacionInput {
+  border-radius: 0px !important;
+  width: 35px !important;
+  height: 10px !important;
+  margin:  0 15px 0 15px;
+  border: 0 !important;
+  border-bottom: 1px solid #ffffff !important;
+}
+
+.votacionesContainer {
+  display: flex;
+  flex-direction: row;
+  padding-left: 40px;
+  width: 100%;
+  margin-bottom: 20px;
+}

@@ -4,6 +4,7 @@ import styles from './agenda.module.css';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import editIcon from '/public/editIcon.svg';
+import backIcon from '/public/backIcon.svg';
 import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
@@ -154,6 +155,12 @@ export default function AgendaPage() {
         }
     }, [idAgenda]);
 
+
+    const handlePuntoClick = (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        router.push(`/agenda/${idAgenda}/punto/${id}`);
+    };
+
     const handleCancelar = (e: React.FormEvent) => {
         e.preventDefault();
         Swal.fire({
@@ -179,8 +186,17 @@ export default function AgendaPage() {
         console.log('Guardar cambios en la agenda:', agenda);
     };
 
+    const handleBack = () => {
+        router.push('/agendaInicio');
+    };
+
     return (
         <div>
+            <div className={styles.backButtonContainer}>
+                <button className={styles.backButton} onClick={handleBack}>
+                    <Image src={backIcon} alt="Regresar" width={40} height={40} />
+                </button>
+            </div>
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
                     <h2>{loading ? 'Cargando agenda...' : `Agenda: ${agenda.numero}`}</h2>
@@ -203,6 +219,7 @@ export default function AgendaPage() {
                                     <div className={styles.listaPuntos}>
                                         {puntos.map((punto) => (
                                             <button
+                                                onClick = {handlePuntoClick(punto.id_Punto)}
                                                 key={punto.id_Punto}
                                                 className={styles.addPuntoButton}
                                             >
