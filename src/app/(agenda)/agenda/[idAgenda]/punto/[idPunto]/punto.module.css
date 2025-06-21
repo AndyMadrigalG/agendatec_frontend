@@ -117,3 +117,30 @@
   width: 100%;
   margin-bottom: 20px;
 }
+
+.timerContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 12px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 100;
+}
+
+.timerImage {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.timerText {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f9fafb;
+}
