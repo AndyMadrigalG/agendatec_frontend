@@ -51,7 +51,7 @@ export default function EditarPunto() {
 
     const fetchPunto = async (id: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/puntos/${idPunto}`, {
+            const response = await fetch(`${BACKEND_URL}/puntos/${idPunto}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
