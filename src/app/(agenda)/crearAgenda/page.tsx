@@ -40,7 +40,7 @@ export default function CrearAgendaPage() {
 
   const [formulario, setFormulario] = useState({
     numero: '',
-    fechaHora: '',
+    fechaHora: new Date().toISOString(),
     tipo: '',
     convocados: [] as string[],
     lugar: '',
@@ -313,12 +313,13 @@ export default function CrearAgendaPage() {
 
                 <label htmlFor="fechaHora">Fecha de Inicio:</label>
                 <input
-                  value={formulario.fechaHora}
-                  className={styles.fechaInput}
-                  type="date"
-                  id="fechaHora"
-                  name="fechaHora"
-                  onChange={handleChange}
+                    type="datetime-local"
+                    id="fechaHora"
+                    name="fechaHora"
+                    value={formulario.fechaHora}
+                    min={new Date().toISOString().slice(0, 16)}
+                    className={styles.fechaInput}
+                    onChange={handleChange}
                 />
 
                 <label htmlFor="tipo">Tipo de Sesion</label>
