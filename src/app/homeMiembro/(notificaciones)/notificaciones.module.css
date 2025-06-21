@@ -16,24 +16,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 600;
-  font-size: 18px;
   margin-bottom: 15px;
 }
 
-.closeButton {
+.title {
+  font-weight: bold;
+  font-size: 18px;
+  color: #ddd;
+}
+
+.clearBtn {
   background: none;
   border: none;
-  font-size: 18px;
+  color: #888;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   cursor: pointer;
-  color: #777;
-  transition: color 0.2s ease;
+  text-decoration: underline;
+  padding: 0;
+  line-height: 1;
+  margin-top: 2px;
 }
 
-.closeButton:hover {
-  color: #111;
+.clearBtn:hover {
+  color: #fff;
 }
 
+.clearIcon {
+  opacity: 0.8;
+}
 
 .notification {
   padding: 16px;
@@ -66,54 +79,10 @@
   color: gray;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: #ddd;
-}
-
-.closeButton {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.clearBtn {
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 13px;
-  margin-right: 10px;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.clearBtn:hover {
-  color: #fff;
-}
-
-.notification {
-  padding: 16px;
-  border-top: 1px solid #333;
-  transition: background-color 0.2s ease;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.notification:hover {
-  background-color: #2a2a2e;
-}
-
 .notiHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .xBtn {
@@ -122,6 +91,9 @@
   color: #777;
   font-size: 14px;
   cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  align-self: flex-start;
 }
 
 .xBtn:hover {
@@ -140,3 +112,24 @@
   font-size: 14px;
 }
 
+.clearBtn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+}
+
+.clearBtn:hover {
+  color: #fff;
+}
+
+.clearIcon {
+  margin-right: 4px;
+  opacity: 0.8;
+}

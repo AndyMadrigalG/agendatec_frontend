@@ -1,5 +1,7 @@
-import styles from './notificaciones.module.css';
-import { useState } from 'react';
+import styles from "./notificaciones.module.css";
+import { useState } from "react";
+import Image from "next/image";
+import trashIcon from "/public/trash.png";
 
 interface Notificacion {
   emisor: string;
@@ -9,12 +11,11 @@ interface Notificacion {
   fecha: string;
   hora: string;
   leida?: boolean;
-
 }
 
 export default function notificaciones({
   onClose,
-  datos
+  datos,
 }: {
   onClose: () => void;
   datos: Notificacion[];
@@ -40,17 +41,23 @@ export default function notificaciones({
   return (
     <div className={styles.popup}>
       <div className={styles.header}>
-        <span>Notificaciones</span>
-        <div>
-          <button onClick={vaciarBuzon} className={styles.clearBtn}>Vaciar buzón</button>
-          <button onClick={onClose} className={styles.closeButton}>✕</button>
-        </div>
+        <span className={styles.title}>Notificaciones</span>
+        <button onClick={vaciarBuzon} className={styles.clearBtn}>
+          <Image
+            src={trashIcon}
+            alt="Vaciar buzón"
+            width={16}
+            height={16}
+            className={styles.clearIcon}
+          />
+          <span>Vaciar buzón</span>
+        </button>
       </div>
 
       {notificaciones.map((n: Notificacion, i: number) => (
         <div
           key={i}
-          className={`${styles.notification} ${n.leida ? styles.leida : ''}`}
+          className={`${styles.notification} ${n.leida ? styles.leida : ""}`}
           onClick={() => marcarComoLeida(i)}
         >
           <div className={styles.notiHeader}>
@@ -66,7 +73,9 @@ export default function notificaciones({
             </button>
           </div>
           <div>{n.asunto}</div>
-          <small>{n.fecha} - {n.hora}</small>
+          <small>
+            {n.fecha} - {n.hora}
+          </small>
         </div>
       ))}
 
