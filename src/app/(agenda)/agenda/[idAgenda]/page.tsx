@@ -9,7 +9,7 @@ import { useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import { BACKEND_URL } from '../../../../Constants/constants';
-import AgendaForm from './AgendaForm';
+import AgendaForm from './(components)/AgendaForm';
 
 interface Agenda {
     id_Agenda: number | string | string[];

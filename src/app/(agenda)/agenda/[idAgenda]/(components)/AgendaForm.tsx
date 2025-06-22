@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import styles from './agenda.module.css';
+import styles from './agendaForm.module.css';
 import editIcon from '/public/editIcon.svg';
 
 interface AgendaFormProps {

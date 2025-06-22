@@ -11,7 +11,7 @@ import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente 
 import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
 import { BACKEND_URL } from '../../../Constants/constants';
 import { Punto } from './puntosContext';
-import CrearAgendaForm from './(components)/CrearAgendaForm';
+import CrearAgendaForm from './(components)/crearAgendaForm';
 
 interface Miembro {
   id: number;

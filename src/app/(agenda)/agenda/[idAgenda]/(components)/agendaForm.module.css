@@ -1,0 +1,243 @@
+@media screen and (max-width: 950px) {
+
+  .form {
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+  }
+
+  .formColumns{
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .columna {
+    margin-top: 20px !important;
+    margin-left: 0 !important;
+    
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+
+  .botonesContainer {
+    width: 100% !important;
+    align-items: center !important;
+    justify-items: center !important;
+    margin: 0 !important;
+    margin: 20px !important;
+  }
+
+  .botonesContainer button {
+    width: 90% !important;
+  }
+
+  .listaPuntos {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+
+
+.form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.formColumns {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.columna {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    margin-top: 50px;
+    margin-left: 60px;
+    justify-content: flex-start;
+}
+
+.columna label {
+    margin: 0;
+    font-size: 22px;
+}
+
+.columna select:focus{
+  transform: scale(1.02);
+  border-color: rgb(255, 255, 255);
+  outline: none;
+}
+
+.addPuntoButton {
+      margin-right: 8px;
+      margin-bottom: 10px;
+      display: inline-flex;
+      width: 85%;
+      height: 45px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 2px solid var(--borderInputColor);
+      border-radius: 12px;
+      background-color: var(--background);
+      font-family: sans-serif;
+      font-size: 14px;
+      color: #ffffff;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+}
+
+.addPuntoButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+.addPuntoButton:hover {
+  background-color: #7c6ef650
+}
+
+
+.guardarButton {
+  width: 250px;
+  height: 45px;
+  padding: 10px;
+  background-color: var(--background);
+  color: white;
+  border: 3px solid green;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+.botonesContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  width: 92%;
+  margin-top: 60px;
+}
+
+.botonesContainer button {
+  margin-left: 10px;
+  width: 170px;
+  height: 50px;
+}
+
+.crearButton {
+  background-color: var(--buttonColor);
+  border: none;
+}
+
+.crearButton:hover {
+  background-color: var(--hoverButton);
+}
+
+.cancelarButton:hover {
+  background-color: red;
+}
+
+.cancelarButton {
+  background-color: var(--background);
+  border: 2px solid red;
+}
+
+.form p {
+    color: gray;
+    font-size: 20px;
+    margin: 10px 0px 30px 20px;
+}
+
+
+.miembrosLista {
+    max-width: 400px; 
+    word-break: break-word;
+    white-space: normal;
+}
+
+.listaPuntos {
+  width: 90%;
+  height:110px;
+  overflow-y: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  padding-left: 5px;
+}
+
+.listaPuntos p {
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+}
+
+.listaConvocados {
+  padding-left: 5px;
+  margin-top: 10px;
+  width: 90%;
+  height: 110px;
+  word-break: break-word;
+  white-space: normal;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.listaConvocados p {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+  margin: 10px 0px 10px 20px;
+  margin-right: 20px;
+}
+
+
+.listaPuntos::-webkit-scrollbar, .listaConvocados::-webkit-scrollbar {
+    width: 8px;
+}
+
+.listaPuntos::-webkit-scrollbar-track, .listaConvocados::-webkit-scrollbar-track {
+    background: #23232b;
+    border-radius: 8px;
+}
+
+.listaConvocados::-webkit-scrollbar-thumb, .listaPuntos::-webkit-scrollbar-thumb {
+    background: var(--buttonColor);
+    border-radius: 8px;
+}
+
+
+.listaConvocados::-webkit-scrollbar-thumb:hover, .listaPuntos::-webkit-scrollbar-thumb:hover {
+    background: #6257c4;
+}
+
+.backButtonContainer {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
+}
