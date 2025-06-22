@@ -1,0 +1,63 @@
+@media screen and (max-width: 950px) {
+  .mainContainer {
+    padding-top: 20px !important;
+    margin: 0 !important;
+  }
+
+  .menu {
+    width: 90%;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 !important;
+  }
+}
+
+.mainContainer {
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.menu{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  border-bottom: rgb(91, 91, 91) 1px solid;
+  padding-bottom: 20px;
+
+}
+
+.menu h2 {
+  margin-bottom: 0px;
+  font-size: 50px;
+}
+
+.formContainer {
+  box-shadow: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+}
+
+.backButtonContainer {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
+}
