@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import { BACKEND_URL } from '../../../../Constants/constants';
 import AgendaForm from './(components)/AgendaForm';
+import {Convocado} from '../../../types'
 
 interface Agenda {
     id_Agenda: number | string | string[];
@@ -30,14 +31,6 @@ interface Punto {
     agendaId: string | number | string[];
 }
 
-interface Convocado {
-    id_Convocado: string;
-    Convocado: {
-        nombre: string;
-        email: string;
-        telefono: string;
-    };
-}
 
 export default function AgendaPage() {
     const { idAgenda } = useParams();

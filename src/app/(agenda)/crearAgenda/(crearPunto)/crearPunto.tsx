@@ -5,14 +5,8 @@ import { usePuntos } from '../puntosContext';
 import styles from './crearPunto.module.css';
 import Swal from 'sweetalert2';
 import { BACKEND_URL } from '../../../../Constants/constants';
-import { Punto } from '../puntosContext';
+import { Punto, Miembro } from '../../../types';
 
-interface Miembro {
-  id: number;
-  nombre: string;
-  email: string;
-  cargo: string;
-}
 
 interface CrearPuntoPageProps {
   onClose: () => void; 

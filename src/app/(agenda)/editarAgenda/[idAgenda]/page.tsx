@@ -10,32 +10,7 @@ import Modal from '../../crearAgenda/ModalCrearPunto/ModalCrearPunto';
 import EditarPuntoPage from './(editarPunto)/editarPunto';
 import { BACKEND_URL } from '../../../../Constants/constants';
 import CrearAgendaForm from '../../crearAgenda/(components)/crearAgendaForm';
-
-interface Miembro {
-  id: number;
-  nombre: string;
-  email: string;
-  cargo: string;
-}
-
-export interface Punto {
-  id_Punto: number; // Cambiar de id a id_Punto
-  enunciado: string;
-  duracion: string;
-  tipo: string;
-  expositor: string;
-  archivos: File[];
-  numeracion: number;
-}
-
-export interface Agenda {
-  id_Agenda: string;
-  numero: string;
-  fechaHora: string;
-  tipo: string;
-  convocados: string[];
-  lugar: string;
-}
+import {Miembro, Agenda, Punto} from '../../../types'
 
 export default function EditarAgendaPage() {
   const router = useRouter();

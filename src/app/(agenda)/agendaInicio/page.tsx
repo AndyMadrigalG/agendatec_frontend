@@ -7,17 +7,10 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import backIcon from '/public/backIcon.svg';
 import { BACKEND_URL } from '../../../Constants/constants';
+import {Agenda} from '../../types';
 
 export default function AgendaPage() {
     const router = useRouter();
-
-    interface Agenda {
-        id_Agenda: number;
-        numero: string;
-        tipo: string;
-        fechaHora: string;
-        lugar: string;
-    }
 
     const [agendas, setAgendas] = useState<Agenda[]>([]);
     const [loading, setLoading] = useState(true);
