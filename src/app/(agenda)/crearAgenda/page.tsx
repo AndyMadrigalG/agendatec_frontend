@@ -12,6 +12,7 @@ import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido 
 import { BACKEND_URL } from '../../../Constants/constants';
 import { Punto } from './puntosContext';
 import CrearAgendaForm from './(components)/crearAgendaForm';
+import { parse } from 'path';
 
 interface Miembro {
   id: number;
@@ -187,6 +188,43 @@ export default function CrearAgendaPage() {
 
   const handleCrear = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const id_newAgenda = '47';
+
+    const formularioPunto = new FormData();
+
+    for (const punto of puntos) {
+      formularioPunto.append('expositor', punto.expositor);
+      formularioPunto.append('numeracion', punto.numeracion.toString());
+      formularioPunto.append('tipo', punto.tipo);
+      formularioPunto.append('duracionMin', parseInt(punto.duracion, 10).toString());
+      formularioPunto.append('enunciado', punto.enunciado);
+      formularioPunto.append('contenido', '');
+      formularioPunto.append('agendaId', id_newAgenda.toString());
+      for (const archivo of punto.archivos) {
+        formularioPunto.append('archivos', archivo);
+      }
+    }
+    fetch('http://localhost:8080/puntos/upload', {
+      method: 'POST',
+      body: formularioPunto,
+    })
+      .then(response => response.json())
+      .then(data => console.log('Respuesta del servidor:', data))
+      .catch(error => console.error('Error al enviar los datos:', error));
+
+
+    console.log('Contenido del FormData:');
+    for (const [key, value] of formularioPunto.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
+
+    const formularioCompleto = new FormData();
+    formularioCompleto.append('numero', formulario.numero);
+    formularioCompleto.append('fechaHora', formulario.fechaHora);
+    formularioCompleto.append('tipo', formulario.tipo);
+    formularioCompleto.append('lugar', formulario.lugar);
   }
 
   const fetchMiembros = async () => {
