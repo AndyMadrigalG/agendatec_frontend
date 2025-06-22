@@ -12,7 +12,7 @@ interface Miembro {
   cargo: string;
 }
 
-interface Punto {
+export interface Punto {
   id_Punto: number;
   numeracion: number;
   enunciado: string;
@@ -24,8 +24,8 @@ interface Punto {
 
 interface EditarPuntoPageProps {
   onClose: () => void;
-  punto: Punto | null; // Recibe el punto seleccionado como prop
-  onGuardar: (punto: Punto) => void; // Callback para guardar los cambios
+  punto: Punto | null ; // Recibe el punto seleccionado como prop
+  onGuardar:  (punto: Punto) => void | Promise<void>;
 }
 
 export default function EditarPuntoPage({ onClose, punto, onGuardar }: EditarPuntoPageProps) {
@@ -179,7 +179,7 @@ export default function EditarPuntoPage({ onClose, punto, onGuardar }: EditarPun
     <div>
       <div className={styles.mainContainer}>
         <div className={styles.menu}>
-          <h2>Editar Punto</h2>
+          <h2>{punto? 'Editar Punto' : 'Crear Punto'}</h2>
         </div>
 
         <div className={styles.formContainer}>
@@ -273,7 +273,7 @@ export default function EditarPuntoPage({ onClose, punto, onGuardar }: EditarPun
                   Cancelar
                 </button>
                 <button className={styles.crearButton} type="submit">
-                  Guardar
+                  {punto ? 'Guardar Cambios' : 'Crear Punto'}
                 </button>
               </div>
             </div>

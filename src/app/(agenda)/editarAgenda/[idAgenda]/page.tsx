@@ -28,6 +28,14 @@ export interface Punto {
   numeracion: number;
 }
 
+export interface Agenda {
+  id_Agenda: string;
+  numero: string;
+  fechaHora: string;
+  tipo: string;
+  convocados: string[];
+  lugar: string;
+}
 
 export default function EditarAgendaPage() {
   const router = useRouter();
@@ -39,6 +47,7 @@ export default function EditarAgendaPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [puntoSeleccionado, setPuntoSeleccionado] = useState<Punto | null>(null);
   const [puntos, setPuntos] = useState<Punto[]>([]);
+  const [agenda, setAgenda] = useState<Agenda | null>(null);
 
   const tipoSesion = [
     { value: 'Ordinaria', label: 'Ordinaria' },
@@ -69,6 +78,7 @@ export default function EditarAgendaPage() {
       }
 
       const agendaData = await agendaResponse.json();
+
 
       const convocadosResponse = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/convocados`, {
         method: 'GET',
@@ -105,7 +115,7 @@ export default function EditarAgendaPage() {
           enunciado: punto.enunciado,
           duracion: punto.duracionMin.toString(),
           tipo: punto.tipo,
-          expositor: punto.expositorId.toString(),
+          expositorId: punto.expositorId.toString(),
           archivos: punto.archivos || [],
         }))
       );
@@ -182,55 +192,108 @@ export default function EditarAgendaPage() {
 
   const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
     e.preventDefault();
-    setPuntoSeleccionado(punto || null); // Establece el punto seleccionado
+    setPuntoSeleccionado(punto || null); // Si no se pasa un punto, se establece como null
     setIsModalOpen(true); // Abre el modal
   };
 
   const handleGuardarPunto = async (puntoActualizado: Punto) => {
-
-    console.log('Punto actualizado:', puntoActualizado);
+    
 
     try {
-      const response = await fetch(`${BACKEND_URL}/puntos/${puntoActualizado.id_Punto}`, {
-        method: 'PATCH', 
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      if (!puntoActualizado.id_Punto) {
+
+        if (!idAgenda || idAgenda === 'string[]') {
+          return;
+        }
+        const puntoEnviar = {
+          agendaId: parseInt(Array.isArray(idAgenda) ? idAgenda[0] : idAgenda, 10),
           enunciado: puntoActualizado.enunciado,
+          numeracion: puntos.length + 1,
           duracionMin: parseInt(puntoActualizado.duracion, 10),
           tipo: puntoActualizado.tipo,
-        }),
-      });
+          contenido: "",
+          expositorId: parseInt(puntoActualizado.expositor, 10),
+        };
+        console.log('Punto a crear:', puntoEnviar);
 
-      if (!response.ok) {
-        throw new Error('Error al actualizar el punto');
+        const response = await fetch(`${BACKEND_URL}/puntos`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(puntoEnviar),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al crear el punto');
+        }
+
+        const nuevoPunto = await response.json();
+        console.log('Nuevo punto creado:', nuevoPunto);
+
+        // Agregar el nuevo punto al estado
+        setPuntos((prevPuntos) => [...prevPuntos, {
+          id_Punto: nuevoPunto.id_Punto,
+          numeracion: prevPuntos.length + 1, // Asignar numeración secuencial
+          enunciado: nuevoPunto.enunciado,
+          duracion: nuevoPunto.duracionMin.toString(),
+          tipo: nuevoPunto.tipo,
+          expositor: nuevoPunto.expositorId.toString(),
+          archivos: [],
+        }]);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Punto creado con éxito',
+          text: 'Se ha creado el punto correctamente.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#7b6ef6',
+          background: 'var(--background)',
+          color: '#f9fafb',
+        });
+      } else {
+        // Editar un punto existente
+        const response = await fetch(`${BACKEND_URL}/puntos/${puntoActualizado.id_Punto}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            enunciado: puntoActualizado.enunciado,
+            duracionMin: parseInt(puntoActualizado.duracion, 10),
+            tipo: puntoActualizado.tipo,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al actualizar el punto');
+        }
+
+        // Actualizar el estado de los puntos
+        setPuntos((prevPuntos) =>
+          prevPuntos.map((p) =>
+            p.id_Punto === puntoActualizado.id_Punto ? puntoActualizado : p
+          )
+        );
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Punto actualizado con éxito',
+          text: 'Se ha actualizado el punto correctamente.',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#7b6ef6',
+          background: 'var(--background)',
+          color: '#f9fafb',
+        });
       }
-
-      // Actualiza el estado de los puntos
-      setPuntos((prevPuntos) =>
-        prevPuntos.map((p) =>
-          p.numeracion === puntoActualizado.numeracion ? puntoActualizado : p
-        )
-      );
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Punto actualizado con éxito',
-        text: 'Se ha actualizado el punto correctamente.',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#7b6ef6',
-        background: 'var(--background)',
-        color: '#f9fafb',
-      });
 
       setIsModalOpen(false); // Cierra el modal
     } catch (error) {
-      console.error('Error al actualizar el punto:', error);
+      console.error('Error al guardar el punto:', error);
       Swal.fire({
         icon: 'error',
-        title: 'Error al actualizar el punto',
-        text: 'Ocurrió un error al actualizar el punto. Inténtelo de nuevo.',
+        title: 'Error al guardar el punto',
+        text: 'Ocurrió un error al guardar el punto. Inténtelo de nuevo.',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#7b6ef6',
         background: 'var(--background)',
@@ -303,7 +366,7 @@ export default function EditarAgendaPage() {
         <Modal onClose={handleCloseModal}>
           <EditarPuntoPage
             onClose={handleCloseModal}
-            punto={puntoSeleccionado} // Pasa el punto seleccionado
+            punto={puntoSeleccionado} 
             onGuardar={handleGuardarPunto} 
           />
         </Modal>
