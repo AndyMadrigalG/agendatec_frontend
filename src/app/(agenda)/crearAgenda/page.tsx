@@ -2,8 +2,6 @@
 
 import styles from './crearAgenda.module.css';
 import Image from 'next/image';
-import addIcon from '/public/addCircle.svg';
-import editIcon from '/public/editIcon.svg';
 import backIcon from '/public/backIcon.svg';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
@@ -13,7 +11,7 @@ import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente 
 import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
 import { BACKEND_URL } from '../../../Constants/constants';
 import { Punto } from './puntosContext';
-import CrearAgendaForm from './crearAgendaForm';
+import CrearAgendaForm from './(components)/CrearAgendaForm';
 
 interface Miembro {
   id: number;

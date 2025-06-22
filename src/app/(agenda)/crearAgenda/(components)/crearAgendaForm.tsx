@@ -5,7 +5,7 @@ import Image from 'next/image';
 import styles from './crearAgenda.module.css';
 import addIcon from '/public/addCircle.svg';
 import editIcon from '/public/editIcon.svg';
-import { Punto } from './puntosContext';
+import { Punto } from '../puntosContext';
 
 interface CrearAgendaFormProps {
   formulario: {
