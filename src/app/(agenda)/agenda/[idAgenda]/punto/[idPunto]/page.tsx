@@ -5,11 +5,14 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BACKEND_URL } from '../../../../../../Constants/constants';
+import Image from 'next/image';
+import timer from '/public/timer.png';
+
 
 export default function EditarPunto() {
     const router = useRouter();
     const { idAgenda, idPunto } = useParams();
-
+    const [timeElapsed, setTimeElapsed] = useState(0);
     const [contenidoTitle, setContenidoTitle] = useState('Contenido');
 
     const [formulario, setFormulario] = useState({
@@ -32,9 +35,23 @@ export default function EditarPunto() {
 
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimeElapsed(prev => prev + 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
     const fetchPunto = async (id: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/puntos/${idPunto}`, {
+            const response = await fetch(`${BACKEND_URL}/puntos/${idPunto}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -217,6 +234,16 @@ export default function EditarPunto() {
 
     return (
         <div>
+            <div className={styles.timerContainer}>
+                <Image 
+                    src={timer}
+                    alt="Icono de temporizador"
+                    width={24}
+                    height={24}
+                    className={styles.timerImage}
+                />
+                <span className={styles.timerText}>{formatTime(timeElapsed)}</span>
+            </div>
 
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
