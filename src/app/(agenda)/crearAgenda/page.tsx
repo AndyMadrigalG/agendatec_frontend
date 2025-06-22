@@ -9,8 +9,8 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePuntos } from './puntosContext';
-import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
-import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
+import Modal from './ModalCrearPunto/ModalCrearPunto';
+import CrearPuntoPage from './(crearPunto)/crearPunto';
 import { BACKEND_URL } from '../../../Constants/constants';
 import { Punto } from './puntosContext';
 
@@ -137,7 +137,6 @@ export default function CrearAgendaPage() {
           tipo: punto.tipo,
           duracionMin: parseInt(punto.duracion, 10),
           enunciado: punto.enunciado,
-          archivos: '',
           contenido: '',
           agendaId: id_newAgenda,
         };

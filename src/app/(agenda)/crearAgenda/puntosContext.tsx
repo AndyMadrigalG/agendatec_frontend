@@ -7,7 +7,6 @@ export interface Punto {
   duracion: string;
   tipo: string;
   expositor: string;
-  archivos: File[];
   numeracion: number;
 }
 
