@@ -41,6 +41,7 @@ interface CrearAgendaFormProps {
   handleOpenModal: (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => void;
   handleCloseModal: () => void;
   setSeleccionados: (ids: number[]) => void;
+  editable?: boolean;
 }
 
 export default function CrearAgendaForm({
@@ -58,6 +59,7 @@ export default function CrearAgendaForm({
   setBusqueda,
   handleOpenModal,
   setSeleccionados,
+  editable = false,
 }: CrearAgendaFormProps) {
   return (
     <form className={styles.form}>
@@ -183,15 +185,20 @@ export default function CrearAgendaForm({
           </div>
 
           <div className={styles.botonesContainer}>
-            <button className={styles.guardarButton} onClick={handleGuardar}>
+            <button
+              className={`${styles.guardarButton} ${!editable ? styles.crearButton : ''}`}
+              onClick={handleGuardar}
+            >
               Guardar
             </button>
-            <button className={styles.crearButton} onClick={handleCrear}>
-              Crear
-            </button>
+            {editable && (
+              <button className={styles.crearButton} onClick={handleCrear}>
+              Guardar y convocar
+              </button>
+            )}
           </div>
         </div>
       </div>
     </form>
   );
-}
+} 

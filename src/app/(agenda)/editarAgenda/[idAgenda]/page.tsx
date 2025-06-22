@@ -185,8 +185,12 @@ export default function EditarAgendaPage() {
 
   const handleGuardar = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Seleccionados: ', seleccionados);
-    console.log('Formulario guardado:', formulario);
+    const agendaEditar = {
+      numero: formulario.numero,
+      fechaHora: formulario.fechaHora,
+      tipo: formulario.tipo,
+      lugar: formulario.lugar,
+    }
   };
   
 
@@ -197,8 +201,6 @@ export default function EditarAgendaPage() {
   };
 
   const handleGuardarPunto = async (puntoActualizado: Punto) => {
-    
-
     try {
       if (!puntoActualizado.id_Punto) {
 
@@ -252,7 +254,6 @@ export default function EditarAgendaPage() {
           color: '#f9fafb',
         });
       } else {
-        // Editar un punto existente
         const response = await fetch(`${BACKEND_URL}/puntos/${puntoActualizado.id_Punto}`, {
           method: 'PATCH',
           headers: {
@@ -269,7 +270,6 @@ export default function EditarAgendaPage() {
           throw new Error('Error al actualizar el punto');
         }
 
-        // Actualizar el estado de los puntos
         setPuntos((prevPuntos) =>
           prevPuntos.map((p) =>
             p.id_Punto === puntoActualizado.id_Punto ? puntoActualizado : p
@@ -358,6 +358,7 @@ export default function EditarAgendaPage() {
             handleOpenModal={handleOpenModal}
             handleCloseModal={handleCloseModal}
             setSeleccionados={setSeleccionados}
+            editable={true} // Cambiar a true para permitir edición
           />
         </div>
       </div>

@@ -29,6 +29,7 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
     { value: 'varios', label: 'Varios' },
   ];
 
+  const id_Punto = punto ? punto.id_Punto : puntos.length + 1; // Asignar un nuevo ID si es un nuevo punto
   const [enunciado, setEnunciado] = useState(punto?.enunciado || '');
   const [duracion, setDuracion] = useState(punto?.duracion || '');
   const [tipo, setTipo] = useState(punto?.tipo || '');
@@ -134,6 +135,7 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
     } else {
       // Crear un nuevo punto
       const nuevoPunto = {
+        id_Punto,
         enunciado,
         duracion,
         tipo,
