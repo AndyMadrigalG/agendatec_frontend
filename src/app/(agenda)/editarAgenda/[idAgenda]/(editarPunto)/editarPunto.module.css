@@ -1,0 +1,276 @@
+@media screen and (max-width: 1500px) {
+    
+    .container {
+        width: 200px !important;
+        flex-direction: column !important;
+
+    }
+
+    .customfileupload{
+      margin-top: 90px !important;
+      margin-left: 0px !important;
+    }
+
+    .folder{
+        left: 30% !important;
+    }
+
+    
+}
+
+@media screen and (max-width: 1000px){
+  .mainContainer {
+    padding-top: 20px !important;
+    margin: 0 !important;
+  }
+
+  .menu {
+      width: 90%;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 !important;
+  }
+  .form {
+      flex-direction: column !important;
+      width: 100% !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+  }
+
+
+  .columna {
+      margin-top: 20px !important;
+      margin-left: 0 !important;
+
+      justify-content: center !important;
+      align-items: center !important;
+      width: 100% !important;
+  }
+
+  .botonContainer {
+      width: 100% !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      margin-top: 60px!important ;
+  }
+
+  .botonContainer button {
+      width: 80% !important;
+      margin-right: 0 !important;
+      align-items: center !important;
+      justify-content: center !important;
+  }
+
+  .container {
+    flex-direction: column !important;
+    align-content: center !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .archivosList{
+    width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+.mainContainer {
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.menu{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  border-bottom: rgb(91, 91, 91) 1px solid;
+  padding-bottom: 20px;
+
+}
+
+.menu h2 {
+  margin-bottom: 0px;
+  font-size: 50px;
+}
+
+.formContainer {
+  box-shadow: #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+}
+
+.form{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.columna {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    margin-top: 50px;
+    margin-left: 60px;
+    justify-content: flex-start;
+}
+
+.columna label {
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+
+.columna input {
+    margin-bottom: 40px;
+    width: 80%;
+    height: 32px;
+}
+
+.columna textarea {
+    padding: 10px;
+    width: 80%;
+    height: 60px; 
+    max-height: 150px; 
+    overflow-y: auto; 
+    resize: none; 
+    margin-bottom: 40px;
+}
+
+.columna textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.columna textarea::-webkit-scrollbar-track {
+    background: #23232b;
+    border-radius: 8px;
+}
+
+.columna textarea::-webkit-scrollbar-thumb {
+    background: var(--buttonColor);
+    border-radius: 8px;
+}
+
+
+.columna textarea::-webkit-scrollbar-thumb:hover {
+    background: #6257c4;
+}
+
+.columna select {
+    width: 80%;
+    height: 40px;
+    color: white;
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: var(--background);
+    border: 2px, rgb(126, 126, 126);
+    border-style:solid;
+    margin: 5px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.2s;
+    margin-bottom: 40px;
+}
+
+
+.form button {
+    width: 60%;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.archivoContainer {
+  display: flex;
+}
+
+.archivosList {
+    padding-left: 10px; 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 10px;
+    align-items: center;
+    height: 80px;
+}
+
+.archivosList h3{
+    margin-top: 2px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: white;
+}
+
+.archivosList span{
+    color: white;
+    font-size: 15px;
+    margin-bottom: 10px;
+    align-self: center;
+}
+
+.botonContainer {
+    width: 90%;
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;    
+}
+
+.form button{
+    width: 250px;
+    margin-right: 20px;
+}
+
+
+.container {
+    width: 80%;
+    margin-top: 20px;
+}
+
+.fileInput {
+  color: #ffffff;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: background var(--transition) ease;
+  display: inline-block;
+  width: 90%;
+  padding: 10px 35px;
+  
+
+}
+
+.fileInput:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.fileInput input[type="file"] {
+  display: none;
+}
+
+.container:hover .folder {
+  transform: translateY(-10px);
+  transition: transform 0.35s ease;
+}
+
+.cancelarButton {
+  background-color: #dc3545;
+}
+
+.crearButton {
+  background-color: var(--buttonColor);
+}

@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePuntos } from '../puntosContext';
-import styles from './crearPunto.module.css';
+import styles from './editarPunto.module.css';
 import Swal from 'sweetalert2';
-import { BACKEND_URL } from '../../../../Constants/constants';
-import { Punto } from '../puntosContext';
+import { BACKEND_URL } from '../../../../../Constants/constants';
 
 interface Miembro {
   id: number;
@@ -14,27 +12,35 @@ interface Miembro {
   cargo: string;
 }
 
-interface CrearPuntoPageProps {
-  onClose: () => void; 
-  punto?: Punto | null;
+export interface Punto {
+  id_Punto: number;
+  numeracion: number;
+  enunciado: string;
+  duracion: string;
+  tipo: string;
+  expositor: string;
+  archivos: File[];
 }
 
-export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) {
-  const { puntos, agregarPunto, setPuntos } = usePuntos(); 
+interface EditarPuntoPageProps {
+  onClose: () => void;
+  punto: Punto | null ; // Recibe el punto seleccionado como prop
+  onGuardar:  (punto: Punto) => void | Promise<void>;
+}
 
+export default function EditarPuntoPage({ onClose, punto, onGuardar }: EditarPuntoPageProps) {
   const tipos = [
-    { value: 'aprobacion', label: 'Aprobación' },
-    { value: 'informativo', label: 'Informativo' },
-    { value: 'estrategia', label: 'Estrategia' },
-    { value: 'varios', label: 'Varios' },
+    { value: 'Aprobacion', label: 'Aprobación' },
+    { value: 'Informativo', label: 'Informativo' },
+    { value: 'Estrategia', label: 'Estrategia' },
+    { value: 'Varios', label: 'Varios' },
   ];
 
-  const id_Punto = punto ? punto.id_Punto : puntos.length + 1; // Asignar un nuevo ID si es un nuevo punto
-  const [enunciado, setEnunciado] = useState(punto?.enunciado || '');
-  const [duracion, setDuracion] = useState(punto?.duracion || '');
-  const [tipo, setTipo] = useState(punto?.tipo || '');
-  const [archivos, setArchivos] = useState<File[]>(punto?.archivos || []);
-  const [expositor, setExpositor] = useState(punto?.expositor || '');
+  const [enunciado, setEnunciado] = useState('');
+  const [duracion, setDuracion] = useState('');
+  const [tipo, setTipo] = useState('');
+  const [archivos, setArchivos] = useState<File[]>([]);
+  const [expositor, setExpositor] = useState('');
   const [miembros, setMiembros] = useState<Miembro[]>([]); 
   const [loading, setLoading] = useState(true); 
 
@@ -55,7 +61,6 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
 
         const data = await response.json();
 
-        // Mapear los datos al formato esperado
         const miembrosFormateados = data.map((miembro: any) => ({
           id: miembro.usuario.id_Usuario,
           nombre: miembro.usuario.nombre,
@@ -65,7 +70,7 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
 
         setMiembros(miembrosFormateados);
         console.log('Miembros cargados:', miembrosFormateados);
-      } catch (error) {
+        } catch (error) {
         console.error('Error al cargar los miembros:', error);
         Swal.fire({
           icon: 'error',
@@ -83,6 +88,16 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
 
     fetchMiembros();
   }, []);
+
+  useEffect(() => {
+    if (punto) {
+      setEnunciado(punto.enunciado || '');
+      setDuracion(punto.duracion || '');
+      setTipo(punto.tipo || '');
+      setExpositor(punto.expositor || '');
+      setArchivos(punto.archivos || []);
+    }
+  }, [punto]);
 
   const camposVacios =
     enunciado.trim() === '' ||
@@ -124,38 +139,17 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
       return;
     }
 
-    if (punto) {
-      // Actualizar el punto existente
-      const puntosActualizados = puntos.map((p) =>
-        p.numeracion === punto.numeracion
-          ? { ...p, enunciado, duracion, tipo, expositor, archivos }
-          : p
-      );
-      setPuntos(puntosActualizados);
-    } else {
-      // Crear un nuevo punto
-      const nuevoPunto = {
-        id_Punto,
-        enunciado,
-        duracion,
-        tipo,
-        expositor,
-        archivos,
-      };
-      agregarPunto(nuevoPunto);
-    }
+    const puntoActualizado: Punto = {
+      id_Punto: punto?.id_Punto || 0, 
+      numeracion: punto?.numeracion || 0,
+      enunciado,
+      duracion,
+      tipo,
+      expositor,
+      archivos,
+    };
 
-    Swal.fire({
-      icon: 'success',
-      title: punto ? 'Punto actualizado con éxito' : 'Punto creado con éxito',
-      text: punto ? 'Se ha actualizado el punto correctamente.' : 'Se ha creado el punto correctamente.',
-      confirmButtonText: 'Aceptar',
-      confirmButtonColor: '#7b6ef6',
-      background: 'var(--background)',
-      color: '#f9fafb',
-    }).then(() => {
-      onClose(); // Cierra el modal
-    });
+    onGuardar(puntoActualizado);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,11 +179,11 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
     <div>
       <div className={styles.mainContainer}>
         <div className={styles.menu}>
-          <h2>Crear Punto</h2>
+          <h2>{punto? 'Editar Punto' : 'Crear Punto'}</h2>
         </div>
 
         <div className={styles.formContainer}>
-          <form className={styles.form}>
+          <form className={styles.form} onSubmit={handleSubmit}>
             <div className={styles.columna}>
               <label htmlFor="enunciado">Enunciado</label>
               <textarea
@@ -278,8 +272,8 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
                 <button className={styles.cancelarButton} onClick={handleCancelar}>
                   Cancelar
                 </button>
-                <button className={styles.crearButton} onClick={handleSubmit}>
-                  Crear
+                <button className={styles.crearButton} type="submit">
+                  {punto ? 'Guardar Cambios' : 'Crear Punto'}
                 </button>
               </div>
             </div>

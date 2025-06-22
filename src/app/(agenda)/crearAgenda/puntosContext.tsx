@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState } from 'react';
 
 export interface Punto {
+  id_Punto: number;
   enunciado: string;
   duracion: string;
   tipo: string;
