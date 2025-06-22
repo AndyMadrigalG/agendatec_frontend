@@ -7,10 +7,9 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import Modal from '../../crearAgenda/ModalCrearPunto/ModalCrearPunto';
-import CrearPuntoPage from '../../crearAgenda/(crearPunto)/crearPunto';
+import EditarPuntoPage from './(editarPunto)/editarPunto';
 import { BACKEND_URL } from '../../../../Constants/constants';
 import CrearAgendaForm from '../../crearAgenda/(components)/crearAgendaForm';
-import { Punto } from '../../crearAgenda/puntosContext';
 
 interface Miembro {
   id: number;
@@ -18,6 +17,17 @@ interface Miembro {
   email: string;
   cargo: string;
 }
+
+export interface Punto {
+  id_Punto: number; // Cambiar de id a id_Punto
+  enunciado: string;
+  duracion: string;
+  tipo: string;
+  expositor: string;
+  archivos: File[];
+  numeracion: number;
+}
+
 
 export default function EditarAgendaPage() {
   const router = useRouter();
@@ -90,6 +100,7 @@ export default function EditarAgendaPage() {
       // Actualizar los puntos
       setPuntos(
         puntosData.map((punto: any) => ({
+          id_Punto: punto.id_Punto, // Asegúrate de que este campo se mapea correctamente
           numeracion: punto.numeracion,
           enunciado: punto.enunciado,
           duracion: punto.duracionMin.toString(),
@@ -98,6 +109,9 @@ export default function EditarAgendaPage() {
           archivos: punto.archivos || [],
         }))
       );
+
+      console.log('Puntos cargados:', puntos);
+
     } catch (error) {
       console.error('Error al cargar la agenda:', error);
       Swal.fire({
@@ -157,13 +171,72 @@ export default function EditarAgendaPage() {
 
   useEffect(() => {
     fetchAgenda();
-    
   }, [idAgenda]);
+
+  const handleGuardar = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Seleccionados: ', seleccionados);
+    console.log('Formulario guardado:', formulario);
+  };
+  
 
   const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
     e.preventDefault();
-    setPuntoSeleccionado(punto || null);
-    setIsModalOpen(true);
+    setPuntoSeleccionado(punto || null); // Establece el punto seleccionado
+    setIsModalOpen(true); // Abre el modal
+  };
+
+  const handleGuardarPunto = async (puntoActualizado: Punto) => {
+
+    console.log('Punto actualizado:', puntoActualizado);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/puntos/${puntoActualizado.id_Punto}`, {
+        method: 'PATCH', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          enunciado: puntoActualizado.enunciado,
+          duracionMin: parseInt(puntoActualizado.duracion, 10),
+          tipo: puntoActualizado.tipo,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar el punto');
+      }
+
+      // Actualiza el estado de los puntos
+      setPuntos((prevPuntos) =>
+        prevPuntos.map((p) =>
+          p.numeracion === puntoActualizado.numeracion ? puntoActualizado : p
+        )
+      );
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Punto actualizado con éxito',
+        text: 'Se ha actualizado el punto correctamente.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+
+      setIsModalOpen(false); // Cierra el modal
+    } catch (error) {
+      console.error('Error al actualizar el punto:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el punto',
+        text: 'Ocurrió un error al actualizar el punto. Inténtelo de nuevo.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+    }
   };
 
   const handleCloseModal = () => {
@@ -211,7 +284,7 @@ export default function EditarAgendaPage() {
             busqueda={busqueda}
             loading={loading}
             handleChange={(e) => setFormulario({ ...formulario, [e.target.name]: e.target.value })}
-            handleGuardar={() => console.log('Guardar agenda')}
+            handleGuardar={handleGuardar}
             handleCrear={() => console.log('Crear agenda')} 
             handleCheck={(id) =>
               setSeleccionados((prev) =>
@@ -228,7 +301,11 @@ export default function EditarAgendaPage() {
 
       {isModalOpen && (
         <Modal onClose={handleCloseModal}>
-          <CrearPuntoPage onClose={handleCloseModal} punto={puntoSeleccionado} />
+          <EditarPuntoPage
+            onClose={handleCloseModal}
+            punto={puntoSeleccionado} // Pasa el punto seleccionado
+            onGuardar={handleGuardarPunto} 
+          />
         </Modal>
       )}
     </div>

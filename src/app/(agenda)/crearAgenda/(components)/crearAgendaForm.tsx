@@ -5,8 +5,16 @@ import Image from 'next/image';
 import styles from './crearAgenda.module.css';
 import addIcon from '/public/addCircle.svg';
 import editIcon from '/public/editIcon.svg';
-import { Punto } from '../puntosContext';
 
+export interface Punto {
+  id_Punto: number;
+  enunciado: string;
+  duracion: string;
+  tipo: string;
+  expositor: string;
+  archivos: File[];
+  numeracion: number;
+}
 interface CrearAgendaFormProps {
   formulario: {
     numero: string;
