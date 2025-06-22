@@ -156,6 +156,29 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const nuevosArchivos = Array.from(e.target.files);
+
+      nuevosArchivos.forEach((file) => {
+        if (file.size > 10 * 1024 * 1024) { // 10 MB
+          Swal.fire({
+            icon: 'error',
+            title: 'Archivo demasiado grande',
+            text: `El archivo ${file.name} es demasiado grande. El tamaño máximo permitido es de 10 MB.`,
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#7b6ef6',
+            background: 'var(--background)',
+            color: '#f9fafb',
+          });
+          return;
+        }
+      });
+
+      setArchivos(nuevosArchivos);
+    }
+  };
+
   return (
     <div>
       <div className={styles.mainContainer}>
@@ -231,16 +254,12 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
                 <div className={styles.container}>
                   <label className={styles.fileInput}>
                     <input
-                      className={styles.title}
-                      type="file"
-                      id="archivos"
-                      name="archivos"
-                      multiple
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          setArchivos(Array.from(e.target.files));
-                        }
-                      }}
+                        className={styles.title}
+                        type="file"
+                        id="archivos"
+                        name="archivos"
+                        multiple
+                        onChange={handleFileChange}
                     />
                     Seleccionar archivos
                   </label>
