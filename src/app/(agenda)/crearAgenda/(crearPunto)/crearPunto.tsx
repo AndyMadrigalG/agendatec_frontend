@@ -221,7 +221,7 @@ export default function CrearPuntoPage({ onClose, punto }: CrearPuntoPageProps) 
                 id="tipo"
                 name="tipo"
                 value={tipo}
-                onChange={(e) => setTipo(e.target.value)}
+                onChange={(e) => setTipo(e.target.value)} // Esto actualiza el estado
                 required
               >
                 <option value="">Seleccionar tipo</option>
