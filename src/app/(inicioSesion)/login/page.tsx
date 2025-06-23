@@ -23,8 +23,21 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // Mostrar el modal de carga
+        Swal.fire({
+            title: 'Iniciando sesión...',
+            text: 'Por favor espere',
+            background: 'var(--background)',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            color: '#f9fafb',
+            willOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
         try {
-            const response = await fetch(BACKEND_URL+'/auth/login', {
+            const response = await fetch(BACKEND_URL + '/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,8 +56,10 @@ export default function LoginPage() {
                     localStorage.setItem('userEmail', data.email);
                 }
                 console.log('Login exitoso');
-                window.location.href = '/home';
+                Swal.close(); 
+                window.location.href = '/home'; 
             } else {
+                Swal.close(); 
                 console.error('Error en el login:', response.statusText);
                 await Swal.fire({
                     icon: 'error',
@@ -57,7 +72,17 @@ export default function LoginPage() {
                 });
             }
         } catch (error) {
+            Swal.close(); // Cierra el modal de carga
             console.error('Error de red:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error de red',
+                text: 'Ocurrió un error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
         }
     };
   
