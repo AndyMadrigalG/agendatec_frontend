@@ -11,6 +11,15 @@ import { useRouter } from 'next/navigation';
 import { BACKEND_URL } from '../../../../Constants/constants';
 import AgendaForm from './(components)/AgendaForm';
 import {Convocado} from '../../../types'
+import jsPDF from 'jspdf';
+import autoTable, { UserOptions } from 'jspdf-autotable';
+
+// Extend jsPDF to include autoTable types
+declare module 'jspdf' {
+    interface jsPDF {
+        lastAutoTable?: { finalY: number };
+    }
+}
 
 interface Agenda {
     id_Agenda: number | string | string[];
@@ -30,7 +39,17 @@ interface Punto {
     archivos: string;
     contenido: string;
     agendaId: string | number | string[];
+    votacion: Votacion;
 }
+
+interface Votacion {
+    id_Punto: number;
+    votos_a_Favor: number;
+    votos_en_Contra: number;
+    votos_Abstencion: number;
+    acuerdo: string;
+}
+
 
 
 export default function AgendaPage() {
@@ -120,8 +139,10 @@ export default function AgendaPage() {
             }
 
             const data = await response.json();
-
             setPuntos(data);
+
+            
+
             console.log('Puntos cargados:', data);
         } catch (error) {
             console.error('Error al cargar los puntos:', error);
@@ -202,7 +223,7 @@ export default function AgendaPage() {
 
     const handleGuardar = async (e: React.FormEvent) => {
         e.preventDefault();
-        let nuevoEstado = 2;
+        let nuevoEstado;
         switch (agenda.estado) {
             case 'Convocada':
                 nuevoEstado = 3; 
@@ -214,8 +235,8 @@ export default function AgendaPage() {
                 nuevoEstado = 5;
                 break;
             case 'Agenda Finalizada':
-                nuevoEstado = 6;
-                break;
+                generarActaPDF({ agenda, puntos, convocados });
+                return;
         }
 
         try {
@@ -264,6 +285,59 @@ export default function AgendaPage() {
 
     const handleBack = () => {
         router.push('/agendaInicio');
+    };
+
+    interface GenerarActaPDFParams {
+        agenda: Agenda;
+        puntos: Punto[];
+        convocados: Convocado[];
+    }
+
+    const generarActaPDF = ({ agenda, puntos, convocados }: GenerarActaPDFParams): void => {
+        const doc = new jsPDF();
+
+        // Título del documento
+        doc.setFontSize(18);
+        doc.text('Acta de Reunión', 105, 20, { align: 'center' });
+
+        // Información de la agenda
+        doc.setFontSize(12);
+        doc.text(`Número de Agenda: ${agenda.numero}`, 20, 40);
+        doc.text(`Tipo de Sesión: ${agenda.tipo}`, 20, 50);
+        doc.text(`Fecha y Hora: ${new Date(agenda.fechaHora).toLocaleString()}`, 20, 60);
+        doc.text(`Lugar: ${agenda.lugar}`, 20, 70);
+
+        // Miembros convocados
+        doc.text('Miembros Convocados:', 20, 80);
+        convocados.forEach((convocado, index) => {
+            doc.text(`${index + 1}. ${convocado.Convocado.nombre} (${convocado.Convocado.email})`, 20, 90 + index * 10);
+        });
+
+        // Puntos de la agenda
+        let currentY = 90 + convocados.length * 10 + 20; // Ajusta la posición inicial después de los convocados
+        doc.setFontSize(14);
+        doc.text('Puntos de la Agenda:', 20, currentY);
+
+        puntos.forEach((punto, index) => {
+            currentY += 10;
+            doc.setFontSize(12);
+            doc.text(`Artículo ${punto.numeracion}. ${punto.enunciado}`, 20, currentY);
+
+            currentY += 10;
+            doc.setFontSize(10);
+            doc.text(punto.contenido || 'Sin contenido.', 20, currentY, { maxWidth: 170 });
+
+            currentY += 10; // Espacio entre puntos
+        });
+
+        // Pie de página
+        const pageHeight = doc.internal.pageSize.height;
+        const footerY = pageHeight - 20;
+        doc.setFontSize(10);
+        doc.text('Este documento fue generado automáticamente.', 105, footerY, { align: 'center' });
+
+        // Guardar el PDF
+        doc.save(`Acta_Agenda_${agenda.numero}.pdf`);
     };
 
     return (
