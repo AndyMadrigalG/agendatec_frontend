@@ -73,7 +73,7 @@ export default function EditarAgendaPage() {
 
       setFormulario({
         numero: agendaData.numero,
-        fechaHora: agendaData.fechaHora,
+        fechaHora: formatDateTimeLocal(agendaData.fechaHora), // Formatea la fecha
         tipo: agendaData.tipo,
         convocados: convocadosData.map((convocado: any) => convocado.id_Convocado.toString()),
         lugar: agendaData.lugar,
@@ -252,7 +252,6 @@ export default function EditarAgendaPage() {
         throw new Error('Error al convocar miembros');
       }
 
-      console.log('Agenda:' , await response.json());
       Swal.fire({
         icon: 'success',
         title: 'Miembros convocados',
@@ -462,6 +461,16 @@ export default function EditarAgendaPage() {
         router.push('/agendaInicio');
       }
     });
+  };
+
+  const formatDateTimeLocal = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
+    const day = String(date.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
+    const hours = String(date.getHours()).padStart(2, '0'); // Horas en formato 2 dígitos
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // Minutos en formato 2 dígitos
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   return (
