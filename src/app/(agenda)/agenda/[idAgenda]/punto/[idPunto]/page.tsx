@@ -192,7 +192,10 @@ export default function EditarPunto() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ...votacionEdit,
+                        votos_a_Favor: votacionEdit.votos_a_Favor,
+                        votos_en_Contra: votacionEdit.votos_en_Contra,
+                        votos_Abstencion: votacionEdit.votos_Abstencion,
+                        acuerdo: votacionEdit.acuerdo,
                     }),
                 });
 
