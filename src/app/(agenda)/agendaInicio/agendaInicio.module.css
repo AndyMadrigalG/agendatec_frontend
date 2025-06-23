@@ -93,6 +93,21 @@
   transition: background-color 0.2s;
 }
 
+.agendaBox .section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.agendaBox .section:first-child {
+  justify-content: flex-start;
+}
+
+.agendaBox .section:last-child {
+  justify-content: flex-end;
+}
+
 .agendaBox:hover {
   background-color: rgba(255, 255, 255, 0.059);
   border-radius: 0px;
@@ -100,6 +115,7 @@
 
 .agendaBox h3 {
   font-size: 20px;
+  
 }
 
 .agendaDerecha {

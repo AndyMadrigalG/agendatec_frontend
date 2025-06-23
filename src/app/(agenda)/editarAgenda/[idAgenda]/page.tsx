@@ -10,36 +10,13 @@ import Modal from '../../crearAgenda/ModalCrearPunto/ModalCrearPunto';
 import EditarPuntoPage from './(editarPunto)/editarPunto';
 import { BACKEND_URL } from '../../../../Constants/constants';
 import CrearAgendaForm from '../../crearAgenda/(components)/crearAgendaForm';
+import {Miembro, Agenda, Punto} from '../../../types'
 
-interface Miembro {
-  id: number;
-  nombre: string;
-  email: string;
-  cargo: string;
-}
-
-export interface Punto {
-  id_Punto: number; // Cambiar de id a id_Punto
-  enunciado: string;
-  duracion: string;
-  tipo: string;
-  expositor: string;
-  archivos: File[];
-  numeracion: number;
-}
-
-export interface Agenda {
-  id_Agenda: string;
-  numero: string;
-  fechaHora: string;
-  tipo: string;
-  convocados: string[];
-  lugar: string;
-}
+const local_URL = "http://localhost:8080";
 
 export default function EditarAgendaPage() {
   const router = useRouter();
-  const { idAgenda } = useParams(); // Obtener el idAgenda del parámetro
+  const { idAgenda } = useParams(); 
   const [loading, setLoading] = useState(true);
   const [miembros, setMiembros] = useState<Miembro[]>([]);
   const [busqueda, setBusqueda] = useState('');
@@ -96,7 +73,7 @@ export default function EditarAgendaPage() {
 
       setFormulario({
         numero: agendaData.numero,
-        fechaHora: agendaData.fechaHora,
+        fechaHora: formatDateTimeLocal(agendaData.fechaHora), // Formatea la fecha
         tipo: agendaData.tipo,
         convocados: convocadosData.map((convocado: any) => convocado.id_Convocado.toString()),
         lugar: agendaData.lugar,
@@ -110,7 +87,7 @@ export default function EditarAgendaPage() {
       // Actualizar los puntos
       setPuntos(
         puntosData.map((punto: any) => ({
-          id_Punto: punto.id_Punto, // Asegúrate de que este campo se mapea correctamente
+          id_Punto: punto.id_Punto, 
           numeracion: punto.numeracion,
           enunciado: punto.enunciado,
           duracion: punto.duracionMin.toString(),
@@ -183,22 +160,184 @@ export default function EditarAgendaPage() {
     fetchAgenda();
   }, [idAgenda]);
 
-  const handleGuardar = (e: React.FormEvent) => {
+  const camposVacios = () => {
+    const campos = Object.entries(formulario).filter(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length === 0;
+      }
+      return value === '';
+    });
+
+    if (campos.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos vacíos',
+        text: 'Por favor, complete todos los campos antes de continuar.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return true;
+    }
+    return false;
+  };
+
+  const handleConvocar = async (e: React.FormEvent) => {
     e.preventDefault();
+    const guardar = await guardarAgenda();
+    if (!guardar) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar la agenda',
+        text: 'No se pudo guardar la agenda. Inténtelo de nuevo.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return;
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Agenda guardada con éxito',
+      text: 'La agenda se ha guardado correctamente.',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7b6ef6',
+      background: 'var(--background)',
+      color: '#f9fafb',
+    }).then(() => {
+      
+
+      Swal.fire({
+        title: '¿Desea convocar a los miembros seleccionados?',
+        text: 'Se enviará una notificación a los miembros convocados.',
+        icon: 'warning',
+        background: 'var(--background)',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, convocar',
+        color: '#f9fafb',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const convocar = await convocarMiembros();
+          if (convocar) {
+            router.push('/agendaInicio');
+          }
+          
+        }
+      });
+    });
+
+  };
+
+
+
+  const handleGuardar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await guardarAgenda();
+  };
+
+  const convocarMiembros = async () => {
+    try{
+      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          estado: 2
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Error al convocar miembros');
+      }
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Miembros convocados',
+        text: 'Se ha enviado la notificación a los miembros convocados.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+
+      return true;
+    }catch (error) {
+      console.error('Error al convocar miembros:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al convocar miembros',
+        text: 'Ocurrió un error al convocar a los miembros.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return false;
+    }
+  }
+
+
+  const guardarAgenda = async () => {
+    if (camposVacios()) {
+      return;
+    }
+
     const agendaEditar = {
       numero: formulario.numero,
       fechaHora: formulario.fechaHora,
+      fechaFin: "",
       tipo: formulario.tipo,
       lugar: formulario.lugar,
+    };
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(agendaEditar),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al guardar la agenda');
+      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Agenda guardada con éxito',
+        text: 'La agenda se ha guardado correctamente.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return true
+
+    } catch (error) {
+      console.error('Error al guardar la agenda:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar la agenda',
+        text: 'Ocurrió un error al guardar la agenda. Inténtelo de nuevo.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return false;
     }
-  };
+  }
   
 
   const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
     e.preventDefault();
-    setPuntoSeleccionado(punto || null); // Si no se pasa un punto, se establece como null
-    setIsModalOpen(true); // Abre el modal
+    setPuntoSeleccionado(punto || null); 
+    setIsModalOpen(true); 
   };
+
+  
 
   const handleGuardarPunto = async (puntoActualizado: Punto) => {
     try {
@@ -236,7 +375,7 @@ export default function EditarAgendaPage() {
         // Agregar el nuevo punto al estado
         setPuntos((prevPuntos) => [...prevPuntos, {
           id_Punto: nuevoPunto.id_Punto,
-          numeracion: prevPuntos.length + 1, // Asignar numeración secuencial
+          numeracion: prevPuntos.length + 1, 
           enunciado: nuevoPunto.enunciado,
           duracion: nuevoPunto.duracionMin.toString(),
           tipo: nuevoPunto.tipo,
@@ -324,6 +463,16 @@ export default function EditarAgendaPage() {
     });
   };
 
+  const formatDateTimeLocal = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes en formato 2 dígitos
+    const day = String(date.getDate()).padStart(2, '0'); // Día en formato 2 dígitos
+    const hours = String(date.getHours()).padStart(2, '0'); // Horas en formato 2 dígitos
+    const minutes = String(date.getMinutes()).padStart(2, '0'); // Minutos en formato 2 dígitos
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   return (
     <div>
       <div className={styles.mainContainer}>
@@ -348,7 +497,7 @@ export default function EditarAgendaPage() {
             loading={loading}
             handleChange={(e) => setFormulario({ ...formulario, [e.target.name]: e.target.value })}
             handleGuardar={handleGuardar}
-            handleCrear={() => console.log('Crear agenda')} 
+            handleCrear={handleConvocar} 
             handleCheck={(id) =>
               setSeleccionados((prev) =>
                 prev.includes(id) ? prev.filter((selId) => selId !== id) : [...prev, id]
@@ -358,7 +507,7 @@ export default function EditarAgendaPage() {
             handleOpenModal={handleOpenModal}
             handleCloseModal={handleCloseModal}
             setSeleccionados={setSeleccionados}
-            editable={true} // Cambiar a true para permitir edición
+            editable={true} 
           />
         </div>
       </div>

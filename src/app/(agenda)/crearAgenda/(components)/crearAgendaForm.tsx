@@ -6,15 +6,8 @@ import styles from './crearAgenda.module.css';
 import addIcon from '/public/addCircle.svg';
 import editIcon from '/public/editIcon.svg';
 
-export interface Punto {
-  id_Punto: number;
-  enunciado: string;
-  duracion: string;
-  tipo: string;
-  expositor: string;
-  archivos: File[];
-  numeracion: number;
-}
+import {Punto} from '../../../types'
+
 interface CrearAgendaFormProps {
   formulario: {
     numero: string;

@@ -4,22 +4,14 @@ import { useEffect, useState } from 'react';
 import styles from './editarPunto.module.css';
 import Swal from 'sweetalert2';
 import { BACKEND_URL } from '../../../../../Constants/constants';
+import {Punto} from '../../../../types';
+
 
 interface Miembro {
   id: number;
   nombre: string;
   email: string;
   cargo: string;
-}
-
-export interface Punto {
-  id_Punto: number;
-  numeracion: number;
-  enunciado: string;
-  duracion: string;
-  tipo: string;
-  expositor: string;
-  archivos: File[];
 }
 
 interface EditarPuntoPageProps {

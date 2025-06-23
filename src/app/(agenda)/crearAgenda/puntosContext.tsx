@@ -1,16 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState } from 'react';
-
-export interface Punto {
-  id_Punto: number;
-  enunciado: string;
-  duracion: string;
-  tipo: string;
-  expositor: string;
-  archivos: File[];
-  numeracion: number;
-}
+import {Punto} from '../../types'
 
 interface PuntosContextProps {
   puntos: Punto[];
