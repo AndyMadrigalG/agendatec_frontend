@@ -12,7 +12,7 @@ export interface Agenda {
   tipo: string;
   convocados: string[];
   lugar: string;
-  estadoId: number;
+  estado: string;
 }
 
 export interface Punto {

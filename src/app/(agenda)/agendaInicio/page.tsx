@@ -31,6 +31,24 @@ export default function AgendaPage() {
             }
 
             const data = await response.json();
+
+            data.forEach((agenda: any) => {
+                switch (agenda.estado) {
+                case 'Draft':
+                    agenda.estado = 'Borrador';
+                    break;
+                case 'Convocatoria_Enviada':
+                    agenda.estado = 'Convocada';
+                    break;
+                case 'Sesion_En_Proceso':
+                    agenda.estado = 'En Proceso';
+                    break;
+                case 'Sesion_Terminada':
+                    agenda.estado = 'Finalizada';
+                    break;
+                }
+            });
+
             setAgendas(data);
             console.log('Agendas cargadas:', data);
         } catch (err) {
@@ -66,8 +84,14 @@ export default function AgendaPage() {
     const handleSeleccionarAgenda = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         const agendaId = e.currentTarget.getAttribute('data-id');
-        if (agendaId) {
-            router.push(`/agenda/${agendaId}`);
+        const agendaEstado = agendas.find(agenda => agenda.id_Agenda.toString() === agendaId)?.estado;
+
+        if (agendaId && agendaEstado) {
+            if (agendaEstado === 'Borrador') {
+                router.push(`/editarAgenda/${agendaId}`);
+            } else {
+                router.push(`/agenda/${agendaId}`);
+            }
         }
     };
 
@@ -151,8 +175,17 @@ export default function AgendaPage() {
                                 onClick={handleSeleccionarAgenda}
                                 style={{ cursor: 'pointer' }}
                             >
-                                <h3>{agenda.numero} - {agenda.tipo}</h3>
-                                <p>Fecha y hora: {new Date(agenda.fechaHora).toLocaleString()}</p>
+                                <div className={styles.section}>
+                                    <h3>{agenda.numero} - {agenda.tipo}</h3>
+                                </div>
+                                <div className={styles.section}>
+                                    <p>{agenda.estado}</p>
+                                </div>
+                                <div className={styles.section}>
+                                    <p>Fecha y hora: {new Date(agenda.fechaHora).toLocaleString()}</p>
+                                </div>
+
+                                
                             </div>
                         ))
                     )}
