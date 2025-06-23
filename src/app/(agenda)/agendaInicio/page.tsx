@@ -176,7 +176,7 @@ export default function AgendaPage() {
                                 style={{ cursor: 'pointer' }}
                             >
                                 <div className={styles.section}>
-                                    <h3>{agenda.numero} - {agenda.tipo}</h3>
+                                    <h3>{agenda.numero} - Sesion {agenda.tipo}</h3>
                                 </div>
                                 <div className={styles.section}>
                                     <p>{agenda.estado}</p>
