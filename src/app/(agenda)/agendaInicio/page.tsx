@@ -63,7 +63,7 @@ export default function AgendaPage() {
                 color: '#f9fafb'
             });
         } finally {
-            setLoading(false); // Desactiva el estado de carga
+            setLoading(false); 
         }
     };
 

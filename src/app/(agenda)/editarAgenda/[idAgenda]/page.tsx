@@ -12,6 +12,8 @@ import { BACKEND_URL } from '../../../../Constants/constants';
 import CrearAgendaForm from '../../crearAgenda/(components)/crearAgendaForm';
 import {Miembro, Agenda, Punto} from '../../../types'
 
+const local_URL = "http://localhost:8080";
+
 export default function EditarAgendaPage() {
   const router = useRouter();
   const { idAgenda } = useParams(); 
@@ -158,19 +160,141 @@ export default function EditarAgendaPage() {
     fetchAgenda();
   }, [idAgenda]);
 
+  const camposVacios = () => {
+    const campos = Object.entries(formulario).filter(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length === 0;
+      }
+      return value === '';
+    });
+
+    if (campos.length > 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos vacíos',
+        text: 'Por favor, complete todos los campos antes de continuar.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return true;
+    }
+    return false;
+  };
+
+  const handleConvocar = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const guardar = await guardarAgenda();
+    if (!guardar) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar la agenda',
+        text: 'No se pudo guardar la agenda. Inténtelo de nuevo.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return;
+    }
+    Swal.fire({
+      icon: 'success',
+      title: 'Agenda guardada con éxito',
+      text: 'La agenda se ha guardado correctamente.',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7b6ef6',
+      background: 'var(--background)',
+      color: '#f9fafb',
+    }).then(() => {
+      
+
+      Swal.fire({
+        title: '¿Desea convocar a los miembros seleccionados?',
+        text: 'Se enviará una notificación a los miembros convocados.',
+        icon: 'warning',
+        background: 'var(--background)',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, convocar',
+        color: '#f9fafb',
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const convocar = await convocarMiembros();
+          if (convocar) {
+            router.push('/agendaInicio');
+          }
+          
+        }
+      });
+    });
+
+  };
+
+
+
   const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
+    await guardarAgenda();
+  };
+
+  const convocarMiembros = async () => {
+    try{
+      const response = await fetch(`${local_URL}/agendas/${idAgenda}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          estado: 2
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Error al convocar miembros');
+      }
+
+      console.log('Agenda:' , await response.json());
+      Swal.fire({
+        icon: 'success',
+        title: 'Miembros convocados',
+        text: 'Se ha enviado la notificación a los miembros convocados.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+
+      return true;
+    }catch (error) {
+      console.error('Error al convocar miembros:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al convocar miembros',
+        text: 'Ocurrió un error al convocar a los miembros.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return false;
+    }
+  }
+
+
+  const guardarAgenda = async () => {
+    if (camposVacios()) {
+      return;
+    }
+
     const agendaEditar = {
       numero: formulario.numero,
       fechaHora: formulario.fechaHora,
       fechaFin: "",
       tipo: formulario.tipo,
       lugar: formulario.lugar,
-    }
-    console.log('Agenda a editar:', agendaEditar);
+    };
 
     try {
-      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}`, {
+      const response = await fetch(`${local_URL}/agendas/${idAgenda}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -190,6 +314,7 @@ export default function EditarAgendaPage() {
         background: 'var(--background)',
         color: '#f9fafb',
       });
+      return true
 
     } catch (error) {
       console.error('Error al guardar la agenda:', error);
@@ -202,9 +327,9 @@ export default function EditarAgendaPage() {
         background: 'var(--background)',
         color: '#f9fafb',
       });
-      return;
+      return false;
     }
-  };
+  }
   
 
   const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
@@ -212,6 +337,8 @@ export default function EditarAgendaPage() {
     setPuntoSeleccionado(punto || null); 
     setIsModalOpen(true); 
   };
+
+  
 
   const handleGuardarPunto = async (puntoActualizado: Punto) => {
     try {
@@ -361,7 +488,7 @@ export default function EditarAgendaPage() {
             loading={loading}
             handleChange={(e) => setFormulario({ ...formulario, [e.target.name]: e.target.value })}
             handleGuardar={handleGuardar}
-            handleCrear={() => console.log('Crear agenda')} 
+            handleCrear={handleConvocar} 
             handleCheck={(id) =>
               setSeleccionados((prev) =>
                 prev.includes(id) ? prev.filter((selId) => selId !== id) : [...prev, id]
