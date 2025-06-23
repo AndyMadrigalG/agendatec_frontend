@@ -18,6 +18,7 @@ interface Agenda {
     tipo: string;
     fechaHora: string;
     lugar: string;
+    estado?: string;
 }
 
 interface Punto {
@@ -63,6 +64,22 @@ export default function AgendaPage() {
             }
 
             const data = await response.json();
+
+            switch (data.estado) {
+                case 'Draft':
+                    data.estado = 'Borrador';
+                    break;
+                case 'Convocatoria_Enviada':
+                    data.estado = 'Convocada';
+                    break;
+                case 'Sesion_En_Proceso':
+                    data.estado = 'En Proceso';
+                    break;
+                case 'Sesion_Terminada':
+                    data.estado = 'Finalizada';
+                    break;
+            }
+
             setAgenda(data);
             console.log('Agenda cargada:', data);
         } catch (error) {
@@ -95,6 +112,7 @@ export default function AgendaPage() {
             }
 
             const data = await response.json();
+
             setPuntos(data);
             console.log('Puntos cargados:', data);
         } catch (error) {
@@ -194,6 +212,8 @@ export default function AgendaPage() {
             <div className={styles.mainContainer}>
                 <div className={styles.menu}>
                     <h2>{loading ? 'Cargando agenda...' : `Agenda: ${agenda.numero}`}</h2>
+                    <p className={styles.estado}>{loading ? 'Cargando Estado...' : `Estado: ${agenda.estado}`}</p>
+
                 </div>
 
                 {loading ? (

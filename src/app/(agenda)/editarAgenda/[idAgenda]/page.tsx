@@ -160,28 +160,15 @@ export default function EditarAgendaPage() {
     fetchAgenda();
   }, [idAgenda]);
 
-  const camposVacios = () => {
-    const campos = Object.entries(formulario).filter(([key, value]) => {
-      if (Array.isArray(value)) {
-        return value.length === 0;
+  const camposVacios = Object.values(formulario).some((valor) => {
+    if (typeof valor === 'string') {
+      if (valor.trim() === '' || seleccionados.length === 0 || puntos.length === 0) {
+        return true;
       }
-      return value === '';
-    });
-
-    if (campos.length > 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Campos vacíos',
-        text: 'Por favor, complete todos los campos antes de continuar.',
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#7b6ef6',
-        background: 'var(--background)',
-        color: '#f9fafb',
-      });
-      return true;
+      return valor.trim() === '';
     }
     return false;
-  };
+  });
 
   const handleConvocar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -220,8 +207,20 @@ export default function EditarAgendaPage() {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const convocar = await convocarMiembros();
-          if (convocar) {
+          const status = await cambiarStatus();
+          if (status) {
             router.push('/agendaInicio');
+          }
+          else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al convocar miembros',
+              text: 'Ocurrió un error al convocar a los miembros.',
+              confirmButtonText: 'Aceptar',
+              confirmButtonColor: '#7b6ef6',
+              background: 'var(--background)',
+              color: '#f9fafb',
+            });
           }
           
         }
@@ -237,7 +236,7 @@ export default function EditarAgendaPage() {
     await guardarAgenda();
   };
 
-  const convocarMiembros = async () => {
+  const cambiarStatus = async () => {
     try{
       const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/status`, {
         method: 'PATCH',
@@ -278,10 +277,54 @@ export default function EditarAgendaPage() {
     }
   }
 
+  const convocarMiembros = async () => {
+    try {
+      console.log('Convocando miembros:', seleccionados);
+      const convocadosData = seleccionados.map((convocado) => ({
+            id_Convocado: convocado,
+          }));
+  
+          // Post Convocados
+          const postConvocados = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/convocados`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(convocadosData),
+          });
+        
+          if (!postConvocados.ok) {
+            throw new Error('Error al guardar los convocados');
+          }
+    }
+    catch (error) {
+      console.error('Error al convocar miembros:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al convocar miembros',
+        text: 'Ocurrió un error al convocar a los miembros.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return false;
+    }
+  }
+
 
   const guardarAgenda = async () => {
-    if (camposVacios()) {
-      return;
+    if (camposVacios) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos incompletos',
+        text: 'Por favor, complete todos los campos antes de guardar la agenda.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return false;
     }
 
     const agendaEditar = {
@@ -304,6 +347,24 @@ export default function EditarAgendaPage() {
       if (!response.ok) {
         throw new Error(data.message || 'Error al guardar la agenda');
       }
+
+      const convocadosData = formulario.convocados.map((convocado) => ({
+        id_Convocado: parseInt(convocado),
+      }));
+
+      // Post Convocados
+      const postConvocados = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/convocados`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(convocadosData),
+      });
+
+      if (!postConvocados.ok) {
+        throw new Error('Error al guardar los convocados');
+      }
+
       Swal.fire({
         icon: 'success',
         title: 'Agenda guardada con éxito',

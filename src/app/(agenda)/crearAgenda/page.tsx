@@ -111,23 +111,6 @@ export default function CrearAgendaPage() {
 
       const id_newAgenda = parseInt(data.id_Agenda);
 
-      const convocadosData = formulario.convocados.map((convocado) => ({
-        id_Convocado: parseInt(convocado),
-      }));
-
-      // Post Convocados
-      const postConvocados = await fetch(`${BACKEND_URL}/agendas/${id_newAgenda}/convocados`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(convocadosData),
-      });
-
-      if (!postConvocados.ok) {
-        throw new Error('Error al guardar los convocados');
-      }
-
       // Post Puntos
       for (const punto of puntos) {
         const puntoData = {
