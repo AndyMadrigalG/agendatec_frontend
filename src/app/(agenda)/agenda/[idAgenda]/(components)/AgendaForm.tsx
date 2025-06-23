@@ -27,6 +27,8 @@ interface AgendaFormProps {
   handlePuntoClick: (id: string) => (e: React.MouseEvent<HTMLButtonElement>) => void;
   handleCancelar: (e: React.FormEvent) => void;
   handleGuardar: (e: React.FormEvent) => void;
+  botonTitulo?: string;
+  editable?: boolean;
 }
 
 export default function AgendaForm({
@@ -36,6 +38,8 @@ export default function AgendaForm({
   handlePuntoClick,
   handleCancelar,
   handleGuardar,
+  botonTitulo,
+  editable,
 }: AgendaFormProps) {
   return (
     <form className={styles.form}>
@@ -50,16 +54,17 @@ export default function AgendaForm({
           <label>Puntos</label>
           <div className={styles.listaPuntos}>
             {puntos.map((punto) => (
-              <button
-                onClick={handlePuntoClick(punto.id_Punto)}
+                <button
+                onClick={editable ? handlePuntoClick(punto.id_Punto) : undefined}
                 key={punto.id_Punto}
                 className={styles.addPuntoButton}
-              >
+                disabled={!editable}
+                >
                 <Image src={editIcon} alt="Editar Punto" width={20} height={20} />
                 <p>
                   {punto.numeracion} - {punto.enunciado}
                 </p>
-              </button>
+                </button>
             ))}
           </div>
         </div>
@@ -85,10 +90,10 @@ export default function AgendaForm({
 
       <div className={styles.botonesContainer}>
         <button className={styles.cancelarButton} onClick={handleCancelar}>
-          Cancelar
+          Cerrar
         </button>
         <button className={styles.crearButton} onClick={handleGuardar}>
-          Guardar
+          {botonTitulo}
         </button>
       </div>
     </form>
