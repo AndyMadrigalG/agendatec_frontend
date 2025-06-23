@@ -14,7 +14,7 @@ import {Miembro, Agenda, Punto} from '../../../types'
 
 export default function EditarAgendaPage() {
   const router = useRouter();
-  const { idAgenda } = useParams(); // Obtener el idAgenda del parámetro
+  const { idAgenda } = useParams(); 
   const [loading, setLoading] = useState(true);
   const [miembros, setMiembros] = useState<Miembro[]>([]);
   const [busqueda, setBusqueda] = useState('');
@@ -85,7 +85,7 @@ export default function EditarAgendaPage() {
       // Actualizar los puntos
       setPuntos(
         puntosData.map((punto: any) => ({
-          id_Punto: punto.id_Punto, // Asegúrate de que este campo se mapea correctamente
+          id_Punto: punto.id_Punto, 
           numeracion: punto.numeracion,
           enunciado: punto.enunciado,
           duracion: punto.duracionMin.toString(),
@@ -170,7 +170,7 @@ export default function EditarAgendaPage() {
     console.log('Agenda a editar:', agendaEditar);
 
     try {
-      const response = await fetch(`http://localhost:8080/agendas/${idAgenda}`, {
+      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ export default function EditarAgendaPage() {
         // Agregar el nuevo punto al estado
         setPuntos((prevPuntos) => [...prevPuntos, {
           id_Punto: nuevoPunto.id_Punto,
-          numeracion: prevPuntos.length + 1, // Asignar numeración secuencial
+          numeracion: prevPuntos.length + 1, 
           enunciado: nuevoPunto.enunciado,
           duracion: nuevoPunto.duracionMin.toString(),
           tipo: nuevoPunto.tipo,
@@ -371,7 +371,7 @@ export default function EditarAgendaPage() {
             handleOpenModal={handleOpenModal}
             handleCloseModal={handleCloseModal}
             setSeleccionados={setSeleccionados}
-            editable={true} // Cambiar a true para permitir edición
+            editable={true} 
           />
         </div>
       </div>
