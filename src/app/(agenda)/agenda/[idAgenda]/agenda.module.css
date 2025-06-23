@@ -73,7 +73,7 @@
 .menu{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: end;
   width: 70%;
   border-bottom: rgb(91, 91, 91) 1px solid;
   padding-bottom: 20px;
@@ -287,4 +287,8 @@
 
 .backButton:hover {
   transform: scale(1.1);
+}
+
+.estado{
+  margin: 0;
 }
