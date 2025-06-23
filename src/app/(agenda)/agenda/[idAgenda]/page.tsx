@@ -90,14 +90,17 @@ export default function AgendaPage() {
                     data.estado = 'Borrador';
                     break;
                 case 'Convocatoria_Enviada':
+                    setEditable(false);
                     data.estado = 'Convocada';
                     setBotonTitulo('Iniciar Reunión');
                     break;
                 case 'Sesion_En_Proceso':
+                    setEditable(true);
                     data.estado = 'En Proceso';
                     setBotonTitulo('Finalizar Reunión');
                     break;
                 case 'Sesion_Terminada':
+                    setEditable(true);
                     data.estado = 'Reunión Finalizada';
                     setBotonTitulo('Finalizar Agenda');
                     break;
@@ -326,6 +329,22 @@ export default function AgendaPage() {
             currentY += 10;
             doc.setFontSize(10);
             doc.text(punto.contenido || 'Sin contenido.', 20, currentY, { maxWidth: 170 });
+
+            currentY += 10;
+
+            if (punto.votacion) {
+                doc.setFontSize(12);
+                doc.text('Resultados de la Votación:', 20, currentY);
+                currentY += 10;
+                doc.setFontSize(10);
+                doc.text(`Votos a Favor: ${punto.votacion.votos_a_Favor}`, 30, currentY);
+                currentY += 10;
+                doc.text(`Votos en Contra: ${punto.votacion.votos_en_Contra}`, 30, currentY);
+                currentY += 10;
+                doc.text(`Votos en Abstención: ${punto.votacion.votos_Abstencion}`, 30, currentY);
+                currentY += 10;
+                doc.text(`Acuerdo: ${punto.votacion.acuerdo || 'Sin acuerdo.'}`, 30, currentY);
+            }
 
             currentY += 10; // Espacio entre puntos
         });
