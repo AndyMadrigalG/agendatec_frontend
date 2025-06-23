@@ -239,7 +239,7 @@ export default function EditarAgendaPage() {
 
   const convocarMiembros = async () => {
     try{
-      const response = await fetch(`${local_URL}/agendas/${idAgenda}/status`, {
+      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ export default function EditarAgendaPage() {
     };
 
     try {
-      const response = await fetch(`${local_URL}/agendas/${idAgenda}`, {
+      const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
