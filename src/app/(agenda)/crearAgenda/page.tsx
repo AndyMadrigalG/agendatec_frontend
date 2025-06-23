@@ -19,7 +19,7 @@ interface Miembro {
   email: string;
   cargo: string;
 }
-const local_URL = 'http://localhost:8080';
+
 
 export default function CrearAgendaPage() {
   const router = useRouter();
@@ -125,7 +125,7 @@ export default function CrearAgendaPage() {
           agendaId: id_newAgenda,
         };
 
-        const responsePuntos = await fetch(`${local_URL}/puntos`, {
+        const responsePuntos = await fetch(`${BACKEND_URL}/puntos`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
