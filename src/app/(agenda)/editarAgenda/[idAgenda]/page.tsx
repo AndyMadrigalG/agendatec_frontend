@@ -454,7 +454,7 @@ export default function EditarAgendaPage() {
           color: '#f9fafb',
         });
       } else {
-        const response = await fetch(`${BACKEND_URL}/puntos/${puntoActualizado.id_Punto}`, {
+        const response = await fetch(`${local_URL}/puntos/${puntoActualizado.id_Punto}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

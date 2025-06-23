@@ -146,7 +146,6 @@ export default function EditarPunto() {
     const handleGuardar = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
 
-        // Mostrar Swal de carga
         Swal.fire({
             title: 'Guardando cambios...',
             text: 'Por favor espera mientras se aplican los cambios.',

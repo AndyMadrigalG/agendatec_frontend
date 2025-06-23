@@ -37,6 +37,8 @@ export default function AgendaPage() {
     const { idAgenda } = useParams();
     const router = useRouter();
 
+    const [editable, setEditable] = useState(true);
+    const [botonTitulo, setBotonTitulo] = useState('Guardar');
     const [agenda, setAgenda] = useState<Agenda>({
         id_Agenda: idAgenda || '',
         numero: '',
@@ -44,7 +46,6 @@ export default function AgendaPage() {
         fechaHora: '',
         lugar: '',
     });
-
     const [puntos, setPuntos] = useState<Punto[]>([]);
     const [convocados, setConvocados] = useState<Convocado[]>([]); 
     const [loading, setLoading] = useState(true);
@@ -71,13 +72,20 @@ export default function AgendaPage() {
                     break;
                 case 'Convocatoria_Enviada':
                     data.estado = 'Convocada';
+                    setBotonTitulo('Iniciar Reunión');
                     break;
                 case 'Sesion_En_Proceso':
                     data.estado = 'En Proceso';
+                    setBotonTitulo('Finalizar Reunión');
                     break;
                 case 'Sesion_Terminada':
-                    data.estado = 'Finalizada';
+                    data.estado = 'Reunión Finalizada';
+                    setBotonTitulo('Finalizar Agenda');
                     break;
+                case 'Finalizada':
+                    data.estado = 'Agenda Finalizada';
+                    setEditable(false);
+                    setBotonTitulo('Generar Acta');
             }
 
             setAgenda(data);
@@ -144,7 +152,6 @@ export default function AgendaPage() {
 
             const data = await response.json();
             setConvocados(data); 
-            console.log('Convocados cargados:', data);
         } catch (error) {
             console.error('Error al cargar los convocados:', error);
             Swal.fire({
@@ -193,10 +200,67 @@ export default function AgendaPage() {
         });
     };
 
-    const handleGuardar = (e: React.FormEvent) => {
+    const handleGuardar = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Guardar cambios en la agenda:', agenda);
-    };
+        let nuevoEstado = 2;
+        switch (agenda.estado) {
+            case 'Convocada':
+                nuevoEstado = 3; 
+                break;
+            case 'En Proceso':
+                nuevoEstado = 4;
+                break;
+            case 'Reunión Finalizada':
+                nuevoEstado = 5;
+                break;
+            case 'Agenda Finalizada':
+                nuevoEstado = 6;
+                break;
+        }
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/agendas/${idAgenda}/status`, {
+            method: 'PATCH',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                estado: nuevoEstado
+            }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cambiar el estado de la agenda');
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Estado de la agenda actualizado',
+                text: `El estado de la agenda ha sido cambiado exitosamente.`,
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            }).then(() => {
+                window.location.reload();
+            });
+        } catch (error) {
+            console.error('Error al guardar la agenda:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al cambiar el estado de la agenda',
+                text: 'Ocurrió un error al cambiar el estado de la agenda, vuelva a intentarlo más tarde.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
+            return;
+        }
+
+
+
+    }
 
     const handleBack = () => {
         router.push('/agendaInicio');
@@ -227,6 +291,8 @@ export default function AgendaPage() {
                             handlePuntoClick={handlePuntoClick}
                             handleCancelar={handleCancelar}
                             handleGuardar={handleGuardar}
+                            botonTitulo={botonTitulo}
+                            editable={editable}
                         />
                     </div>
                 )}
