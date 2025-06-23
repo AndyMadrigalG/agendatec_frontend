@@ -327,6 +327,20 @@ export default function AgendaPage() {
             doc.setFontSize(10);
             doc.text(punto.contenido || 'Sin contenido.', 20, currentY, { maxWidth: 170 });
 
+            if (punto.votacion) {
+                doc.setFontSize(12);
+                doc.text('Resultados de la Votación:', 30, currentY);
+                currentY += 10;
+                doc.setFontSize(10);
+                doc.text(`Votos a Favor: ${punto.votacion.votos_a_Favor}`, 40, currentY);
+                currentY += 10;
+                doc.text(`Votos en Contra: ${punto.votacion.votos_en_Contra}`, 40, currentY);
+                currentY += 10;
+                doc.text(`Votos en Abstención: ${punto.votacion.votos_Abstencion}`, 40, currentY);
+                currentY += 10;
+                doc.text(`Acuerdo: ${punto.votacion.acuerdo || 'Sin acuerdo.'}`, 40, currentY);
+            }
+
             currentY += 10; // Espacio entre puntos
         });
 
