@@ -158,21 +158,59 @@ export default function EditarAgendaPage() {
     fetchAgenda();
   }, [idAgenda]);
 
-  const handleGuardar = (e: React.FormEvent) => {
+  const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault();
     const agendaEditar = {
       numero: formulario.numero,
       fechaHora: formulario.fechaHora,
+      fechaFin: "",
       tipo: formulario.tipo,
       lugar: formulario.lugar,
+    }
+    console.log('Agenda a editar:', agendaEditar);
+
+    try {
+      const response = await fetch(`http://localhost:8080/agendas/${idAgenda}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(agendaEditar),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al guardar la agenda');
+      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Agenda guardada con éxito',
+        text: 'La agenda se ha guardado correctamente.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+
+    } catch (error) {
+      console.error('Error al guardar la agenda:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al guardar la agenda',
+        text: 'Ocurrió un error al guardar la agenda. Inténtelo de nuevo.',
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#7b6ef6',
+        background: 'var(--background)',
+        color: '#f9fafb',
+      });
+      return;
     }
   };
   
 
   const handleOpenModal = (e: React.MouseEvent<HTMLButtonElement>, punto?: Punto) => {
     e.preventDefault();
-    setPuntoSeleccionado(punto || null); // Si no se pasa un punto, se establece como null
-    setIsModalOpen(true); // Abre el modal
+    setPuntoSeleccionado(punto || null); 
+    setIsModalOpen(true); 
   };
 
   const handleGuardarPunto = async (puntoActualizado: Punto) => {
