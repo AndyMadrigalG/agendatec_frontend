@@ -10,10 +10,18 @@ import {useRouter} from "next/navigation";
 
 export function LoginForm(){
     const router = useRouter();
-    const handleNavigation = (path: string) => {
-        router.push(path);
-    };
 
+    async function handleSubmit(event: React.FormEvent) {
+        event.preventDefault();
+        const formData = new FormData(event.target as HTMLFormElement);
+        const result = await handleLogin(null, formData);
+
+        if (result.success && result.redirectUrl) {
+            router.push(result.redirectUrl); // Redirección
+        } else {
+            console.log('Error en el login:', result.message || result.error);
+        }
+    }
     const [state, loginAction] = useActionState(handleLogin, undefined);
 
     return (
@@ -28,7 +36,7 @@ export function LoginForm(){
                 </div>
                 <div className={styles.right}>
                     <h2>Iniciar Sesión</h2>
-                    <form className={styles.form} action={loginAction}>
+                    <form className={styles.form} onSubmit={handleSubmit}>
                         <input
                             id="email"
                             name="email"
@@ -46,20 +54,10 @@ export function LoginForm(){
                             //onChange={handleContrasenaChange}
                             required
                         />
-                        <SubmitButton />
+                        <button type="submit">Ingresar</button>
                     </form>
                 </div>
             </div>
         </div>
-    );
-}
-
-function SubmitButton() {
-    const { pending } = useFormStatus();
-
-    return (
-        <button disabled={pending} type="submit">
-            { pending ? "Cargando..." : "Ingresar" }
-        </button>
     );
 }

@@ -29,7 +29,7 @@ export async function handleLogin(prevState: any, formData: FormData) {
                     user_name: data.username
                 });
                 console.log('Login exitoso');
-                return { success: true, redirectUrl: '/Home' };
+                return { success: true, redirectUrl: '/home' };
             }
         } else {
             return {

@@ -36,13 +36,12 @@ export async function createSession(response: any) {
     const userEmailCookie = await encrypt({ user_email, expiresAt });
     const userNameCookie = await encrypt({ user_name, expiresAt });
     const idTokenCookie = await encrypt({ idToken, expiresAt });
-    const refreshTokenCookie = await encrypt({ idToken, expiresAt });
+    const refreshTokenCookie = await encrypt({ refreshToken, expiresAt });
 
     // Obtén las cookies y establece la nueva cookie
     const cookieStore = await cookies();
     cookieStore.set('session_userName', userNameCookie, {
         httpOnly: true,
-        secure: true,
         expires: expiresAt,
     });
     cookieStore.set('session_userEmail', userEmailCookie, {
@@ -51,9 +50,10 @@ export async function createSession(response: any) {
     });
     cookieStore.set('session_idToken', idTokenCookie, {
         httpOnly: true,
+        secure: true,
         expires: expiresAt,
     });
-    cookieStore.set('session_refreshToken', idTokenCookie, {
+    cookieStore.set('session_refreshToken', refreshTokenCookie, {
         httpOnly: true,
         secure: true,
         expires: expiresAt,
