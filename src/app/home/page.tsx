@@ -5,7 +5,6 @@ import logo from '/public/logo.png';
 import calendarImage from '/public/calendar.png';
 import gestionLogo from '/public/gestionLogo.png';
 import actasLogo from '/public/actas.png';
-import { useRouter } from 'next/navigation';
 import LogoutButton from "../logout/LogoutButton";
 import { cookies } from "next/headers";
 
