@@ -26,8 +26,6 @@ export async function handleLogin(prevState: any, formData: FormData) {
                 await createSession({
                     idToken: data.idToken,
                     refreshToken: data.refreshToken,
-                    user_email: data.email,
-                    user_name: data.username
                 });
                 console.log('Login exitoso');
                 return { success: true, redirectUrl: '/home' };

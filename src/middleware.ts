@@ -4,31 +4,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decrypt } from '@/Constants/lib';
 import { cookies } from "next/headers";
-import {BACKEND_URL} from "@/Constants/constants";
+import { BACKEND_URL } from "@/Constants/constants";
 
 const protectedRoutes = ['/home'];
 const publicRoutes = ['/login'];
 
-function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function middleware(request: NextRequest) {
     const cookie = (await cookies()).get('session_idToken');
     const session =  cookie ? await decrypt(cookie.value) : null;
-    console.log('decripted cookie in middleware: ', session);
 
-    // send axios get /auth with token in headers
+    // send GET /auth with token in headers to validate token
     const response = await fetch(BACKEND_URL + '/auth', {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${session?.idToken}` },
     });
     const data = await response.json();
-    console.log('response dataa: ', data);
+    // console.log('id token authenticated : ', data);
 
-    // Allow access to the login without a token
-    if ( request.nextUrl.pathname.startsWith('/login') ) {
+    if (data?.valid && data?.userName) {
+        // Agregar el nombre del usuario a las cookies
+        const cookieStore = await cookies();
+        cookieStore.set('session_userName', data.userName);
+        cookieStore.set('session_userEmail', data.userEmail);
+    }
+
+    // Allow access to the login without a token or token is valid
+    if (request.nextUrl.pathname.startsWith('/login') && (!session || !session.idToken || !data?.valid)) {
         return NextResponse.next();
+    } else if (request.nextUrl.pathname.startsWith('/login') && data?.valid) {
+        // If the user is already logged in, redirect to home
+        return NextResponse.redirect(new URL('/home', request.url));
     }
 
     // Redirect to login if no session token is present

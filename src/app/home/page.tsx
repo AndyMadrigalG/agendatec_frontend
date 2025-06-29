@@ -1,5 +1,4 @@
-"use client"
-
+import Link from 'next/link';
 import styles from './home.module.css';
 import Image from 'next/image';
 import logo from '/public/logo.png';
@@ -8,13 +7,11 @@ import gestionLogo from '/public/gestionLogo.png';
 import actasLogo from '/public/actas.png';
 import { useRouter } from 'next/navigation';
 import LogoutButton from "../logout/LogoutButton";
+import { cookies } from "next/headers";
 
-export default function HomePage() {
-    const router = useRouter();
-
-    const handleNavigation = (path: string) => {
-        router.push(path);
-    };
+export default async function HomePage() {
+    const cookieStore = await cookies();
+    const userName = cookieStore.get('session_userName')?.value;
 
     return (
         <div className={styles.principalContainer}>
@@ -24,29 +21,20 @@ export default function HomePage() {
             </div>
 
             <div className={styles.container}>
-                <h1 className={styles.title}>Inicio</h1>
+                <h1 className={styles.bienvenida}>Bienvenido, {userName}</h1>
                 <div className={styles.menu}>
-                    <div
-                        className={styles.card}
-                        onClick={() => handleNavigation('/agendaInicio')}
-                    >
+                    <Link href="/agendaInicio" className={styles.card}>
                         <Image src={calendarImage} alt="Agendas Logo" />
                         <span>Agendas</span>
-                    </div>
-                    <div
-                        className={styles.card}
-                        onClick={() => handleNavigation('/gestionInicio')}
-                    >
+                    </Link>
+                    <Link href="/gestionInicio" className={styles.card}>
                         <Image src={gestionLogo} alt="Gestion Logo" />
                         <span>Gestión</span>
-                    </div>
-                    <div
-                        className={styles.card}
-                        onClick={() => handleNavigation('/actas')}
-                    >
+                    </Link>
+                    <Link href="/actas" className={styles.card}>
                         <Image src={actasLogo} alt="Actas Logo" />
                         <span>Actas</span>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>
