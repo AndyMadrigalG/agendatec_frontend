@@ -1,7 +1,8 @@
 "use server";
 
 import { BACKEND_URL } from "@/Constants/constants";
-import { createSession } from "@/Constants/lib";
+import {createSession, deleteSession} from "@/Constants/lib";
+import {redirect} from "next/navigation";
 
 export async function handleLogin(prevState: any, formData: FormData) {
     try {
@@ -43,4 +44,7 @@ export async function handleLogin(prevState: any, formData: FormData) {
     }
 }
 
-export async function handleLogout() {}
+export async function handleLogout() {
+    await deleteSession();
+    redirect('/login');
+}

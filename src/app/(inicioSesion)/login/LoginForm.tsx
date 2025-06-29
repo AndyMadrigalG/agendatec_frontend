@@ -17,7 +17,7 @@ export function LoginForm(){
         const result = await handleLogin(null, formData);
 
         if (result.success && result.redirectUrl) {
-            router.push(result.redirectUrl); // Redirección
+            router.push(result.redirectUrl);
         } else {
             console.log('Error en el login:', result.message || result.error);
         }

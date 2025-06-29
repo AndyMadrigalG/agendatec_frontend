@@ -1,20 +1,12 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import styles from "./LogoutButton.module.css";
+import { handleLogout } from "@/app/(inicioSesion)/login/actions";
 
 export default function LogoutButton() {
-    const router = useRouter();
-
-    const handleLogout = () => {
-        localStorage.removeItem("idToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("userEmail");
-        router.push("/login");
-    };
 
     return (
-        <button className={styles.logoutButton} onClick={handleLogout}>
+        <button className={styles.logoutButton} onClick={() => handleLogout()}>
             Cerrar sesión
         </button>
     );

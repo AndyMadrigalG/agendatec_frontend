@@ -60,13 +60,13 @@ export async function createSession(response: any) {
     });
 }
 
-export async function logout() {
-    // Obtén las cookies y elimina la cookie de sesión
+export async function deleteSession() {
+    // Obtén las cookies y elimina las cookies de sesión
     const cookieStore = await cookies();
-    cookieStore.set('session_userName', '', { expires: new Date(0) });
-    cookieStore.set('session_userEmail', '', { expires: new Date(0) });
-    cookieStore.set('session_idToken', '', { expires: new Date(0) });
-    cookieStore.set('session_refreshToken', '', { expires: new Date(0) });
+    cookieStore.delete('session_userName');
+    cookieStore.delete('session_userEmail');
+    cookieStore.delete('session_idToken');
+    cookieStore.delete('session_refreshToken');
 }
 
 export async function getSession() {
