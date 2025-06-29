@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState } from "react";
-import { useFormStatus } from 'react-dom';
 import { handleLogin } from "./actions";
 import styles from "./login.module.css";
 import Image from "next/image";
@@ -16,13 +15,13 @@ export function LoginForm(){
         const formData = new FormData(event.target as HTMLFormElement);
         const result = await handleLogin(null, formData);
 
-        if (result.success && result.redirectUrl) {
+        if (result?.success && result?.redirectUrl) {
+            // Si el login es exitoso, redirigir al usuario
             router.push(result.redirectUrl);
         } else {
-            console.log('Error en el login:', result.message || result.error);
+            console.log('Error en el login:', result?.message || result?.error);
         }
     }
-    const [state, loginAction] = useActionState(handleLogin, undefined);
 
     return (
         <div className={styles.principalContainer}>
