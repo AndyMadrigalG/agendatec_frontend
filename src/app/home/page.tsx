@@ -10,7 +10,7 @@ import { cookies } from "next/headers";
 
 export default async function HomePage() {
     const cookieStore = await cookies();
-    const userName = cookieStore.get('session_userName')?.value;
+    const userName = await cookieStore.get('session_userName')?.value;
 
     return (
         <div className={styles.principalContainer}>
@@ -20,7 +20,9 @@ export default async function HomePage() {
             </div>
 
             <div className={styles.container}>
-                <h1 className={styles.bienvenida}>Bienvenido, {userName}</h1>
+                <h1 className={styles.bienvenida}>
+                    {userName ? `Bienvenido, ${userName}` : 'Bienvenido de vuelta!'}
+                </h1>
                 <div className={styles.menu}>
                     <Link href="/agendaInicio" className={styles.card}>
                         <Image src={calendarImage} alt="Agendas Logo" />
