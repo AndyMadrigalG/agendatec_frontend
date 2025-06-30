@@ -137,12 +137,12 @@ export default function EditarAgendaPage() {
       setMiembros(miembrosFormateados);
 
       // Seleccionar todos los miembros por defecto
-      const idsSeleccionados = miembrosFormateados.map((miembro) => miembro.id);
+      const idsSeleccionados = miembrosFormateados.map((miembro: any) => miembro.id);
       setSeleccionados(idsSeleccionados);
 
       setFormulario((prevFormulario) => ({
         ...prevFormulario,
-        convocados: idsSeleccionados.map((id) => id.toString()),
+        convocados: idsSeleccionados.map((id: any) => id.toString()),
       }));
     } catch (error) {
       console.error('Error al cargar los miembros:', error);

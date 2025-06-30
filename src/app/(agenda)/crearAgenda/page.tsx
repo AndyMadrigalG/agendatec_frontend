@@ -10,15 +10,9 @@ import { usePuntos } from './puntosContext';
 import Modal from './ModalCrearPunto/ModalCrearPunto';
 import CrearPuntoPage from './(crearPunto)/crearPunto';
 import { BACKEND_URL } from '@/Constants/constants';
-import { Punto } from '../../types';
+import { Miembro, Punto } from '../../types';
 import CrearAgendaForm from './(components)/crearAgendaForm';
 
-interface Miembro {
-  id: number;
-  nombre: string;
-  email: string;
-  cargo: string;
-}
 
 const subirArchivos = async (archivos: File[], puntoId: number) => {
   try {
@@ -277,12 +271,12 @@ export default function CrearAgendaPage() {
       setMiembros(miembrosFormateados);
 
       // Seleccionar todos los miembros por defecto
-      const idsSeleccionados = miembrosFormateados.map((miembro) => miembro.id);
+      const idsSeleccionados = miembrosFormateados.map((miembro: any) => miembro.id);
       setSeleccionados(idsSeleccionados);
 
       setFormulario((prevFormulario) => ({
         ...prevFormulario,
-        convocados: idsSeleccionados.map((id) => id.toString()),
+        convocados: idsSeleccionados.map((id: any) => id.toString()),
       }));
 
     } catch (error) {
