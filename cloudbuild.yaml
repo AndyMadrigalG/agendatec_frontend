@@ -1,8 +1,14 @@
-options: 
+availableSecrets:
+  secretManager:
+    - versionName: 'projects/371160271556/secrets/NEXT_PUBLIC_JWT_SECRET/versions/latest'
+      env: 'NEXT_PUBLIC_JWT_SECRET'
+
+options:
     logging: 'CLOUD_LOGGING_ONLY'
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/agendatec-gcp-proyect/agendatec-frontend', '.']
+    secretEnv: [ 'NEXT_PUBLIC_JWT_SECRET' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/agendatec-gcp-proyect/agendatec-frontend']
