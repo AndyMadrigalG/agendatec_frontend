@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { useRouter, usePathname, useParams } from 'next/navigation';
 import Modal from '../../crearAgenda/ModalCrearPunto/ModalCrearPunto';
 import EditarPuntoPage from './(editarPunto)/editarPunto';
-import { BACKEND_URL } from '../../../../Constants/constants';
+import { BACKEND_URL } from '@/Constants/constants';
 import CrearAgendaForm from '../../crearAgenda/(components)/crearAgendaForm';
 import {Miembro, Agenda, Punto} from '../../../types'
 

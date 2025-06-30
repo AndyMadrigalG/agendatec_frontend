@@ -7,9 +7,9 @@ import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { useRouter, usePathname } from 'next/navigation';
 import { usePuntos } from './puntosContext';
-import Modal from './ModalCrearPunto/ModalCrearPunto'; // Importa el componente Modal
-import CrearPuntoPage from './(crearPunto)/crearPunto'; // Importa el contenido de CrearPuntoPage
-import { BACKEND_URL } from '../../../Constants/constants';
+import Modal from './ModalCrearPunto/ModalCrearPunto';
+import CrearPuntoPage from './(crearPunto)/crearPunto';
+import { BACKEND_URL } from '@/Constants/constants';
 import { Punto } from '../../types';
 import CrearAgendaForm from './(components)/crearAgendaForm';
 
@@ -20,6 +20,38 @@ interface Miembro {
   cargo: string;
 }
 
+const subirArchivos = async (archivos: File[], puntoId: number) => {
+  try {
+    for (const archivo of archivos) {
+      const formData = new FormData();
+      formData.append('file', archivo);
+      formData.append('puntoId', puntoId.toString());
+
+      const response = await fetch(`${BACKEND_URL}/file/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error al subir el archivo: ${archivo.name}`);
+      }
+
+      const data = await response.json();
+      console.log(`Archivo subido: ${archivo.name}, URL: ${data.publicUrl}`);
+    }
+  } catch (error) {
+    console.error('Error al subir los archivos:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al subir los archivos',
+      text: 'Ocurrió un error al subir los archivos.',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#7b6ef6',
+      background: 'var(--background)',
+      color: '#f9fafb',
+    });
+  }
+};
 
 export default function CrearAgendaPage() {
   const router = useRouter();
@@ -136,6 +168,14 @@ export default function CrearAgendaPage() {
         if (!responsePuntos.ok) {
           throw new Error('Error al guardar los puntos');
         }
+
+        const puntoCreado = await responsePuntos.json();
+        console.log('Punto creado: ', puntoCreado);
+        const puntoId = puntoCreado.id_Punto;
+
+        // Subir archivos asociados al punto
+        await subirArchivos(punto.archivos, puntoId);
+
       }
 
       
@@ -235,7 +275,16 @@ export default function CrearAgendaPage() {
       }));
 
       setMiembros(miembrosFormateados);
-      console.log('Miembros cargados:', miembrosFormateados);
+
+      // Seleccionar todos los miembros por defecto
+      const idsSeleccionados = miembrosFormateados.map((miembro) => miembro.id);
+      setSeleccionados(idsSeleccionados);
+
+      setFormulario((prevFormulario) => ({
+        ...prevFormulario,
+        convocados: idsSeleccionados.map((id) => id.toString()),
+      }));
+
     } catch (error) {
       console.error('Error al cargar los miembros:', error);
       Swal.fire({

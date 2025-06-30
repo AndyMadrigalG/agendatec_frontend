@@ -10,34 +10,41 @@ const protectedRoutes = ['/home'];
 const publicRoutes = ['/login'];
 
 export async function middleware(request: NextRequest) {
-    const cookie = (await cookies()).get('session_idToken');
-    const session =  cookie ? await decrypt(cookie.value) : null;
+    const id_cookie = (await cookies()).get('session_idToken');
+    const refresh_cookie = (await cookies()).get('session_refreshToken');
+    const decrypt_idCookie =  id_cookie ? await decrypt(id_cookie.value) : null;
+    const decrypt_refreshCookie = refresh_cookie ? await decrypt(refresh_cookie.value) : null;
+    // console.log ('decrypt_idCookie: ', decrypt_idCookie);
+    // console.log ('decrypt_refreshCookie: ', decrypt_refreshCookie);
 
     // send GET /auth with token in headers to validate token
     const response = await fetch(BACKEND_URL + '/auth', {
         method: 'GET',
-        headers: { 'Authorization': `Bearer ${session?.idToken}` },
+        headers: {
+            'Authorization': `Bearer ${decrypt_idCookie?.idToken}`,
+            'x-refresh-token': decrypt_refreshCookie?.refreshToken,
+        },
     });
-    const data = await response.json();
+    const response_data = await response.json();
     // console.log('id token authenticated : ', data);
 
-    if (data?.valid && data?.userName) {
+    if (response_data?.valid && response_data?.userName) {
         // Agregar el nombre del usuario a las cookies
         const cookieStore = await cookies();
-        cookieStore.set('session_userName', data.userName);
-        cookieStore.set('session_userEmail', data.userEmail);
+        cookieStore.set('session_userName', response_data.userName);
+        cookieStore.set('session_userEmail', response_data.userEmail);
     }
 
     // Allow access to the login without a token or token is valid
-    if (request.nextUrl.pathname.startsWith('/login') && (!session || !session.idToken || !data?.valid)) {
+    if (request.nextUrl.pathname.startsWith('/login') && (!decrypt_idCookie || !decrypt_idCookie.idToken || !response_data?.valid)) {
         return NextResponse.next();
-    } else if (request.nextUrl.pathname.startsWith('/login') && data?.valid) {
+    } else if (request.nextUrl.pathname.startsWith('/login') && response_data?.valid) {
         // If the user is already logged in, redirect to home
         return NextResponse.redirect(new URL('/home', request.url));
     }
 
     // Redirect to login if no session token is present
-    if (!session || !session.idToken) {
+    if (!decrypt_idCookie || !decrypt_idCookie.idToken) {
         // If the session is invalid
         return NextResponse.redirect(new URL('/login', request.url));
     }

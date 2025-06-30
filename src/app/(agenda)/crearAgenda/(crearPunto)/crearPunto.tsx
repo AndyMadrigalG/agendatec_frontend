@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePuntos } from '../puntosContext';
 import styles from './crearPunto.module.css';
 import Swal from 'sweetalert2';
-import { BACKEND_URL } from '../../../../Constants/constants';
+import { BACKEND_URL } from '@/Constants/constants';
 import { Punto, Miembro } from '../../../types';
 
 
