@@ -1,10 +1,10 @@
 "use server";
 
 import { BACKEND_URL } from "@/Constants/constants";
-import {createSession, deleteSession} from "@/Constants/lib";
-import {redirect} from "next/navigation";
+import { createSession, deleteSession } from "@/Constants/lib";
+import { redirect } from "next/navigation";
 
-export async function handleLogin(prevState: any, formData: FormData) {
+export async function handleLogin(formData: FormData) {
     try {
         const usuario_email = formData.get('email');
         const usuario_password = formData.get('password');

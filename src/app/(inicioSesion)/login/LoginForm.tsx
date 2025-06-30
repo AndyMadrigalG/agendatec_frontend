@@ -27,7 +27,7 @@ export function LoginForm(){
         });
 
         const formData = new FormData(event.target as HTMLFormElement);
-        const result = await handleLogin(null, formData);
+        const result = await handleLogin(formData);
 
         if (result?.success && result?.redirectUrl) {
             // Si el login es exitoso, redirigir al usuario

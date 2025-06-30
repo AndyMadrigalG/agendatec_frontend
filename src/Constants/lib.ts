@@ -22,7 +22,8 @@ export async function decrypt(session: string ){
         });
         return payload;
     } catch (error) {
-        console.log("Fallo al verificar el JWT:", error);
+        console.log("Fallo al verificar el JWT:", error?.code);
+        return null;
     }
 }
 
