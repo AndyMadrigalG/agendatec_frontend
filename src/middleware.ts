@@ -46,6 +46,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    // Aplica el middleware a todas las rutas excepto las excluidas como api o login
-    matcher: ['/((?!_next|api).*)'], // Excluye rutas que comienzan con _next, api, o login
+    // Aplica el middleware a todas las rutas excepto las excluidas
+    matcher: ['/((?!_next|api).*)'], // Excluye rutas que comienzan con _next o api
 };

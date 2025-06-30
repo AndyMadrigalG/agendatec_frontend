@@ -1,25 +1,62 @@
 "use client";
 
-import { useActionState } from "react";
 import { handleLogin } from "./actions";
 import styles from "./login.module.css";
 import Image from "next/image";
 import logo from "@/../public/logo.png";
 import {useRouter} from "next/navigation";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 export function LoginForm(){
     const router = useRouter();
+    const [usuario, setUsuario] = useState('');
+    const [contrasena, setContrasena] = useState('');
+
+    const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsuario(e.target.value);
+    };
+
+    const handleContrasenaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setContrasena(e.target.value);
+    };
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
+
+        // Mostrar el modal de carga
+        Swal.fire({
+            title: 'Iniciando sesión...',
+            text: 'Por favor espere',
+            background: 'var(--background)',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            color: '#f9fafb',
+            willOpen: () => {
+                Swal.showLoading();
+            },
+        });
+
         const formData = new FormData(event.target as HTMLFormElement);
         const result = await handleLogin(null, formData);
 
         if (result?.success && result?.redirectUrl) {
             // Si el login es exitoso, redirigir al usuario
+            Swal.close();
+            console.log('Login exitoso');
             router.push(result.redirectUrl);
         } else {
+            Swal.close();
             console.log('Error en el login:', result?.message || result?.error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Login inválido',
+                text: 'Por favor ingrese un correo electrónico y contraseña válidos',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#7b6ef6',
+                background: 'var(--background)',
+                color: '#f9fafb',
+            });
         }
     }
 
@@ -41,7 +78,7 @@ export function LoginForm(){
                             name="email"
                             type="text"
                             placeholder="Email"
-                            //onChange={handleUsuarioChange}
+                            onChange={handleUsuarioChange}
                             required
                         />
 
@@ -50,7 +87,7 @@ export function LoginForm(){
                             name="password"
                             type="password"
                             placeholder="Contraseña"
-                            //onChange={handleContrasenaChange}
+                            onChange={handleContrasenaChange}
                             required
                         />
                         <button type="submit">Ingresar</button>

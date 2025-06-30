@@ -31,7 +31,7 @@ export async function createSession(response: any) {
     //console.log('Response in create session: ', response);
 
     // Crea un objeto de sesión con el usuario y la fecha de expiración
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 60 minutos desde ahora
+    const expiresAt = new Date(Date.now() + 120 * 60 * 1000); // 120 minutos desde ahora
 
     const idTokenCookie = await encrypt({ idToken, expiresAt });
     const refreshTokenCookie = await encrypt({ refreshToken, expiresAt });
