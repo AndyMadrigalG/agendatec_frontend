@@ -73,7 +73,7 @@
 .menu{
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: flex-end;
   width: 70%;
   border-bottom: rgb(91, 91, 91) 1px solid;
   padding-bottom: 20px;

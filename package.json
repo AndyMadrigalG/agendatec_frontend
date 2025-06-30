@@ -9,6 +9,8 @@
     "dev": "next dev -p 3001"
   },
   "dependencies": {
+    "cookie": "^1.0.2",
+    "jose": "^6.0.11",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "next": "15.3.2",
