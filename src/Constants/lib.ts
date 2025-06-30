@@ -21,7 +21,7 @@ export async function decrypt(session: string ){
             algorithms: ['HS256'],
         });
         return payload;
-    } catch (error) {
+    } catch (error: any) {
         console.log("Fallo al verificar el JWT:", error?.code);
         return null;
     }

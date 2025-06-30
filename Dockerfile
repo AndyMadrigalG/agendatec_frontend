@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Instalamos ÚNICAMENTE las dependencias de producción, esto reduce drásticamente el tamaño de la imagen
-RUN npm install --omit=dev
+RUN npm ci
 
 COPY src ./src
 COPY public ./public
