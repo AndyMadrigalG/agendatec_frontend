@@ -1,25 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { handleLogin } from "./actions";
 import styles from "./login.module.css";
 import Image from "next/image";
 import logo from "@/../public/logo.png";
-import {useRouter} from "next/navigation";
-import { useState } from "react";
 import Swal from "sweetalert2";
 
 export function LoginForm(){
     const router = useRouter();
-    const [usuario, setUsuario] = useState('');
-    const [contrasena, setContrasena] = useState('');
-
-    const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUsuario(e.target.value);
-    };
-
-    const handleContrasenaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setContrasena(e.target.value);
-    };
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
@@ -78,7 +67,6 @@ export function LoginForm(){
                             name="email"
                             type="text"
                             placeholder="Email"
-                            onChange={handleUsuarioChange}
                             required
                         />
 
@@ -87,7 +75,6 @@ export function LoginForm(){
                             name="password"
                             type="password"
                             placeholder="Contraseña"
-                            onChange={handleContrasenaChange}
                             required
                         />
                         <button type="submit">Ingresar</button>
