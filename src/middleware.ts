@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${decrypt_idCookie?.idToken}`,
-            'x-refresh-token': decrypt_refreshCookie?.refreshToken,
+            'refresh-token': ''+decrypt_refreshCookie?.refreshToken,
         },
     });
     const response_data = await response.json();
